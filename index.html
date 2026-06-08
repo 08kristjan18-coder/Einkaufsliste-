@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Meine Liste">
-<meta name="theme-color" content="#08000f">
+<meta name="theme-color" content="#12091e">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
 <title>Meine Liste</title>
@@ -18,13 +18,14 @@
 body{
   min-height:100vh;
   font-family:'DM Sans',sans-serif;
+  font-size:16px; /* FESTE BASIS-SCHRIFTGRÖSSE – verhindert System-Font-Scaling */
   color:#fff;
   overflow-x:hidden;
-  background:#08000f;
+  background:#12091e;
 }
 
-/* ── BG ── */
-.bg{position:fixed;inset:0;z-index:0;overflow:hidden;background:#08000f}
+/* ── BG – mittelhell, Rot + Blau + Gold vermischen sich ── */
+.bg{position:fixed;inset:0;z-index:0;overflow:hidden;background:#12091e}
 
 .orb{
   position:absolute;border-radius:50%;
@@ -34,66 +35,77 @@ body{
 @keyframes orbrise{to{opacity:var(--op,0.4)}}
 @keyframes drift{
   0%,100%{transform:translate(0,0) scale(1)}
-  25%{transform:translate(var(--x1,20px),var(--y1,-30px)) scale(1.04)}
+  25%{transform:translate(var(--x1,20px),var(--y1,-30px)) scale(1.06)}
   50%{transform:translate(var(--x2,-15px),var(--y2,20px)) scale(0.97)}
-  75%{transform:translate(var(--x3,10px),var(--y3,10px)) scale(1.02)}
+  75%{transform:translate(var(--x3,10px),var(--y3,10px)) scale(1.03)}
 }
 
-/* Orb definitions – gentle, large, very blurry */
+/* Rot-Orb */
 .o1{
-  width:600px;height:600px;
-  background:radial-gradient(circle at 40% 40%, #6a1fb5 0%, #3a0070 50%, transparent 75%);
-  top:-180px;left:-150px;
-  filter:blur(90px);
-  --op:0.5;--dr:20s;--ds:0s;
-  --x1:40px;--y1:-20px;--x2:-25px;--y2:35px;--x3:15px;--y3:-10px;
-}
-.o2{
-  width:500px;height:500px;
-  background:radial-gradient(circle at 60% 50%, #9c1560 0%, #5a0035 55%, transparent 78%);
-  top:25%;right:-140px;
+  width:620px;height:620px;
+  background:radial-gradient(circle at 40% 40%, #c0182a 0%, #7a0010 45%, transparent 72%);
+  top:-200px;left:-160px;
   filter:blur(100px);
-  --op:0.45;--dr:24s;--ds:6s;
-  --x1:-30px;--y1:40px;--x2:20px;--y2:-25px;--x3:-10px;--y3:15px;
+  --op:0.38;--dr:22s;--ds:0s;
+  --x1:50px;--y1:-25px;--x2:-30px;--y2:40px;--x3:20px;--y3:-15px;
 }
+/* Blau-Orb */
+.o2{
+  width:540px;height:540px;
+  background:radial-gradient(circle at 60% 50%, #1040c8 0%, #060e5e 55%, transparent 78%);
+  top:20%;right:-160px;
+  filter:blur(110px);
+  --op:0.42;--dr:26s;--ds:7s;
+  --x1:-35px;--y1:45px;--x2:25px;--y2:-30px;--x3:-12px;--y3:20px;
+}
+/* Gold/Orange-Orb */
 .o3{
-  width:450px;height:450px;
-  background:radial-gradient(circle at 50% 55%, #0d3fa6 0%, #051f60 55%, transparent 78%);
-  bottom:-120px;left:5%;
-  filter:blur(95px);
-  --op:0.4;--dr:22s;--ds:12s;
-  --x1:25px;--y1:-35px;--x2:-20px;--y2:20px;--x3:10px;--y3:25px;
+  width:480px;height:480px;
+  background:radial-gradient(circle at 50% 55%, #c87800 0%, #7a4400 50%, transparent 76%);
+  bottom:-130px;left:10%;
+  filter:blur(105px);
+  --op:0.35;--dr:24s;--ds:14s;
+  --x1:30px;--y1:-40px;--x2:-22px;--y2:25px;--x3:12px;--y3:30px;
 }
+/* Rot-Pink Misch-Orb */
 .o4{
-  width:320px;height:320px;
-  background:radial-gradient(circle at 45% 45%, #7b1fa2 0%, #3d0070 60%, transparent 80%);
-  bottom:15%;right:5%;
-  filter:blur(85px);
-  --op:0.35;--dr:26s;--ds:4s;
-  --x1:-20px;--y1:25px;--x2:15px;--y2:-20px;--x3:-8px;--y3:12px;
+  width:360px;height:360px;
+  background:radial-gradient(circle at 45% 45%, #d43060 0%, #7a0830 60%, transparent 80%);
+  bottom:20%;right:0%;
+  filter:blur(90px);
+  --op:0.32;--dr:28s;--ds:5s;
+  --x1:-25px;--y1:30px;--x2:18px;--y2:-22px;--x3:-10px;--y3:14px;
 }
+/* Blau-Gold Misch-Orb Mitte */
 .o5{
+  width:300px;height:300px;
+  background:radial-gradient(circle at 50% 50%, #1a5a8e 0%, #0a2040 55%, transparent 80%);
+  top:12%;left:30%;
+  filter:blur(85px);
+  --op:0.28;--dr:32s;--ds:10s;
+  --x1:18px;--y1:35px;--x2:-28px;--y2:-18px;--x3:22px;--y3:-8px;
+}
+/* Gold-Rot Misch unten mitte */
+.o6{
   width:280px;height:280px;
-  background:radial-gradient(circle at 50% 50%, #1a237e 0%, #0a0d45 60%, transparent 80%);
-  top:10%;left:35%;
+  background:radial-gradient(circle at 50% 50%, #a06010 0%, #600800 55%, transparent 80%);
+  bottom:35%;left:20%;
   filter:blur(80px);
-  --op:0.3;--dr:30s;--ds:9s;
-  --x1:15px;--y1:30px;--x2:-25px;--y2:-15px;--x3:20px;--y3:-5px;
+  --op:0.25;--dr:19s;--ds:3s;
+  --x1:22px;--y1:-28px;--x2:-15px;--y2:18px;--x3:10px;--y3:22px;
 }
 
-/* noise overlay for depth */
+/* noise overlay */
 .noise{
   position:fixed;inset:0;z-index:0;
-  opacity:0.03;pointer-events:none;
+  opacity:0.025;pointer-events:none;
   background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-size:200px 200px;
 }
 
-/* subtle sparkles */
+/* sparkles */
 .spark{
-  position:fixed;border-radius:50%;
-  background:#fff;
-  opacity:0;
+  position:fixed;border-radius:50%;background:#fff;opacity:0;
   animation:twinkle var(--d,7s) var(--dl,0s) ease-in-out infinite;
 }
 @keyframes twinkle{
@@ -109,7 +121,7 @@ body{
 h1{
   font-family:'Bebas Neue',sans-serif;
   font-size:50px;letter-spacing:6px;
-  background:linear-gradient(135deg,#d16aff 0%,#8b5cff 50%,#5ab4ff 100%);
+  background:linear-gradient(135deg,#ff6a6a 0%,#ffc230 45%,#5ab4ff 100%);
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
   line-height:1;margin-bottom:5px;
 }
@@ -118,8 +130,8 @@ h1{
 /* ── STATS ── */
 .stats-bar{
   margin:0 16px 14px;
-  background:rgba(255,255,255,0.05);
-  border:1px solid rgba(255,255,255,0.08);
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.1);
   border-radius:14px;padding:11px 16px;
   display:flex;align-items:center;gap:12px;
   backdrop-filter:blur(6px);
@@ -129,7 +141,7 @@ h1{
 .prog-wrap{flex:1;height:3px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden}
 .prog-fill{
   height:100%;border-radius:2px;
-  background:linear-gradient(90deg,#d16aff,#8b5cff,#5ab4ff);
+  background:linear-gradient(90deg,#ff6a6a,#ffc230,#5ab4ff);
   transition:width 0.45s cubic-bezier(.4,0,.2,1);
 }
 .prog-pct{font-size:12px;color:rgba(255,255,255,0.3);min-width:30px;text-align:right}
@@ -154,13 +166,12 @@ h1{
   transition:border-color 0.2s,box-shadow 0.2s;
 }
 .inp:focus{
-  border-color:rgba(209,106,255,0.6);
-  box-shadow:0 0 0 3px rgba(209,106,255,0.1);
+  border-color:rgba(255,194,48,0.6);
+  box-shadow:0 0 0 3px rgba(255,194,48,0.1);
 }
 .inp::placeholder{color:rgba(255,255,255,0.25)}
 
-
-
+/* Menge-Stepper – Zahl ist tippbar */
 .qty-ctrl{
   display:flex;align-items:center;
   background:rgba(0,0,0,0.35);
@@ -169,16 +180,18 @@ h1{
 }
 .qty-btn{
   background:none;border:none;
-  color:#d16aff;width:36px;height:100%;
+  color:#ffc230;width:36px;height:100%;
   font-size:22px;cursor:pointer;
   display:flex;align-items:center;justify-content:center;
-  transition:background 0.15s;
+  transition:background 0.15s;flex-shrink:0;
 }
-.qty-btn:active{background:rgba(209,106,255,0.18)}
+.qty-btn:active{background:rgba(255,194,48,0.18)}
 .qty-num{
   font-size:16px;font-weight:500;
-  min-width:26px;text-align:center;color:#fff;
-  pointer-events:none;
+  min-width:30px;text-align:center;color:#fff;
+  background:none;border:none;outline:none;
+  font-family:'DM Sans',sans-serif;
+  padding:0;cursor:text;
 }
 
 /* ── COUNTDOWN ── */
@@ -193,7 +206,7 @@ h1{
 .cd-bar.show{display:flex}
 .cd-fill-wrap{flex:1;height:3px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden}
 .cd-fill{height:100%;background:#66bb6a;border-radius:2px;transition:width 0.1s linear}
-.cd-undo{background:none;border:none;color:#d16aff;font-size:12px;cursor:pointer;text-decoration:underline;font-family:'DM Sans',sans-serif;flex-shrink:0}
+.cd-undo{background:none;border:none;color:#ffc230;font-size:12px;cursor:pointer;text-decoration:underline;font-family:'DM Sans',sans-serif;flex-shrink:0}
 
 /* ── LIST ── */
 .list-wrap{padding:0 16px}
@@ -202,9 +215,9 @@ h1{
 .sec-btn{background:none;border:none;color:rgba(255,255,255,0.2);font-size:11px;cursor:pointer;text-decoration:underline;font-family:'DM Sans',sans-serif}
 .sec-btn:hover{color:#ff5252}
 
-/* ITEM */
+/* ITEM – klick überall = toggle, feste Schriftgröße */
 .item{
-  display:flex;align-items:center;gap:12px;
+  display:flex;align-items:flex-start;gap:12px;
   background:rgba(255,255,255,0.055);
   border:1px solid rgba(255,255,255,0.08);
   border-radius:14px;
@@ -214,10 +227,11 @@ h1{
   transition:opacity 0.25s;
   position:relative;overflow:hidden;
   backdrop-filter:blur(4px);
+  cursor:pointer; /* ganzes Item klickbar */
 }
 .item::before{
   content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
-  background:linear-gradient(180deg,#d16aff,#7c4dff);
+  background:linear-gradient(180deg,#ff6a6a,#ffc230);
   border-radius:3px 0 0 3px;opacity:0.8;
 }
 .item.done{opacity:0.35}
@@ -233,47 +247,58 @@ h1{
 .chk{
   width:26px;height:26px;border-radius:50%;flex-shrink:0;
   border:1.5px solid rgba(255,255,255,0.18);
-  background:none;cursor:pointer;
+  background:none;
   display:flex;align-items:center;justify-content:center;
   transition:all 0.18s;
+  margin-top:1px; /* align mit erster Textzeile */
 }
 .chk.on{
-  background:linear-gradient(135deg,#d16aff,#7c4dff);
+  background:linear-gradient(135deg,#ff6a6a,#ffc230);
   border-color:transparent;
 }
 .chk.on::after{content:'✓';font-size:13px;color:#fff;font-weight:600}
 
-/* item content – NAME + MENGE in einer Zeile, dann actions */
+/* item content */
 .item-main{
   flex:1;
-  display:flex;align-items:center;gap:10px;
+  display:flex;flex-direction:column;gap:3px;
   min-width:0;
 }
-.item-name{
-  font-size:18px;   /* größer */
-  font-weight:400;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-  flex:1;
+/* Name + Badge in einer Zeile, darf umbrechen */
+.item-name-row{
+  display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;
 }
-/* Menge rechts neben dem Namen */
+.item-name{
+  font-size:16px; /* FEST – kein em, kein rem */
+  font-weight:400;
+  line-height:1.35;
+  word-break:break-word;
+  white-space:normal; /* kein nowrap → wächst nach unten */
+}
 .item-qty-badge{
-  font-size:16px;   /* größer, gleiche Höhe wie Name */
+  font-size:14px;
   font-weight:500;
-  color:#d16aff;
+  color:#ffc230;
   flex-shrink:0;
   white-space:nowrap;
 }
+.item-store-tag{
+  font-size:11px;
+  color:rgba(255,255,255,0.3);
+  letter-spacing:0.04em;
+}
 
-/* action buttons rechts */
+/* action buttons */
 .item-acts{display:flex;gap:2px;flex-shrink:0}
 .act-btn{
   background:none;border:none;cursor:pointer;
   padding:8px;border-radius:8px;font-size:16px;
   transition:background 0.15s;
   color:rgba(255,255,255,0.2);
+  /* verhindert dass Klick auf Button auch toggle auslöst – wird per JS gestoppt */
 }
 .act-btn:hover{background:rgba(255,255,255,0.07)}
-.edit-btn:hover{color:#d16aff!important}
+.edit-btn:hover{color:#ffc230!important}
 .del-btn:hover{color:#ff5252!important}
 
 /* empty */
@@ -289,8 +314,8 @@ h1{
 }
 .modal-bg.open{display:flex}
 .modal{
-  background:linear-gradient(160deg,#150025,#0c0018);
-  border:1px solid rgba(209,106,255,0.2);
+  background:linear-gradient(160deg,#1a0c10,#0c0818);
+  border:1px solid rgba(255,106,106,0.2);
   border-radius:22px 22px 0 0;
   padding:24px 20px calc(28px + env(safe-area-inset-bottom,0px));
   width:100%;max-width:480px;
@@ -299,7 +324,7 @@ h1{
 @keyframes slideUp{from{transform:translateY(50px)}to{transform:translateY(0)}}
 .modal h2{
   font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:2px;
-  background:linear-gradient(135deg,#d16aff,#7c4dff);
+  background:linear-gradient(135deg,#ff6a6a,#ffc230);
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
   margin-bottom:16px;
 }
@@ -311,13 +336,13 @@ h1{
   padding:13px 14px;font-size:16px;
   font-family:'DM Sans',sans-serif;outline:none;margin-bottom:14px;
 }
-.modal input:focus{border-color:rgba(209,106,255,0.5)}
+.modal input:focus{border-color:rgba(255,194,48,0.5)}
 .modal-btns{display:flex;gap:10px}
 .m-save{
   flex:1;padding:13px;border-radius:10px;border:none;cursor:pointer;
-  background:linear-gradient(135deg,#c052f0,#7c4dff);
+  background:linear-gradient(135deg,#e04020,#ffc230);
   color:#fff;font-size:15px;font-weight:500;font-family:'DM Sans',sans-serif;
-  box-shadow:0 4px 15px rgba(124,77,255,0.35);
+  box-shadow:0 4px 15px rgba(255,100,40,0.35);
 }
 .m-cancel{
   flex:1;padding:13px;border-radius:10px;cursor:pointer;
@@ -329,12 +354,12 @@ h1{
 .toast{
   position:fixed;bottom:30px;left:50%;
   transform:translateX(-50%) translateY(80px);
-  background:linear-gradient(135deg,#c052f0,#7c4dff);
+  background:linear-gradient(135deg,#c03020,#ffc230);
   color:#fff;padding:10px 24px;border-radius:24px;
   font-size:13px;font-weight:500;
   transition:transform 0.3s cubic-bezier(.4,0,.2,1);
   z-index:400;white-space:nowrap;
-  box-shadow:0 6px 24px rgba(124,77,255,0.5);
+  box-shadow:0 6px 24px rgba(200,80,30,0.5);
 }
 .toast.show{transform:translateX(-50%) translateY(0)}
 
@@ -356,9 +381,9 @@ h1{
   display:flex;align-items:center;justify-content:space-between;
 }
 .store-pick-btn.has-store{
-  border-color:rgba(209,106,255,0.5);
-  color:#d16aff;
-  background:rgba(209,106,255,0.1);
+  border-color:rgba(255,194,48,0.5);
+  color:#ffc230;
+  background:rgba(255,194,48,0.08);
 }
 .store-pick-btn .arrow{font-size:11px;opacity:0.5}
 .store-clear-btn{
@@ -378,18 +403,67 @@ h1{
 }
 .store-popup-bg.open{display:flex}
 .store-popup{
-  background:linear-gradient(160deg,#150025,#0c0018);
-  border:1px solid rgba(209,106,255,0.2);
+  background:linear-gradient(160deg,#1a0c10,#0c0818);
+  border:1px solid rgba(255,106,106,0.2);
   border-radius:22px 22px 0 0;
   padding:20px 0 calc(20px + env(safe-area-inset-bottom,0px));
   width:100%;max-width:480px;
+  max-height:75vh;overflow-y:auto;
   animation:slideUp 0.22s ease;
+}
+.store-popup-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 20px 14px;
 }
 .store-popup-title{
   font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;
-  background:linear-gradient(135deg,#d16aff,#7c4dff);
+  background:linear-gradient(135deg,#ff6a6a,#ffc230);
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  padding:0 20px 14px;display:block;
+}
+/* Laden hinzufügen Row */
+.store-add-row{
+  display:flex;gap:8px;padding:0 16px 12px;
+  border-bottom:1px solid rgba(255,255,255,0.07);
+}
+.store-add-inp{
+  flex:1;background:rgba(0,0,0,0.4);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:10px;color:#fff;
+  padding:10px 13px;font-size:14px;
+  font-family:'DM Sans',sans-serif;outline:none;
+}
+.store-add-inp:focus{border-color:rgba(255,194,48,0.5)}
+.store-add-inp::placeholder{color:rgba(255,255,255,0.25)}
+.store-add-btn{
+  background:linear-gradient(135deg,#c03020,#ffc230);
+  border:none;border-radius:10px;
+  color:#fff;font-size:20px;width:42px;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+/* Stadtsuche */
+.store-search-row{
+  display:flex;gap:8px;padding:10px 16px 4px;
+}
+.store-search-inp{
+  flex:1;background:rgba(0,0,0,0.4);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:10px;color:#fff;
+  padding:10px 13px;font-size:14px;
+  font-family:'DM Sans',sans-serif;outline:none;
+}
+.store-search-inp:focus{border-color:rgba(90,180,255,0.5)}
+.store-search-inp::placeholder{color:rgba(255,255,255,0.25)}
+.store-search-btn{
+  background:linear-gradient(135deg,#1040c8,#5ab4ff);
+  border:none;border-radius:10px;
+  color:#fff;font-size:13px;font-weight:500;
+  padding:0 14px;cursor:pointer;font-family:'DM Sans',sans-serif;
+  white-space:nowrap;flex-shrink:0;
+}
+.store-search-hint{
+  font-size:11px;color:rgba(255,255,255,0.2);
+  padding:0 16px 8px;
 }
 .store-list-item{
   display:flex;align-items:center;
@@ -401,15 +475,21 @@ h1{
   transition:background 0.12s;
 }
 .store-list-item:last-child{border-bottom:none}
-.store-list-item:active{background:rgba(209,106,255,0.12)}
-.store-list-item.selected{color:#d16aff}
+.store-list-item:active{background:rgba(255,194,48,0.1)}
+.store-list-item.selected{color:#ffc230}
 .store-list-item .s-check{margin-left:auto;font-size:14px;opacity:0}
 .store-list-item.selected .s-check{opacity:1}
+.store-del-btn{
+  background:none;border:none;color:rgba(255,100,100,0.3);
+  font-size:16px;cursor:pointer;padding:4px 6px;margin-left:8px;
+  transition:color 0.15s;
+}
+.store-del-btn:hover{color:#ff5252}
 
 /* store group label in list */
 .store-group-lbl{
   font-size:11px;letter-spacing:0.13em;text-transform:uppercase;
-  color:#4cd97b;
+  color:#ffc230;
   margin:16px 0 6px;padding-left:4px;
   font-weight:500;
 }
@@ -418,11 +498,11 @@ h1{
 #installBanner{
   display:none;position:fixed;bottom:0;left:0;right:0;z-index:500;
   padding:14px 16px calc(14px + env(safe-area-inset-bottom,0px));
-  background:linear-gradient(160deg,#1a0030,#0c0018);
-  border-top:1px solid rgba(209,106,255,0.25);
+  background:linear-gradient(160deg,#1a0c10,#0c0818);
+  border-top:1px solid rgba(255,106,106,0.25);
   backdrop-filter:blur(12px);
   animation:slideUp 0.3s ease;
-  display:none;flex-direction:row;align-items:center;gap:12px;
+  flex-direction:row;align-items:center;gap:12px;
 }
 #installBanner.show{display:flex}
 .ib-icon{font-size:28px;flex-shrink:0}
@@ -430,11 +510,11 @@ h1{
 .ib-title{font-size:14px;font-weight:500;color:#fff;margin-bottom:2px}
 .ib-sub{font-size:11px;color:rgba(255,255,255,0.35)}
 .ib-btn{
-  background:linear-gradient(135deg,#c052f0,#7c4dff);
+  background:linear-gradient(135deg,#c03020,#ffc230);
   color:#fff;border:none;border-radius:10px;
   padding:10px 16px;font-size:13px;font-weight:500;
   font-family:'DM Sans',sans-serif;cursor:pointer;
-  box-shadow:0 4px 14px rgba(124,77,255,0.4);
+  box-shadow:0 4px 14px rgba(200,80,30,0.4);
   flex-shrink:0;white-space:nowrap;
 }
 .ib-close{
@@ -451,6 +531,7 @@ h1{
   <div class="orb o3"></div>
   <div class="orb o4"></div>
   <div class="orb o5"></div>
+  <div class="orb o6"></div>
 </div>
 <div class="noise"></div>
 <div id="sparks"></div>
@@ -471,10 +552,9 @@ h1{
   <div class="input-card">
     <div class="input-row">
       <input class="inp" id="inp" type="text" placeholder="Was brauchst du?" autocomplete="off" />
-
       <div class="qty-ctrl">
         <button class="qty-btn" onclick="changeQty(-1)">−</button>
-        <span class="qty-num" id="qtyVal">1</span>
+        <input class="qty-num" id="qtyVal" type="text" inputmode="numeric" value="1" />
         <button class="qty-btn" onclick="changeQty(1)">+</button>
       </div>
     </div>
@@ -490,7 +570,20 @@ h1{
   <!-- Store Popup -->
   <div class="store-popup-bg" id="storePopupBg" onclick="storePopupBgClick(event)">
     <div class="store-popup">
-      <span class="store-popup-title">LADEN WÄHLEN</span>
+      <div class="store-popup-header">
+        <span class="store-popup-title">LADEN WÄHLEN</span>
+      </div>
+      <!-- Laden selbst hinzufügen -->
+      <div class="store-add-row">
+        <input class="store-add-inp" id="storeAddInp" type="text" placeholder="Eigenen Laden hinzufügen…" />
+        <button class="store-add-btn" onclick="addCustomStore()" title="Hinzufügen">＋</button>
+      </div>
+      <!-- Stadtsuche -->
+      <div class="store-search-row">
+        <input class="store-search-inp" id="storeSearchInp" type="text" placeholder="Stadt oder PLZ eingeben…" />
+        <button class="store-search-btn" onclick="searchStoresByCity()">Suchen</button>
+      </div>
+      <div class="store-search-hint" id="storeSearchHint"></div>
       <div id="storeListItems"></div>
     </div>
   </div>
@@ -548,48 +641,108 @@ h1{
 </div>
 
 <script>
-// sparks
+// ── Sparkles ──
 (function(){
   const c=document.getElementById('sparks');
   for(let i=0;i<35;i++){
     const s=document.createElement('div');
     s.className='spark';
     const sz=Math.random()<0.5?2:1;
-    s.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--d:${5+Math.random()*9}s;--dl:${Math.random()*10}s;--op:${0.3+Math.random()*0.4};position:fixed;border-radius:50%;background:#fff;opacity:0;animation:twinkle var(--d) var(--dl) ease-in-out infinite;`;
+    s.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--d:${5+Math.random()*9}s;--dl:${Math.random()*10}s;--op:${0.3+Math.random()*0.4};`;
     c.appendChild(s);
   }
-  const st=document.createElement('style');
-  st.textContent='@keyframes twinkle{0%,100%{opacity:0;transform:scale(0.3)}50%{opacity:var(--op);transform:scale(1)}}';
-  document.head.appendChild(st);
 })();
 
-let items=JSON.parse(localStorage.getItem('mylist_v5')||'[]');
+let items=JSON.parse(localStorage.getItem('mylist_v6')||'[]');
 let qty=1;
 let editId=null;
 let toastTimer=null;
 let cdInterval=null;
 let selectedStore='';
 
-const STORES=[
+// ── Stores – aus localStorage oder Default ──
+const DEFAULT_STORES=[
   'Edeka klein','Edeka groß','Penny','Lidl','Aldi',
   'Netto Hund','Netto','Norma','Rewe','BayWa',
   'McGeiz','Kik','Rossmann'
 ];
+let customStores=JSON.parse(localStorage.getItem('customStores_v1')||'null');
+if(!customStores) customStores=[...DEFAULT_STORES];
+
+function saveStores(){ localStorage.setItem('customStores_v1',JSON.stringify(customStores)); }
 
 // Store-Popup aufbauen
-(function(){
+function buildStoreList(){
   const list=document.getElementById('storeListItems');
-  STORES.forEach(s=>{
+  list.innerHTML='';
+  customStores.forEach(s=>{
     const d=document.createElement('div');
     d.className='store-list-item';
-    d.id='sli-'+s.replace(/\s/g,'_');
-    d.innerHTML=`<span>${s}</span><span class="s-check">✓</span>`;
-    d.onclick=()=>selectStore(s);
+    d.id='sli-'+s.replace(/[\s\/]/g,'_');
+    if(s===selectedStore) d.classList.add('selected');
+    const isCustom=!DEFAULT_STORES.includes(s);
+    d.innerHTML=`<span>${s}</span><span class="s-check">✓</span>${isCustom?`<button class="store-del-btn" title="Entfernen" onclick="removeStore(event,'${s.replace(/'/g,"\\'")}')">✕</button>`:''}`;
+    d.addEventListener('click',(e)=>{
+      if(e.target.classList.contains('store-del-btn'))return;
+      selectStore(s);
+    });
     list.appendChild(d);
   });
-})();
+}
+
+function addCustomStore(){
+  const inp=document.getElementById('storeAddInp');
+  const name=inp.value.trim();
+  if(!name)return;
+  if(customStores.includes(name)){showToast('Laden existiert schon');return;}
+  customStores.push(name);
+  saveStores();
+  buildStoreList();
+  inp.value='';
+  showToast('✅ '+name+' hinzugefügt');
+}
+
+function removeStore(e,name){
+  e.stopPropagation();
+  customStores=customStores.filter(s=>s!==name);
+  saveStores();
+  if(selectedStore===name) clearStore();
+  buildStoreList();
+  showToast('🗑 '+name+' entfernt');
+}
+
+// Stadtsuche via Nominatim / Overpass
+async function searchStoresByCity(){
+  const hint=document.getElementById('storeSearchHint');
+  const cityVal=document.getElementById('storeSearchInp').value.trim();
+  if(!cityVal){hint.textContent='Bitte Stadt oder PLZ eingeben.';return;}
+  hint.textContent='Suche läuft…';
+  try{
+    // Geocoding: Stadt → Koordinaten
+    const geoResp=await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(cityVal)}&limit=1&countrycodes=de`,{headers:{'Accept-Language':'de'}});
+    const geoData=await geoResp.json();
+    if(!geoData.length){hint.textContent='Ort nicht gefunden. Versuch z.B. "Templin" oder "17268".';return;}
+    const {lat,lon,display_name}=geoData[0];
+    // Overpass: Supermärkte & Drogerien im Umkreis 3km
+    const query=`[out:json][timeout:10];(node["shop"~"supermarket|convenience|discounter|drogerie|chemist|grocery"](around:3000,${lat},${lon});way["shop"~"supermarket|convenience|discounter|drogerie|chemist|grocery"](around:3000,${lat},${lon}););out tags;`;
+    const ovResp=await fetch('https://overpass-api.de/api/interpreter',{method:'POST',body:'data='+encodeURIComponent(query)});
+    const ovData=await ovResp.json();
+    const found=[];
+    ovData.elements.forEach(el=>{
+      const name=el.tags&&(el.tags.name||el.tags.brand);
+      if(name&&!found.includes(name)&&!customStores.includes(name)) found.push(name);
+    });
+    if(!found.length){hint.textContent='Keine neuen Läden in '+display_name.split(',')[0]+' gefunden.';return;}
+    found.forEach(n=>customStores.push(n));
+    saveStores();buildStoreList();
+    hint.textContent='✅ '+found.length+' Läden aus '+display_name.split(',')[0]+' hinzugefügt!';
+  }catch(err){
+    hint.textContent='Fehler bei der Suche. Internetverbindung prüfen.';
+  }
+}
 
 function openStorePopup(){
+  buildStoreList();
   document.getElementById('storePopupBg').classList.add('open');
 }
 function closeStorePopup(){
@@ -598,10 +751,14 @@ function closeStorePopup(){
 function storePopupBgClick(e){
   if(e.target===document.getElementById('storePopupBg')) closeStorePopup();
 }
+// Enter in den Popup-Inputs
+document.getElementById('storeAddInp').addEventListener('keydown',e=>{if(e.key==='Enter')addCustomStore();});
+document.getElementById('storeSearchInp').addEventListener('keydown',e=>{if(e.key==='Enter')searchStoresByCity();});
+
 function selectStore(s){
   selectedStore=s;
   document.querySelectorAll('.store-list-item').forEach(el=>el.classList.remove('selected'));
-  const el=document.getElementById('sli-'+s.replace(/\s/g,'_'));
+  const el=document.getElementById('sli-'+s.replace(/[\s\/]/g,'_'));
   if(el) el.classList.add('selected');
   document.getElementById('storePickLabel').textContent=s;
   document.getElementById('storePickBtn').classList.add('has-store');
@@ -619,35 +776,43 @@ function clearStore(){
 document.getElementById('dateStr').textContent=
   new Date().toLocaleDateString('de-DE',{weekday:'long',day:'numeric',month:'long'});
 
-function changeQty(d){
-  qty=Math.max(1,qty+d);
-  document.getElementById('qtyVal').textContent=qty;
+// Menge – +/- Buttons + tippbare Zahl
+function getQty(){
+  const v=document.getElementById('qtyVal').value.trim();
+  const n=parseInt(v);
+  return isNaN(n)||n<1?1:n;
 }
+function setQty(n){
+  qty=Math.max(1,n);
+  document.getElementById('qtyVal').value=qty;
+}
+function changeQty(d){ setQty(getQty()+d); }
+document.getElementById('qtyVal').addEventListener('change',()=>{ setQty(getQty()); });
+document.getElementById('qtyVal').addEventListener('blur',()=>{ setQty(getQty()); });
 
-function save(){localStorage.setItem('mylist_v5',JSON.stringify(items));}
+function save(){localStorage.setItem('mylist_v6',JSON.stringify(items));}
 function cap(s){return s.charAt(0).toUpperCase()+s.slice(1);}
 
 function addItem(){
   const inp=document.getElementById('inp');
   const raw=inp.value.trim();
   if(!raw) return;
-  let name=raw, itemQty=qty;
+  let name=raw, itemQty=getQty();
   const m=raw.match(/^(\d+)[x×\s]\s*(.+)$/i);
   if(m){itemQty=parseInt(m[1]);name=cap(m[2].trim());}
   else{name=cap(raw);}
   items.unshift({id:Date.now(),name,qty:itemQty,done:false,store:selectedStore});
   save();render();
-  inp.value='';qty=1;
-  document.getElementById('qtyVal').textContent='1';
+  inp.value='';setQty(1);
   inp.focus();
   showToast('➕ '+name+(selectedStore?' · '+selectedStore:'')+' hinzugefügt');
 }
 
-// Enter-Taste
 document.getElementById('inp').addEventListener('keydown',e=>{
   if(e.key==='Enter'){e.preventDefault();addItem();}
 });
 
+// Toggle – ganzes Item klickbar, Buttons stoppen Propagation
 function toggle(id){
   const it=items.find(i=>i.id===id);
   if(it){it.done=!it.done;save();render();checkAllDone();}
@@ -754,18 +919,33 @@ function render(){
   function makeItem(it){
     const d=document.createElement('div');
     d.className='item'+(it.done?' done':'');
-    const qtyDisplay = String(it.qty).trim();
-    const qtyHtml = qtyDisplay ? `<span class="item-qty-badge">${qtyDisplay}×</span>` : '';
+    const qtyDisplay=String(it.qty).trim();
+    const qtyHtml=qtyDisplay?`<span class="item-qty-badge">${qtyDisplay}×</span>`:'';
+    const storeHtml=it.store?`<div class="item-store-tag">📍 ${it.store}</div>`:'';
     d.innerHTML=`
-      <div class="chk${it.done?' on':''}" onclick="toggle(${it.id})"></div>
+      <div class="chk${it.done?' on':''}"></div>
       <div class="item-main">
-        <span class="item-name">${it.name}</span>
-        ${qtyHtml}
+        <div class="item-name-row">
+          <span class="item-name">${it.name}</span>
+          ${qtyHtml}
+        </div>
+        ${storeHtml}
       </div>
       <div class="item-acts">
-        <button class="act-btn edit-btn" onclick="openEdit(${it.id})" title="Bearbeiten">✎</button>
-        <button class="act-btn del-btn" onclick="del(${it.id})" title="Löschen">✕</button>
+        <button class="act-btn edit-btn" title="Bearbeiten">✎</button>
+        <button class="act-btn del-btn" title="Löschen">✕</button>
       </div>`;
+    // Klick auf ganzes Item = toggle
+    d.addEventListener('click',function(e){
+      if(e.target.classList.contains('act-btn')||e.target.closest('.act-btn')) return;
+      toggle(it.id);
+    });
+    d.querySelector('.edit-btn').addEventListener('click',function(e){
+      e.stopPropagation();openEdit(it.id);
+    });
+    d.querySelector('.del-btn').addEventListener('click',function(e){
+      e.stopPropagation();del(it.id);
+    });
     return d;
   }
 
@@ -833,7 +1013,6 @@ dismissBtn.addEventListener('click', () => {
   localStorage.setItem('pwa_dismissed', String(Date.now()));
 });
 
-// iOS Safari hint (kein beforeinstallprompt)
 const isIos = /iphone|ipad|ipod/.test(navigator.userAgent.toLowerCase());
 const isStandalone = window.navigator.standalone;
 if(isIos && !isStandalone && !localStorage.getItem('pwa_dismissed')){
