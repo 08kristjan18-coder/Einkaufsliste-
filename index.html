@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Meine Liste">
+<meta name="theme-color" content="#08000f">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Meine Liste</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+
+body{
+  min-height:100vh;
+  font-family:'DM Sans',sans-serif;
+  color:#fff;
+  overflow-x:hidden;
+  background:#08000f;
+}
+
+/* ── BG ── */
+.bg{position:fixed;inset:0;z-index:0;overflow:hidden;background:#08000f}
+
+.orb{
+  position:absolute;border-radius:50%;
+  opacity:0;
+  animation:orbrise 3s ease forwards, drift var(--dr,18s) ease-in-out var(--ds,3s) infinite;
+}
+@keyframes orbrise{to{opacity:var(--op,0.4)}}
+@keyframes drift{
+  0%,100%{transform:translate(0,0) scale(1)}
+  25%{transform:translate(var(--x1,20px),var(--y1,-30px)) scale(1.04)}
+  50%{transform:translate(var(--x2,-15px),var(--y2,20px)) scale(0.97)}
+  75%{transform:translate(var(--x3,10px),var(--y3,10px)) scale(1.02)}
+}
+
+/* Orb definitions – gentle, large, very blurry */
+.o1{
+  width:600px;height:600px;
+  background:radial-gradient(circle at 40% 40%, #6a1fb5 0%, #3a0070 50%, transparent 75%);
+  top:-180px;left:-150px;
+  filter:blur(90px);
+  --op:0.5;--dr:20s;--ds:0s;
+  --x1:40px;--y1:-20px;--x2:-25px;--y2:35px;--x3:15px;--y3:-10px;
+}
+.o2{
+  width:500px;height:500px;
+  background:radial-gradient(circle at 60% 50%, #9c1560 0%, #5a0035 55%, transparent 78%);
+  top:25%;right:-140px;
+  filter:blur(100px);
+  --op:0.45;--dr:24s;--ds:6s;
+  --x1:-30px;--y1:40px;--x2:20px;--y2:-25px;--x3:-10px;--y3:15px;
+}
+.o3{
+  width:450px;height:450px;
+  background:radial-gradient(circle at 50% 55%, #0d3fa6 0%, #051f60 55%, transparent 78%);
+  bottom:-120px;left:5%;
+  filter:blur(95px);
+  --op:0.4;--dr:22s;--ds:12s;
+  --x1:25px;--y1:-35px;--x2:-20px;--y2:20px;--x3:10px;--y3:25px;
+}
+.o4{
+  width:320px;height:320px;
+  background:radial-gradient(circle at 45% 45%, #7b1fa2 0%, #3d0070 60%, transparent 80%);
+  bottom:15%;right:5%;
+  filter:blur(85px);
+  --op:0.35;--dr:26s;--ds:4s;
+  --x1:-20px;--y1:25px;--x2:15px;--y2:-20px;--x3:-8px;--y3:12px;
+}
+.o5{
+  width:280px;height:280px;
+  background:radial-gradient(circle at 50% 50%, #1a237e 0%, #0a0d45 60%, transparent 80%);
+  top:10%;left:35%;
+  filter:blur(80px);
+  --op:0.3;--dr:30s;--ds:9s;
+  --x1:15px;--y1:30px;--x2:-25px;--y2:-15px;--x3:20px;--y3:-5px;
+}
+
+/* noise overlay for depth */
+.noise{
+  position:fixed;inset:0;z-index:0;
+  opacity:0.03;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:200px 200px;
+}
+
+/* subtle sparkles */
+.spark{
+  position:fixed;border-radius:50%;
+  background:#fff;
+  opacity:0;
+  animation:twinkle var(--d,7s) var(--dl,0s) ease-in-out infinite;
+}
+@keyframes twinkle{
+  0%,100%{opacity:0;transform:scale(0.3)}
+  50%{opacity:var(--op,0.5);transform:scale(1)}
+}
+
+/* ── APP ── */
+.app{position:relative;z-index:1;max-width:480px;margin:0 auto;padding:0 0 70px}
+
+/* ── HEADER ── */
+.header{padding:30px 20px 14px;text-align:center}
+h1{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:50px;letter-spacing:6px;
+  background:linear-gradient(135deg,#d16aff 0%,#8b5cff 50%,#5ab4ff 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  line-height:1;margin-bottom:5px;
+}
+.date-str{font-size:12px;color:rgba(255,255,255,0.3);letter-spacing:0.1em}
+
+/* ── STATS ── */
+.stats-bar{
+  margin:0 16px 14px;
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:14px;padding:11px 16px;
+  display:flex;align-items:center;gap:12px;
+  backdrop-filter:blur(6px);
+}
+.stat-nums{font-size:13px;color:rgba(255,255,255,0.4);flex-shrink:0}
+.stat-nums b{color:rgba(255,255,255,0.85);font-weight:500}
+.prog-wrap{flex:1;height:3px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden}
+.prog-fill{
+  height:100%;border-radius:2px;
+  background:linear-gradient(90deg,#d16aff,#8b5cff,#5ab4ff);
+  transition:width 0.45s cubic-bezier(.4,0,.2,1);
+}
+.prog-pct{font-size:12px;color:rgba(255,255,255,0.3);min-width:30px;text-align:right}
+
+/* ── INPUT CARD ── */
+.input-card{
+  margin:0 16px 14px;
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:16px;padding:13px;
+  backdrop-filter:blur(8px);
+}
+.input-row{display:flex;gap:8px;align-items:stretch}
+
+.inp{
+  flex:1;
+  background:rgba(0,0,0,0.35);
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:10px;color:#fff;
+  padding:13px 15px;font-size:16px;
+  font-family:'DM Sans',sans-serif;outline:none;
+  transition:border-color 0.2s,box-shadow 0.2s;
+}
+.inp:focus{
+  border-color:rgba(209,106,255,0.6);
+  box-shadow:0 0 0 3px rgba(209,106,255,0.1);
+}
+.inp::placeholder{color:rgba(255,255,255,0.25)}
+
+
+
+.qty-ctrl{
+  display:flex;align-items:center;
+  background:rgba(0,0,0,0.35);
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:10px;overflow:hidden;
+}
+.qty-btn{
+  background:none;border:none;
+  color:#d16aff;width:36px;height:100%;
+  font-size:22px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:background 0.15s;
+}
+.qty-btn:active{background:rgba(209,106,255,0.18)}
+.qty-num{
+  font-size:16px;font-weight:500;
+  min-width:26px;text-align:center;color:#fff;
+  pointer-events:none;
+}
+
+/* ── COUNTDOWN ── */
+.cd-bar{
+  display:none;margin:0 16px 10px;
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(100,220,100,0.2);
+  border-radius:12px;padding:10px 14px;
+  font-size:13px;color:rgba(255,255,255,0.5);
+  align-items:center;gap:10px;
+}
+.cd-bar.show{display:flex}
+.cd-fill-wrap{flex:1;height:3px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden}
+.cd-fill{height:100%;background:#66bb6a;border-radius:2px;transition:width 0.1s linear}
+.cd-undo{background:none;border:none;color:#d16aff;font-size:12px;cursor:pointer;text-decoration:underline;font-family:'DM Sans',sans-serif;flex-shrink:0}
+
+/* ── LIST ── */
+.list-wrap{padding:0 16px}
+.section-hd{display:flex;align-items:center;justify-content:space-between;margin:14px 0 8px}
+.section-lbl{font-size:10px;letter-spacing:0.13em;text-transform:uppercase;color:rgba(255,255,255,0.25)}
+.sec-btn{background:none;border:none;color:rgba(255,255,255,0.2);font-size:11px;cursor:pointer;text-decoration:underline;font-family:'DM Sans',sans-serif}
+.sec-btn:hover{color:#ff5252}
+
+/* ITEM */
+.item{
+  display:flex;align-items:center;gap:12px;
+  background:rgba(255,255,255,0.055);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:14px;
+  padding:14px 14px;
+  margin-bottom:7px;
+  animation:popIn 0.2s ease;
+  transition:opacity 0.25s;
+  position:relative;overflow:hidden;
+  backdrop-filter:blur(4px);
+}
+.item::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:linear-gradient(180deg,#d16aff,#7c4dff);
+  border-radius:3px 0 0 3px;opacity:0.8;
+}
+.item.done{opacity:0.35}
+.item.done .item-name{text-decoration:line-through;color:rgba(255,255,255,0.3)}
+.item.done::before{background:rgba(255,255,255,0.15);opacity:0.5}
+
+@keyframes popIn{
+  from{opacity:0;transform:translateY(-7px) scale(0.98)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+
+/* check */
+.chk{
+  width:26px;height:26px;border-radius:50%;flex-shrink:0;
+  border:1.5px solid rgba(255,255,255,0.18);
+  background:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all 0.18s;
+}
+.chk.on{
+  background:linear-gradient(135deg,#d16aff,#7c4dff);
+  border-color:transparent;
+}
+.chk.on::after{content:'✓';font-size:13px;color:#fff;font-weight:600}
+
+/* item content – NAME + MENGE in einer Zeile, dann actions */
+.item-main{
+  flex:1;
+  display:flex;align-items:center;gap:10px;
+  min-width:0;
+}
+.item-name{
+  font-size:18px;   /* größer */
+  font-weight:400;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  flex:1;
+}
+/* Menge rechts neben dem Namen */
+.item-qty-badge{
+  font-size:16px;   /* größer, gleiche Höhe wie Name */
+  font-weight:500;
+  color:#d16aff;
+  flex-shrink:0;
+  white-space:nowrap;
+}
+
+/* action buttons rechts */
+.item-acts{display:flex;gap:2px;flex-shrink:0}
+.act-btn{
+  background:none;border:none;cursor:pointer;
+  padding:8px;border-radius:8px;font-size:16px;
+  transition:background 0.15s;
+  color:rgba(255,255,255,0.2);
+}
+.act-btn:hover{background:rgba(255,255,255,0.07)}
+.edit-btn:hover{color:#d16aff!important}
+.del-btn:hover{color:#ff5252!important}
+
+/* empty */
+.empty{text-align:center;padding:2.5rem 1rem;color:rgba(255,255,255,0.25)}
+.empty-icon{font-size:40px;margin-bottom:10px}
+.empty p{font-size:14px;line-height:1.7}
+
+/* ── MODAL ── */
+.modal-bg{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,0.75);backdrop-filter:blur(5px);
+  z-index:300;align-items:flex-end;justify-content:center;
+}
+.modal-bg.open{display:flex}
+.modal{
+  background:linear-gradient(160deg,#150025,#0c0018);
+  border:1px solid rgba(209,106,255,0.2);
+  border-radius:22px 22px 0 0;
+  padding:24px 20px calc(28px + env(safe-area-inset-bottom,0px));
+  width:100%;max-width:480px;
+  animation:slideUp 0.22s ease;
+}
+@keyframes slideUp{from{transform:translateY(50px)}to{transform:translateY(0)}}
+.modal h2{
+  font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:2px;
+  background:linear-gradient(135deg,#d16aff,#7c4dff);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  margin-bottom:16px;
+}
+.modal label{font-size:11px;color:rgba(255,255,255,0.35);display:block;margin-bottom:5px;letter-spacing:0.08em;text-transform:uppercase}
+.modal input{
+  width:100%;background:rgba(0,0,0,0.4);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:10px;color:#fff;
+  padding:13px 14px;font-size:16px;
+  font-family:'DM Sans',sans-serif;outline:none;margin-bottom:14px;
+}
+.modal input:focus{border-color:rgba(209,106,255,0.5)}
+.modal-btns{display:flex;gap:10px}
+.m-save{
+  flex:1;padding:13px;border-radius:10px;border:none;cursor:pointer;
+  background:linear-gradient(135deg,#c052f0,#7c4dff);
+  color:#fff;font-size:15px;font-weight:500;font-family:'DM Sans',sans-serif;
+  box-shadow:0 4px 15px rgba(124,77,255,0.35);
+}
+.m-cancel{
+  flex:1;padding:13px;border-radius:10px;cursor:pointer;
+  background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);
+  color:rgba(255,255,255,0.35);font-size:15px;font-family:'DM Sans',sans-serif;
+}
+
+/* ── TOAST ── */
+.toast{
+  position:fixed;bottom:30px;left:50%;
+  transform:translateX(-50%) translateY(80px);
+  background:linear-gradient(135deg,#c052f0,#7c4dff);
+  color:#fff;padding:10px 24px;border-radius:24px;
+  font-size:13px;font-weight:500;
+  transition:transform 0.3s cubic-bezier(.4,0,.2,1);
+  z-index:400;white-space:nowrap;
+  box-shadow:0 6px 24px rgba(124,77,255,0.5);
+}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+/* ── PWA INSTALL BANNER ── */
+#installBanner{
+  display:none;position:fixed;bottom:0;left:0;right:0;z-index:500;
+  padding:14px 16px calc(14px + env(safe-area-inset-bottom,0px));
+  background:linear-gradient(160deg,#1a0030,#0c0018);
+  border-top:1px solid rgba(209,106,255,0.25);
+  backdrop-filter:blur(12px);
+  animation:slideUp 0.3s ease;
+  display:none;flex-direction:row;align-items:center;gap:12px;
+}
+#installBanner.show{display:flex}
+.ib-icon{font-size:28px;flex-shrink:0}
+.ib-text{flex:1}
+.ib-title{font-size:14px;font-weight:500;color:#fff;margin-bottom:2px}
+.ib-sub{font-size:11px;color:rgba(255,255,255,0.35)}
+.ib-btn{
+  background:linear-gradient(135deg,#c052f0,#7c4dff);
+  color:#fff;border:none;border-radius:10px;
+  padding:10px 16px;font-size:13px;font-weight:500;
+  font-family:'DM Sans',sans-serif;cursor:pointer;
+  box-shadow:0 4px 14px rgba(124,77,255,0.4);
+  flex-shrink:0;white-space:nowrap;
+}
+.ib-close{
+  background:none;border:none;color:rgba(255,255,255,0.25);
+  font-size:20px;cursor:pointer;padding:4px;flex-shrink:0;line-height:1;
+}
+</style>
+</head>
+<body>
+
+<div class="bg">
+  <div class="orb o1"></div>
+  <div class="orb o2"></div>
+  <div class="orb o3"></div>
+  <div class="orb o4"></div>
+  <div class="orb o5"></div>
+</div>
+<div class="noise"></div>
+<div id="sparks"></div>
+
+<div class="app">
+
+  <div class="header">
+    <h1>MEINE LISTE</h1>
+    <div class="date-str" id="dateStr"></div>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stat-nums"><b id="doneCount">0</b> / <b id="totalCount">0</b> erledigt</div>
+    <div class="prog-wrap"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+    <div class="prog-pct" id="progPct">—</div>
+  </div>
+
+  <div class="input-card">
+    <div class="input-row">
+      <input class="inp" id="inp" type="text" placeholder="Was brauchst du?" autocomplete="off" />
+
+      <div class="qty-ctrl">
+        <button class="qty-btn" onclick="changeQty(-1)">−</button>
+        <span class="qty-num" id="qtyVal">1</span>
+        <button class="qty-btn" onclick="changeQty(1)">+</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="cd-bar" id="cdBar">
+    <span id="cdText">Liste wird in 5s geleert…</span>
+    <div class="cd-fill-wrap"><div class="cd-fill" id="cdFill" style="width:100%"></div></div>
+    <button class="cd-undo" onclick="cancelAutoDelete()">Abbrechen</button>
+  </div>
+
+  <div class="list-wrap">
+    <div class="section-hd">
+      <span class="section-lbl" id="openLbl">Offen</span>
+      <button class="sec-btn" onclick="clearAll()">Alle löschen</button>
+    </div>
+    <div id="listOpen"></div>
+
+    <div id="doneSec" style="display:none">
+      <div class="section-hd">
+        <span class="section-lbl">Erledigt</span>
+        <button class="sec-btn" onclick="clearDone()">Leeren</button>
+      </div>
+      <div id="listDone"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Edit Modal -->
+<div class="modal-bg" id="modalBg" onclick="bgClick(event)">
+  <div class="modal">
+    <h2>Bearbeiten</h2>
+    <label>Artikelname</label>
+    <input id="editName" type="text" />
+    <label>Menge</label>
+    <input id="editQty" type="text" placeholder="z.B. 2, 500g, 1 Pkg" />
+    <div class="modal-btns">
+      <button class="m-cancel" onclick="closeModal()">Abbrechen</button>
+      <button class="m-save" onclick="saveEdit()">Speichern</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- PWA Install Banner -->
+<div id="installBanner">
+  <div class="ib-icon">🛒</div>
+  <div class="ib-text">
+    <div class="ib-title">App installieren</div>
+    <div class="ib-sub">Zur Liste direkt vom Startbildschirm</div>
+  </div>
+  <button class="ib-btn" id="installBtn">Installieren</button>
+  <button class="ib-close" id="dismissBtn">✕</button>
+</div>
+
+<script>
+// sparks
+(function(){
+  const c=document.getElementById('sparks');
+  for(let i=0;i<35;i++){
+    const s=document.createElement('div');
+    s.className='spark';
+    const sz=Math.random()<0.5?2:1;
+    s.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--d:${5+Math.random()*9}s;--dl:${Math.random()*10}s;--op:${0.3+Math.random()*0.4};position:fixed;border-radius:50%;background:#fff;opacity:0;animation:twinkle var(--d) var(--dl) ease-in-out infinite;`;
+    c.appendChild(s);
+  }
+  const st=document.createElement('style');
+  st.textContent='@keyframes twinkle{0%,100%{opacity:0;transform:scale(0.3)}50%{opacity:var(--op);transform:scale(1)}}';
+  document.head.appendChild(st);
+})();
+
+let items=JSON.parse(localStorage.getItem('mylist_v5')||'[]');
+let qty=1;
+let editId=null;
+let toastTimer=null;
+let cdInterval=null;
+
+document.getElementById('dateStr').textContent=
+  new Date().toLocaleDateString('de-DE',{weekday:'long',day:'numeric',month:'long'});
+
+function changeQty(d){
+  qty=Math.max(1,qty+d);
+  document.getElementById('qtyVal').textContent=qty;
+}
+
+function save(){localStorage.setItem('mylist_v5',JSON.stringify(items));}
+function cap(s){return s.charAt(0).toUpperCase()+s.slice(1);}
+
+function addItem(){
+  const inp=document.getElementById('inp');
+  const raw=inp.value.trim();
+  if(!raw) return;
+  let name=raw, itemQty=qty;
+  const m=raw.match(/^(\d+)[x×\s]\s*(.+)$/i);
+  if(m){itemQty=parseInt(m[1]);name=cap(m[2].trim());}
+  else{name=cap(raw);}
+  items.unshift({id:Date.now(),name,qty:itemQty,done:false});
+  save();render();
+  inp.value='';qty=1;
+  document.getElementById('qtyVal').textContent='1';
+  inp.focus();
+  showToast('➕ '+name+' hinzugefügt');
+}
+
+// Enter-Taste
+document.getElementById('inp').addEventListener('keydown',e=>{
+  if(e.key==='Enter'){e.preventDefault();addItem();}
+});
+
+function toggle(id){
+  const it=items.find(i=>i.id===id);
+  if(it){it.done=!it.done;save();render();checkAllDone();}
+}
+
+function del(id){
+  const it=items.find(i=>i.id===id);
+  items=items.filter(i=>i.id!==id);
+  save();render();
+  if(it) showToast('🗑 '+it.name+' gelöscht');
+  checkAllDone();
+}
+
+function clearDone(){
+  const n=items.filter(i=>i.done).length;
+  items=items.filter(i=>!i.done);
+  save();render();cancelAutoDelete();
+  showToast('✅ '+n+' Items geleert');
+}
+
+function clearAll(){
+  if(!items.length)return;
+  if(!confirm('Wirklich alle '+items.length+' Artikel löschen?'))return;
+  items=[];save();render();cancelAutoDelete();
+  showToast('🗑 Liste geleert');
+}
+
+function checkAllDone(){
+  if(items.length>0&&items.every(i=>i.done)) startCountdown();
+  else cancelAutoDelete();
+}
+
+function startCountdown(){
+  cancelAutoDelete();
+  const bar=document.getElementById('cdBar');
+  const fill=document.getElementById('cdFill');
+  const txt=document.getElementById('cdText');
+  bar.classList.add('show');
+  let secs=5;
+  fill.style.width='100%';
+  txt.textContent='Liste wird in '+secs+'s geleert…';
+  cdInterval=setInterval(()=>{
+    secs--;
+    fill.style.width=(secs/5*100)+'%';
+    txt.textContent='Liste wird in '+secs+'s geleert…';
+    if(secs<=0){
+      cancelAutoDelete();
+      items=[];save();render();
+      showToast('🎉 Alles erledigt – Liste geleert!');
+    }
+  },1000);
+}
+
+function cancelAutoDelete(){
+  clearInterval(cdInterval);cdInterval=null;
+  document.getElementById('cdBar').classList.remove('show');
+}
+
+// Edit
+function openEdit(id){
+  const it=items.find(i=>i.id===id);
+  if(!it)return;
+  editId=id;
+  document.getElementById('editName').value=it.name;
+  document.getElementById('editQty').value=it.qty;
+  document.getElementById('modalBg').classList.add('open');
+  setTimeout(()=>document.getElementById('editName').focus(),120);
+}
+function saveEdit(){
+  const it=items.find(i=>i.id===editId);
+  if(!it)return;
+  const n=document.getElementById('editName').value.trim();
+  const q=document.getElementById('editQty').value.trim();
+  if(n)it.name=n;
+  if(q)it.qty=isNaN(q)?q:parseInt(q);
+  save();render();closeModal();
+  showToast('✏️ Gespeichert');
+}
+function closeModal(){document.getElementById('modalBg').classList.remove('open');}
+function bgClick(e){if(e.target===document.getElementById('modalBg'))closeModal();}
+document.getElementById('editName').addEventListener('keydown',e=>{if(e.key==='Enter')saveEdit();});
+document.getElementById('editQty').addEventListener('keydown',e=>{if(e.key==='Enter')saveEdit();});
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  if(toastTimer)clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+function render(){
+  const open=items.filter(i=>!i.done);
+  const done=items.filter(i=>i.done);
+  const total=items.length;
+  const dn=done.length;
+  const pct=total?Math.round(dn/total*100):0;
+
+  document.getElementById('totalCount').textContent=total;
+  document.getElementById('doneCount').textContent=dn;
+  document.getElementById('progFill').style.width=pct+'%';
+  document.getElementById('progPct').textContent=total?pct+'%':'—';
+  document.getElementById('openLbl').textContent='Offen'+(open.length?' ('+open.length+')':'');
+
+  function makeItem(it){
+    const d=document.createElement('div');
+    d.className='item'+(it.done?' done':'');
+    const qtyDisplay = String(it.qty).trim();
+    const qtyHtml = qtyDisplay ? `<span class="item-qty-badge">${qtyDisplay}×</span>` : '';
+    d.innerHTML=`
+      <div class="chk${it.done?' on':''}" onclick="toggle(${it.id})"></div>
+      <div class="item-main">
+        <span class="item-name">${it.name}</span>
+        ${qtyHtml}
+      </div>
+      <div class="item-acts">
+        <button class="act-btn edit-btn" onclick="openEdit(${it.id})" title="Bearbeiten">✎</button>
+        <button class="act-btn del-btn" onclick="del(${it.id})" title="Löschen">✕</button>
+      </div>`;
+    return d;
+  }
+
+  const lo=document.getElementById('listOpen');
+  lo.innerHTML='';
+  if(!open.length){
+    lo.innerHTML=`<div class="empty"><div class="empty-icon">${total===0?'🛒':'🎉'}</div>
+      <p>${total===0?'Noch nichts auf der Liste.<br>Füge deinen ersten Artikel hinzu!':'Alles erledigt!'}</p></div>`;
+  } else { open.forEach(i=>lo.appendChild(makeItem(i))); }
+
+  const ld=document.getElementById('listDone');
+  ld.innerHTML='';
+  const ds=document.getElementById('doneSec');
+  if(done.length){ds.style.display='block';done.forEach(i=>ld.appendChild(makeItem(i)));}
+  else{ds.style.display='none';}
+}
+
+render();
+
+// ── PWA: Service Worker ──
+if('serviceWorker' in navigator){
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(()=>{});
+  });
+}
+
+// ── PWA: Install Banner ──
+let deferredPrompt = null;
+const banner = document.getElementById('installBanner');
+const installBtn = document.getElementById('installBtn');
+const dismissBtn = document.getElementById('dismissBtn');
+
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  if(!localStorage.getItem('pwa_dismissed')){
+    banner.classList.add('show');
+  }
+});
+
+installBtn.addEventListener('click', async () => {
+  if(!deferredPrompt) return;
+  banner.classList.remove('show');
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  if(outcome === 'accepted') showToast('✅ App installiert!');
+  deferredPrompt = null;
+});
+
+dismissBtn.addEventListener('click', () => {
+  banner.classList.remove('show');
+  localStorage.setItem('pwa_dismissed', String(Date.now()));
+});
+
+// iOS Safari hint (kein beforeinstallprompt)
+const isIos = /iphone|ipad|ipod/.test(navigator.userAgent.toLowerCase());
+const isStandalone = window.navigator.standalone;
+if(isIos && !isStandalone && !localStorage.getItem('pwa_dismissed')){
+  setTimeout(()=>showToast('📲 Installieren: Teilen → Zum Home-Bildschirm'), 2500);
+}
+</script>
+</body>
+</html>
