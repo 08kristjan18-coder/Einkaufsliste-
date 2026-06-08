@@ -1,8 +1,8 @@
 {
-  "name": "index.html",
+  "name": "Meine Einkaufsliste",
   "short_name": "Meine Liste",
   "description": "Einkaufsliste als App – immer dabei",
-  "start_url": "./einkaufsliste.html",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#08000f",
   "theme_color": "#08000f",
