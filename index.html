@@ -7,538 +7,230 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Meine Liste">
-<meta name="theme-color" content="#0d0d18">
+<meta name="theme-color" content="#040408">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
 <title>Meine Liste</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-
-body{
-  min-height:100vh;
-  font-family:'DM Sans',sans-serif;
-  font-size:16px; /* FESTE BASIS-SCHRIFTGRÖSSE – verhindert System-Font-Scaling */
-  color:#fff;
-  overflow-x:hidden;
-  background:#0d0d18;
+:root{
+  --c1:#ff9de2;--c2:#c084fc;--c3:#818cf8;--c4:#7dd3fc;
+  --grad:linear-gradient(135deg,var(--c1) 0%,var(--c2) 40%,var(--c3) 75%,var(--c4) 100%);
+  --card-bg:rgba(12,6,28,0.78);
+  --card-border:rgba(200,160,255,0.13);
+  --card-border-hover:rgba(232,138,255,0.36);
 }
-
-/* ── BG – wolkiger Nebel, fließt wie Wasser ── */
-.bg{
-  position:fixed;inset:0;z-index:0;overflow:hidden;
-  background:radial-gradient(ellipse at 30% 20%, #1a1035 0%, #0d0d18 60%);
-}
-
-/* Große weiche Nebel-Wolken – kein harter Rand, alles Blur */
-.cloud{
-  position:absolute;
-  border-radius:50%;
-  filter:blur(var(--bl,120px));
-  opacity:0;
-  animation:
-    cloudrise 4s ease forwards,
-    flow var(--dr,28s) ease-in-out var(--ds,0s) infinite alternate;
-  will-change:transform,opacity;
-}
-@keyframes cloudrise{ to{opacity:var(--op,0.3)} }
-@keyframes flow{
-  0%  {transform:translate(0,0) scale(1) rotate(0deg)}
-  33% {transform:translate(var(--x1,40px),var(--y1,-50px)) scale(1.08) rotate(2deg)}
-  66% {transform:translate(var(--x2,-30px),var(--y2,35px)) scale(0.95) rotate(-1deg)}
-  100%{transform:translate(var(--x3,20px),var(--y3,-20px)) scale(1.04) rotate(1.5deg)}
-}
-
-/* Tief-Lila Wolke – Basis */
-.c1{
-  width:900px;height:700px;
-  background:radial-gradient(ellipse at 45% 45%,
-    #2e1060 0%, #1a0840 40%, transparent 70%);
-  top:-200px;left:-250px;
-  --bl:140px;--op:0.55;--dr:34s;--ds:0s;
-  --x1:60px;--y1:-40px;--x2:-45px;--y2:55px;--x3:30px;--y3:-25px;
-}
-/* Mitternachts-Blau rechts */
-.c2{
-  width:800px;height:800px;
-  background:radial-gradient(ellipse at 55% 50%,
-    #0d2a6e 0%, #060f3a 45%, transparent 72%);
-  top:10%;right:-280px;
-  --bl:130px;--op:0.45;--dr:40s;--ds:8s;
-  --x1:-50px;--y1:60px;--x2:35px;--y2:-40px;--x3:-20px;--y3:30px;
-}
-/* Warm-Violett unten links */
-.c3{
-  width:750px;height:600px;
-  background:radial-gradient(ellipse at 50% 55%,
-    #3d1260 0%, #200640 50%, transparent 74%);
-  bottom:-180px;left:-100px;
-  --bl:135px;--op:0.4;--dr:38s;--ds:16s;
-  --x1:45px;--y1:-55px;--x2:-30px;--y2:35px;--x3:20px;--y3:40px;
-}
-/* Indigo-Dunst Mitte */
-.c4{
-  width:600px;height:500px;
-  background:radial-gradient(ellipse at 50% 50%,
-    #1a2280 0%, #0a1050 55%, transparent 80%);
-  top:30%;left:10%;
-  --bl:120px;--op:0.3;--dr:44s;--ds:6s;
-  --x1:-35px;--y1:40px;--x2:28px;--y2:-35px;--x3:-18px;--y3:22px;
-}
-/* Zarter Aqua-Hauch ganz unten rechts */
-.c5{
-  width:500px;height:450px;
-  background:radial-gradient(ellipse at 50% 50%,
-    #0a2840 0%, #040e1e 55%, transparent 80%);
-  bottom:5%;right:-80px;
-  --bl:115px;--op:0.25;--dr:36s;--ds:22s;
-  --x1:25px;--y1:-30px;--x2:-20px;--y2:25px;--x3:14px;--y3:-18px;
-}
-/* Subtiles Lila Highlight oben rechts */
-.c6{
-  width:420px;height:380px;
-  background:radial-gradient(ellipse at 50% 50%,
-    #4a1878 0%, #260840 55%, transparent 80%);
-  top:-60px;right:5%;
-  --bl:110px;--op:0.28;--dr:30s;--ds:12s;
-  --x1:-22px;--y1:28px;--x2:18px;--y2:-22px;--x3:-12px;--y3:16px;
-}
-
-/* Leichte Körnigkeit für Tiefe */
-.noise{
-  position:fixed;inset:0;z-index:0;
-  opacity:0.018;pointer-events:none;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size:300px 300px;
-}
-
-/* ── APP ── */
-.app{position:relative;z-index:1;max-width:480px;margin:0 auto;padding:0 0 70px}
-
-/* ── HEADER ── */
-.header{padding:30px 20px 14px;text-align:center}
-h1{
-  font-family:'Bebas Neue',sans-serif;
-  font-size:50px;letter-spacing:6px;
-  background:linear-gradient(135deg,#c8aaff 0%,#8b7fff 45%,#a0d4ff 100%);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  line-height:1;margin-bottom:5px;
-}
-.date-str{font-size:12px;color:rgba(255,255,255,0.3);letter-spacing:0.1em}
-
-/* ── STATS ── */
-.stats-bar{
-  margin:0 16px 14px;
-  background:rgba(255,255,255,0.06);
-  border:1px solid rgba(255,255,255,0.1);
-  border-radius:14px;padding:11px 16px;
-  display:flex;align-items:center;gap:12px;
-  backdrop-filter:blur(6px);
-}
-.stat-nums{font-size:13px;color:rgba(255,255,255,0.4);flex-shrink:0}
-.stat-nums b{color:rgba(255,255,255,0.85);font-weight:500}
-.prog-wrap{flex:1;height:3px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden}
-.prog-fill{
-  height:100%;border-radius:2px;
-  background:linear-gradient(90deg,#c8aaff,#8b7fff,#a0d4ff);
-  transition:width 0.45s cubic-bezier(.4,0,.2,1);
-}
-.prog-pct{font-size:12px;color:rgba(255,255,255,0.3);min-width:30px;text-align:right}
-
-/* ── INPUT CARD ── */
-.input-card{
-  margin:0 16px 14px;
-  background:rgba(255,255,255,0.06);
-  border:1px solid rgba(255,255,255,0.1);
-  border-radius:16px;padding:13px;
-  backdrop-filter:blur(8px);
-}
+body{min-height:100vh;font-family:'DM Sans',sans-serif;font-size:16px;color:#fff;overflow-x:hidden;background:#03020a;}
+#bgCanvas{position:fixed;inset:0;z-index:0;width:100%;height:100%;}
+#starCanvas{position:fixed;inset:0;z-index:0;width:100%;height:100%;pointer-events:none;}
+.noise{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse 80% 70% at 50% 50%, transparent 30%, rgba(0,0,0,0.76) 100%);}
+.app{position:relative;z-index:2;max-width:480px;margin:0 auto;padding:0 0 80px}
+.header{padding:30px 20px 14px;text-align:center;position:relative}
+h1{font-family:'Bebas Neue',sans-serif;font-size:54px;letter-spacing:7px;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;margin-bottom:5px;filter:drop-shadow(0 0 14px rgba(192,132,252,0.38));}
+.date-str{font-size:12px;color:rgba(255,255,255,0.28);letter-spacing:0.1em}
+.settings-btn{position:absolute;right:20px;top:32px;background:rgba(255,255,255,0.05);border:1px solid rgba(200,160,255,0.16);border-radius:10px;color:rgba(200,160,255,0.58);width:38px;height:38px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.18s;backdrop-filter:blur(6px);}
+.settings-btn:hover{background:rgba(200,160,255,0.09);border-color:rgba(200,160,255,0.38);color:#e879f9}
+.stats-bar{margin:0 16px 14px;background:var(--card-bg);border:1px solid var(--card-border);border-radius:16px;padding:12px 18px;display:flex;align-items:center;gap:12px;backdrop-filter:blur(12px);box-shadow:0 4px 24px rgba(0,0,0,0.55),inset 0 1px 0 rgba(255,255,255,0.04);}
+.stat-nums{font-size:14px;color:rgba(255,255,255,0.38);flex-shrink:0}
+.stat-nums b{color:rgba(255,255,255,0.88);font-weight:500}
+.prog-wrap{flex:1;height:4px;background:rgba(255,255,255,0.07);border-radius:2px;overflow:hidden}
+.prog-fill{height:100%;border-radius:2px;background:var(--grad);transition:width 0.45s cubic-bezier(.4,0,.2,1);box-shadow:0 0 8px rgba(192,132,252,0.45);}
+.prog-pct{font-size:12px;color:rgba(255,255,255,0.28);min-width:30px;text-align:right}
+.input-card{margin:0 16px 14px;background:var(--card-bg);border:1px solid var(--card-border);border-radius:18px;padding:14px;backdrop-filter:blur(12px);box-shadow:0 4px 28px rgba(0,0,0,0.55),inset 0 1px 0 rgba(255,255,255,0.04);transition:border-color 0.3s;}
+.input-card:focus-within{border-color:rgba(232,138,255,0.33)}
 .input-row{display:flex;gap:8px;align-items:stretch}
-
-.inp{
-  flex:1;
-  background:rgba(0,0,0,0.35);
-  border:1px solid rgba(255,255,255,0.12);
-  border-radius:10px;color:#fff;
-  padding:13px 15px;font-size:16px;
-  font-family:'DM Sans',sans-serif;outline:none;
-  transition:border-color 0.2s,box-shadow 0.2s;
-}
-.inp:focus{
-  border-color:rgba(200,170,255,0.6);
-  box-shadow:0 0 0 3px rgba(200,170,255,0.1);
-}
-.inp::placeholder{color:rgba(255,255,255,0.25)}
-
-/* Menge-Stepper – Zahl ist tippbar */
-.qty-ctrl{
-  display:flex;align-items:center;
-  background:rgba(0,0,0,0.35);
-  border:1px solid rgba(255,255,255,0.12);
-  border-radius:10px;overflow:hidden;
-}
-.qty-btn{
-  background:none;border:none;
-  color:#c8aaff;width:36px;height:100%;
-  font-size:22px;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  transition:background 0.15s;flex-shrink:0;
-}
-.qty-btn:active{background:rgba(200,170,255,0.18)}
-.qty-num{
-  font-size:16px;font-weight:500;
-  min-width:30px;text-align:center;color:#fff;
-  background:none;border:none;outline:none;
-  font-family:'DM Sans',sans-serif;
-  padding:0;cursor:text;
-}
-
-/* ── COUNTDOWN ── */
-.cd-bar{
-  display:none;margin:0 16px 10px;
-  background:rgba(255,255,255,0.05);
-  border:1px solid rgba(100,220,100,0.2);
-  border-radius:12px;padding:10px 14px;
-  font-size:13px;color:rgba(255,255,255,0.5);
-  align-items:center;gap:10px;
-}
+.inp{flex:1;background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.09);border-radius:12px;color:#fff;padding:14px 16px;font-size:17px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color 0.2s,box-shadow 0.2s;}
+.inp:focus{border-color:rgba(232,138,255,0.58);box-shadow:0 0 0 3px rgba(232,138,255,0.07);}
+.inp::placeholder{color:rgba(255,255,255,0.17)}
+.qty-ctrl{display:flex;align-items:center;background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.09);border-radius:12px;overflow:hidden;}
+.qty-btn{background:none;border:none;color:#e879f9;width:38px;height:100%;font-size:24px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.15s;flex-shrink:0;}
+.qty-btn:active{background:rgba(232,138,255,0.16)}
+.qty-num{font-size:17px;font-weight:500;min-width:32px;text-align:center;color:#fff;background:none;border:none;outline:none;font-family:'DM Sans',sans-serif;padding:0;cursor:text;}
+.add-btn{width:100%;margin-top:10px;padding:13px;border-radius:12px;border:none;cursor:pointer;background:var(--grad);color:#fff;font-size:16px;font-weight:500;font-family:'DM Sans',sans-serif;box-shadow:0 4px 18px rgba(168,85,247,0.33);transition:opacity 0.15s,transform 0.1s,box-shadow 0.2s;letter-spacing:0.04em;}
+.add-btn:active{opacity:0.85;transform:scale(0.98)}
+.add-btn:hover{box-shadow:0 4px 26px rgba(232,138,255,0.48)}
+.store-pick-row{display:flex;align-items:center;gap:8px;margin-top:10px;}
+.store-pick-btn{flex:1;background:rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.08);border-radius:12px;color:rgba(255,255,255,0.28);font-size:14px;font-family:'DM Sans',sans-serif;padding:11px 15px;cursor:pointer;text-align:left;transition:all 0.15s;display:flex;align-items:center;justify-content:space-between;}
+.store-pick-btn.has-store{border-color:rgba(200,170,255,0.42);color:#c084fc;background:rgba(200,170,255,0.06);}
+.store-pick-btn .arrow{font-size:11px;opacity:0.45}
+.store-clear-btn{background:none;border:none;color:rgba(255,255,255,0.16);font-size:18px;cursor:pointer;padding:6px 8px;display:none;}
+.store-clear-btn.show{display:block}
+.cd-bar{display:none;margin:0 16px 10px;background:rgba(10,24,10,0.8);border:1px solid rgba(100,220,100,0.18);border-radius:14px;padding:11px 15px;font-size:13px;color:rgba(255,255,255,0.42);align-items:center;gap:10px;backdrop-filter:blur(8px);}
 .cd-bar.show{display:flex}
-.cd-fill-wrap{flex:1;height:3px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden}
-.cd-fill{height:100%;background:#66bb6a;border-radius:2px;transition:width 0.1s linear}
-.cd-undo{background:none;border:none;color:#c8aaff;font-size:12px;cursor:pointer;text-decoration:underline;font-family:'DM Sans',sans-serif;flex-shrink:0}
-
-/* ── LIST ── */
+.cd-fill-wrap{flex:1;height:3px;background:rgba(255,255,255,0.07);border-radius:2px;overflow:hidden}
+.cd-fill{height:100%;background:#66bb6a;border-radius:2px;transition:width 0.1s linear;box-shadow:0 0 6px rgba(102,187,106,0.45);}
+.cd-undo{background:none;border:none;color:#c084fc;font-size:12px;cursor:pointer;text-decoration:underline;font-family:'DM Sans',sans-serif;flex-shrink:0}
 .list-wrap{padding:0 16px}
-.section-hd{display:flex;align-items:center;justify-content:space-between;margin:14px 0 8px}
-.section-lbl{font-size:10px;letter-spacing:0.13em;text-transform:uppercase;color:rgba(255,255,255,0.25)}
-.sec-btn{background:none;border:none;color:rgba(255,255,255,0.2);font-size:11px;cursor:pointer;text-decoration:underline;font-family:'DM Sans',sans-serif}
+.section-hd{display:flex;align-items:center;justify-content:space-between;margin:16px 0 9px}
+.section-lbl{font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.27);font-weight:500}
+.sec-btn{background:none;border:none;color:rgba(255,255,255,0.17);font-size:11px;cursor:pointer;text-decoration:underline;font-family:'DM Sans',sans-serif}
 .sec-btn:hover{color:#ff5252}
 
-/* ITEM – klick überall = toggle, feste Schriftgröße */
+/* ── ITEM KACHELN ── */
 .item{
-  display:flex;align-items:flex-start;gap:12px;
-  background:rgba(255,255,255,0.055);
-  border:1px solid rgba(255,255,255,0.08);
-  border-radius:14px;
-  padding:14px 14px;
-  margin-bottom:7px;
-  animation:popIn 0.2s ease;
-  transition:opacity 0.25s;
+  display:flex;align-items:center;gap:13px;
+  background:var(--card-bg);
+  border:1px solid var(--card-border);
+  border-radius:16px;padding:16px 16px;margin-bottom:8px;
   position:relative;overflow:hidden;
-  backdrop-filter:blur(4px);
-  cursor:pointer; /* ganzes Item klickbar */
+  backdrop-filter:blur(14px);cursor:pointer;
+  transition:border-color 0.25s,box-shadow 0.25s,transform 0.2s,opacity 0.55s;
+  box-shadow:0 3px 20px rgba(0,0,0,0.6),inset 0 1px 0 rgba(255,255,255,0.04);
+  animation:popIn 0.28s cubic-bezier(.175,.885,.32,1.275);
 }
-.item::before{
-  content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
-  background:linear-gradient(180deg,#c8aaff,#8b7fff);
-  border-radius:3px 0 0 3px;opacity:0.8;
-}
-.item.done{opacity:0.35}
-.item.done .item-name{text-decoration:line-through;color:rgba(255,255,255,0.3)}
-.item.done::before{background:rgba(255,255,255,0.15);opacity:0.5}
+.item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--grad);border-radius:3px 0 0 3px;}
+.item::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,0.025) 0%,transparent 60%);pointer-events:none;}
+.item:active{transform:scale(0.985)}
+.item:not(.done):hover{border-color:var(--card-border-hover);box-shadow:0 4px 28px rgba(192,132,252,0.14),inset 0 1px 0 rgba(255,255,255,0.05)}
+@keyframes popIn{from{opacity:0;transform:translateY(-10px) scale(0.96)}to{opacity:1;transform:translateY(0) scale(1)}}
 
-@keyframes popIn{
-  from{opacity:0;transform:translateY(-7px) scale(0.98)}
-  to{opacity:1;transform:translateY(0) scale(1)}
-}
-
-/* check */
+/* ── CHECK ── */
 .chk{
-  width:26px;height:26px;border-radius:50%;flex-shrink:0;
-  border:1.5px solid rgba(255,255,255,0.18);
+  width:28px;height:28px;border-radius:50%;flex-shrink:0;
+  border:1.5px solid rgba(255,255,255,0.15);
   background:none;
   display:flex;align-items:center;justify-content:center;
-  transition:all 0.18s;
-  margin-top:1px; /* align mit erster Textzeile */
+  transition:
+    background 0.5s cubic-bezier(.175,.885,.32,1.275),
+    border-color 0.4s,
+    box-shadow 0.55s,
+    transform 0.5s cubic-bezier(.175,.885,.32,1.275);
+  position:relative;overflow:visible;
 }
 .chk.on{
-  background:linear-gradient(135deg,#c8aaff,#8b7fff);
-  border-color:transparent;
+  background:var(--grad);border-color:transparent;
+  box-shadow:0 0 24px rgba(192,132,252,0.85),0 0 55px rgba(100,80,200,0.38);
+  transform:scale(1.16);
 }
-.chk.on::after{content:'✓';font-size:13px;color:#fff;font-weight:600}
+.chk-mark{
+  font-size:14px;color:#fff;font-weight:700;
+  opacity:0;transform:scale(0.2) rotate(-25deg);
+  transition:opacity 0.38s 0.1s cubic-bezier(.175,.885,.32,1.275),
+             transform 0.42s 0.08s cubic-bezier(.175,.885,.32,1.275);
+  display:block;
+}
+.chk.on .chk-mark{opacity:1;transform:scale(1) rotate(0deg);}
 
-/* item content */
-.item-main{
-  flex:1;
-  display:flex;flex-direction:column;gap:3px;
-  min-width:0;
+/* Ripple 1 */
+@keyframes rippleOut{
+  0%  {transform:scale(0.3);opacity:0.9}
+  60% {opacity:0.35}
+  100%{transform:scale(4.8);opacity:0}
 }
-/* Name + Badge in einer Zeile, darf umbrechen */
-.item-name-row{
-  display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;
-}
-.item-name{
-  font-size:16px; /* FEST – kein em, kein rem */
-  font-weight:400;
-  line-height:1.35;
-  word-break:break-word;
-  white-space:normal; /* kein nowrap → wächst nach unten */
-}
-.item-qty-badge{
-  font-size:14px;
-  font-weight:500;
-  color:#c8aaff;
-  flex-shrink:0;
-  white-space:nowrap;
-}
-.item-store-tag{
-  font-size:11px;
-  color:rgba(255,255,255,0.3);
-  letter-spacing:0.04em;
+.chk-ripple{
+  position:absolute;inset:0;border-radius:50%;
+  background:radial-gradient(circle,rgba(240,150,255,0.72) 0%,rgba(130,80,250,0.32) 50%,transparent 70%);
+  animation:rippleOut 0.9s cubic-bezier(.2,.8,.4,1) forwards;
+  pointer-events:none;
 }
 
-/* action buttons */
+/* Ripple 2 – verzögert, noch größer */
+@keyframes rippleOut2{
+  0%  {transform:scale(0.5);opacity:0.55}
+  100%{transform:scale(6.0);opacity:0}
+}
+.chk-ripple2{
+  position:absolute;inset:0;border-radius:50%;
+  background:radial-gradient(circle,rgba(200,140,255,0.42) 0%,rgba(100,60,210,0.14) 50%,transparent 70%);
+  animation:rippleOut2 1.2s 0.2s cubic-bezier(.15,.9,.35,1) forwards;
+  pointer-events:none;
+}
+
+/* Item Glow-Flash */
+@keyframes toggleFlash{
+  0%  {box-shadow:0 3px 20px rgba(0,0,0,0.6),inset 0 1px 0 rgba(255,255,255,0.04)}
+  18% {box-shadow:0 0 55px rgba(150,80,255,0.65),0 0 110px rgba(100,50,230,0.32),inset 0 1px 0 rgba(255,255,255,0.11)}
+  55% {box-shadow:0 0 32px rgba(120,70,240,0.28),inset 0 1px 0 rgba(255,255,255,0.07)}
+  100%{box-shadow:0 3px 20px rgba(0,0,0,0.6),inset 0 1px 0 rgba(255,255,255,0.04)}
+}
+.item.flash{animation:toggleFlash 0.95s ease forwards;}
+
+.item.done{opacity:0.24;transition:opacity 0.75s ease,transform 0.55s ease;transform:scale(0.981);}
+.item.done .item-name{text-decoration:line-through;color:rgba(255,255,255,0.26)}
+.item.done::before{background:rgba(255,255,255,0.09);}
+
+.item-main{flex:1;display:flex;flex-direction:column;gap:3px;min-width:0;}
+.item-name{font-size:18px;font-weight:400;line-height:1.3;word-break:break-word;letter-spacing:0.01em;}
+.item-store-tag{font-size:12px;color:rgba(255,255,255,0.23);letter-spacing:0.03em;}
+.item-qty-badge{font-size:22px;font-weight:600;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 5px rgba(192,132,252,0.38));flex-shrink:0;min-width:36px;text-align:right;margin-right:2px;line-height:1;align-self:center;}
 .item-acts{display:flex;gap:2px;flex-shrink:0}
-.act-btn{
-  background:none;border:none;cursor:pointer;
-  padding:8px;border-radius:8px;font-size:16px;
-  transition:background 0.15s;
-  color:rgba(255,255,255,0.2);
-  /* verhindert dass Klick auf Button auch toggle auslöst – wird per JS gestoppt */
-}
-.act-btn:hover{background:rgba(255,255,255,0.07)}
-.edit-btn:hover{color:#c8aaff!important}
+.act-btn{background:none;border:none;cursor:pointer;padding:8px;border-radius:9px;font-size:17px;transition:background 0.15s,color 0.15s;color:rgba(255,255,255,0.14);}
+.act-btn:hover{background:rgba(255,255,255,0.06)}
+.edit-btn:hover{color:#e879f9!important}
 .del-btn:hover{color:#ff5252!important}
+.store-group-lbl{font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#c084fc;margin:16px 0 7px;padding-left:2px;font-weight:500;display:flex;align-items:center;gap:7px;}
+.store-group-lbl::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(192,132,252,0.22),transparent);}
+.empty{text-align:center;padding:2.5rem 1rem;color:rgba(255,255,255,0.2)}
+.empty-icon{font-size:44px;margin-bottom:12px}
+.empty p{font-size:15px;line-height:1.7}
 
-/* empty */
-.empty{text-align:center;padding:2.5rem 1rem;color:rgba(255,255,255,0.25)}
-.empty-icon{font-size:40px;margin-bottom:10px}
-.empty p{font-size:14px;line-height:1.7}
-
-/* ── MODAL ── */
-.modal-bg{
-  display:none;position:fixed;inset:0;
-  background:rgba(0,0,0,0.75);backdrop-filter:blur(5px);
-  z-index:300;align-items:flex-end;justify-content:center;
-}
+/* ── MODALS ── */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.84);backdrop-filter:blur(6px);z-index:300;align-items:flex-end;justify-content:center;}
 .modal-bg.open{display:flex}
-.modal{
-  background:linear-gradient(160deg,#120c28,#080818);
-  border:1px solid rgba(200,170,255,0.2);
-  border-radius:22px 22px 0 0;
-  padding:24px 20px calc(28px + env(safe-area-inset-bottom,0px));
-  width:100%;max-width:480px;
-  animation:slideUp 0.22s ease;
-}
-@keyframes slideUp{from{transform:translateY(50px)}to{transform:translateY(0)}}
-.modal h2{
-  font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:2px;
-  background:linear-gradient(135deg,#c8aaff,#8b7fff);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  margin-bottom:16px;
-}
-.modal label{font-size:11px;color:rgba(255,255,255,0.35);display:block;margin-bottom:5px;letter-spacing:0.08em;text-transform:uppercase}
-.modal input{
-  width:100%;background:rgba(0,0,0,0.4);
-  border:1px solid rgba(255,255,255,0.1);
-  border-radius:10px;color:#fff;
-  padding:13px 14px;font-size:16px;
-  font-family:'DM Sans',sans-serif;outline:none;margin-bottom:14px;
-}
-.modal input:focus{border-color:rgba(255,194,48,0.5)}
+.modal{background:linear-gradient(160deg,#0d0820,#05050f);border:1px solid rgba(232,138,255,0.16);border-radius:24px 24px 0 0;padding:26px 22px calc(30px + env(safe-area-inset-bottom,0px));width:100%;max-width:480px;animation:slideUp 0.22s ease;box-shadow:0 -8px 40px rgba(0,0,0,0.75);}
+@keyframes slideUp{from{transform:translateY(60px)}to{transform:translateY(0)}}
+.modal h2{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:2px;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:18px;}
+.modal label{font-size:11px;color:rgba(255,255,255,0.28);display:block;margin-bottom:6px;letter-spacing:0.08em;text-transform:uppercase}
+.modal input{width:100%;background:rgba(0,0,0,0.52);border:1px solid rgba(255,255,255,0.09);border-radius:12px;color:#fff;padding:14px 15px;font-size:17px;font-family:'DM Sans',sans-serif;outline:none;margin-bottom:14px;}
+.modal input:focus{border-color:rgba(232,138,255,0.44)}
 .modal-btns{display:flex;gap:10px}
-.m-save{
-  flex:1;padding:13px;border-radius:10px;border:none;cursor:pointer;
-  background:linear-gradient(135deg,#7c50e0,#a0d4ff);
-  color:#fff;font-size:15px;font-weight:500;font-family:'DM Sans',sans-serif;
-  box-shadow:0 4px 15px rgba(124,80,224,0.35);
-}
-.m-cancel{
-  flex:1;padding:13px;border-radius:10px;cursor:pointer;
-  background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);
-  color:rgba(255,255,255,0.35);font-size:15px;font-family:'DM Sans',sans-serif;
-}
+.m-save{flex:1;padding:14px;border-radius:12px;border:none;cursor:pointer;background:var(--grad);color:#fff;font-size:16px;font-weight:500;font-family:'DM Sans',sans-serif;box-shadow:0 4px 18px rgba(168,85,247,0.33);transition:opacity 0.15s,transform 0.1s;}
+.m-save:active{opacity:0.85;transform:scale(0.98)}
+.m-cancel{flex:1;padding:14px;border-radius:12px;cursor:pointer;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);color:rgba(255,255,255,0.28);font-size:16px;font-family:'DM Sans',sans-serif;}
 
-/* ── TOAST ── */
-.toast{
-  position:fixed;bottom:30px;left:50%;
-  transform:translateX(-50%) translateY(80px);
-  background:linear-gradient(135deg,#7c50e0,#c8aaff);
-  color:#fff;padding:10px 24px;border-radius:24px;
-  font-size:13px;font-weight:500;
-  transition:transform 0.3s cubic-bezier(.4,0,.2,1);
-  z-index:400;white-space:nowrap;
-  box-shadow:0 6px 24px rgba(124,80,224,0.45);
-}
-.toast.show{transform:translateX(-50%) translateY(0)}
+.settings-modal{background:linear-gradient(160deg,#0d0820,#05050f);border:1px solid rgba(232,138,255,0.16);border-radius:24px 24px 0 0;padding:26px 22px calc(30px + env(safe-area-inset-bottom,0px));width:100%;max-width:480px;animation:slideUp 0.22s ease;box-shadow:0 -8px 40px rgba(0,0,0,0.75);}
+.settings-modal h2{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:2px;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:20px;}
+.settings-row{margin-bottom:16px;}
+.settings-modal label{font-size:11px;color:rgba(255,255,255,0.28);display:block;margin-bottom:6px;letter-spacing:0.08em;text-transform:uppercase}
+.settings-modal input{width:100%;background:rgba(0,0,0,0.52);border:1px solid rgba(255,255,255,0.09);border-radius:12px;color:#fff;padding:13px 15px;font-size:16px;font-family:'DM Sans',sans-serif;outline:none;}
+.settings-modal input:focus{border-color:rgba(232,138,255,0.44)}
+.settings-hint{font-size:12px;color:rgba(255,255,255,0.17);margin-top:6px;line-height:1.5}
+.s-save{width:100%;padding:14px;border-radius:12px;border:none;cursor:pointer;background:var(--grad);color:#fff;font-size:16px;font-weight:500;font-family:'DM Sans',sans-serif;box-shadow:0 4px 18px rgba(168,85,247,0.33);margin-top:4px;transition:opacity 0.15s;}
+.s-save:active{opacity:0.85}
+.s-cancel{width:100%;padding:13px;border-radius:12px;cursor:pointer;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);color:rgba(255,255,255,0.26);font-size:15px;font-family:'DM Sans',sans-serif;margin-top:8px;}
 
-/* ── STORE PICKER ── */
-.store-pick-row{
-  display:flex;align-items:center;gap:8px;
-  margin-top:10px;
-}
-.store-pick-btn{
-  flex:1;
-  background:rgba(255,255,255,0.06);
-  border:1px solid rgba(255,255,255,0.1);
-  border-radius:10px;
-  color:rgba(255,255,255,0.4);
-  font-size:14px;font-family:'DM Sans',sans-serif;
-  padding:10px 14px;cursor:pointer;
-  text-align:left;
-  transition:all 0.15s;
-  display:flex;align-items:center;justify-content:space-between;
-}
-.store-pick-btn.has-store{
-  border-color:rgba(200,170,255,0.5);
-  color:#c8aaff;
-  background:rgba(200,170,255,0.08);
-}
-.store-pick-btn .arrow{font-size:11px;opacity:0.5}
-.store-clear-btn{
-  background:none;border:none;
-  color:rgba(255,255,255,0.2);
-  font-size:18px;cursor:pointer;
-  padding:6px 8px;
-  display:none;
-}
-.store-clear-btn.show{display:block}
-
-/* Popup */
-.store-popup-bg{
-  display:none;position:fixed;inset:0;
-  background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);
-  z-index:350;align-items:flex-end;justify-content:center;
-}
+.store-popup-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(5px);z-index:350;align-items:flex-end;justify-content:center;}
 .store-popup-bg.open{display:flex}
-.store-popup{
-  background:linear-gradient(160deg,#120c28,#080818);
-  border:1px solid rgba(200,170,255,0.2);
-  border-radius:22px 22px 0 0;
-  padding:20px 0 calc(20px + env(safe-area-inset-bottom,0px));
-  width:100%;max-width:480px;
-  max-height:75vh;overflow-y:auto;
-  animation:slideUp 0.22s ease;
-}
-.store-popup-header{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:0 20px 14px;
-}
-.store-popup-title{
-  font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;
-  background:linear-gradient(135deg,#c8aaff,#8b7fff);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-}
-/* Laden hinzufügen Row */
-.store-add-row{
-  display:flex;gap:8px;padding:0 16px 12px;
-  border-bottom:1px solid rgba(255,255,255,0.07);
-}
-.store-add-inp{
-  flex:1;background:rgba(0,0,0,0.4);
-  border:1px solid rgba(255,255,255,0.1);
-  border-radius:10px;color:#fff;
-  padding:10px 13px;font-size:14px;
-  font-family:'DM Sans',sans-serif;outline:none;
-}
-.store-add-inp:focus{border-color:rgba(255,194,48,0.5)}
-.store-add-inp::placeholder{color:rgba(255,255,255,0.25)}
-.store-add-btn{
-  background:linear-gradient(135deg,#7c50e0,#c8aaff);
-  border:none;border-radius:10px;
-  color:#fff;font-size:20px;width:42px;
-  cursor:pointer;display:flex;align-items:center;justify-content:center;
-  flex-shrink:0;
-}
-/* Stadtsuche */
-.store-search-row{
-  display:flex;gap:8px;padding:10px 16px 4px;
-}
-.store-search-inp{
-  flex:1;background:rgba(0,0,0,0.4);
-  border:1px solid rgba(255,255,255,0.1);
-  border-radius:10px;color:#fff;
-  padding:10px 13px;font-size:14px;
-  font-family:'DM Sans',sans-serif;outline:none;
-}
-.store-search-inp:focus{border-color:rgba(90,180,255,0.5)}
-.store-search-inp::placeholder{color:rgba(255,255,255,0.25)}
-.store-search-btn{
-  background:linear-gradient(135deg,#1040c8,#5ab4ff);
-  border:none;border-radius:10px;
-  color:#fff;font-size:13px;font-weight:500;
-  padding:0 14px;cursor:pointer;font-family:'DM Sans',sans-serif;
-  white-space:nowrap;flex-shrink:0;
-}
-.store-search-hint{
-  font-size:11px;color:rgba(255,255,255,0.2);
-  padding:0 16px 8px;
-}
-.store-list-item{
-  display:flex;align-items:center;
-  padding:13px 20px;
-  cursor:pointer;
-  font-size:16px;color:rgba(255,255,255,0.7);
-  font-family:'DM Sans',sans-serif;
-  border-bottom:1px solid rgba(255,255,255,0.05);
-  transition:background 0.12s;
-}
+.store-popup{background:linear-gradient(160deg,#0d0820,#05050f);border:1px solid rgba(232,138,255,0.16);border-radius:24px 24px 0 0;padding:20px 0 calc(20px + env(safe-area-inset-bottom,0px));width:100%;max-width:480px;max-height:78vh;overflow-y:auto;animation:slideUp 0.22s ease;box-shadow:0 -8px 40px rgba(0,0,0,0.75);}
+.store-popup-header{display:flex;align-items:center;justify-content:space-between;padding:0 20px 14px;}
+.store-popup-title{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:2px;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.store-add-row{display:flex;gap:8px;padding:0 16px 12px;border-bottom:1px solid rgba(255,255,255,0.06);}
+.store-add-inp{flex:1;background:rgba(0,0,0,0.45);border:1px solid rgba(255,255,255,0.09);border-radius:11px;color:#fff;padding:11px 13px;font-size:15px;font-family:'DM Sans',sans-serif;outline:none;}
+.store-add-inp:focus{border-color:rgba(232,138,255,0.44)}
+.store-add-inp::placeholder{color:rgba(255,255,255,0.19)}
+.store-add-btn{background:var(--grad);border:none;border-radius:11px;color:#fff;font-size:20px;width:44px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.store-list-item{display:flex;align-items:center;padding:14px 20px;cursor:pointer;font-size:16px;color:rgba(255,255,255,0.62);font-family:'DM Sans',sans-serif;border-bottom:1px solid rgba(255,255,255,0.04);transition:background 0.12s;}
 .store-list-item:last-child{border-bottom:none}
-.store-list-item:active{background:rgba(255,194,48,0.1)}
-.store-list-item.selected{color:#c8aaff}
+.store-list-item:active{background:rgba(232,138,255,0.07)}
+.store-list-item.selected{color:#e879f9}
 .store-list-item .s-check{margin-left:auto;font-size:14px;opacity:0}
 .store-list-item.selected .s-check{opacity:1}
-.store-del-btn{
-  background:none;border:none;color:rgba(255,100,100,0.3);
-  font-size:16px;cursor:pointer;padding:4px 6px;margin-left:8px;
-  transition:color 0.15s;
-}
+.store-del-btn{background:none;border:none;color:rgba(255,100,100,0.22);font-size:16px;cursor:pointer;padding:4px 6px;margin-left:8px;transition:color 0.15s;}
 .store-del-btn:hover{color:#ff5252}
-
-/* store group label in list */
-.store-group-lbl{
-  font-size:11px;letter-spacing:0.13em;text-transform:uppercase;
-  color:#c8aaff;
-  margin:16px 0 6px;padding-left:4px;
-  font-weight:500;
-}
-
-/* ── PWA INSTALL BANNER ── */
-#installBanner{
-  display:none;position:fixed;bottom:0;left:0;right:0;z-index:500;
-  padding:14px 16px calc(14px + env(safe-area-inset-bottom,0px));
-  background:linear-gradient(160deg,#120c28,#080818);
-  border-top:1px solid rgba(200,170,255,0.25);
-  backdrop-filter:blur(12px);
-  animation:slideUp 0.3s ease;
-  flex-direction:row;align-items:center;gap:12px;
-}
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(90px);background:var(--grad);color:#fff;padding:11px 26px;border-radius:26px;font-size:14px;font-weight:500;transition:transform 0.3s cubic-bezier(.4,0,.2,1);z-index:500;white-space:nowrap;box-shadow:0 6px 28px rgba(168,85,247,0.42);}
+.toast.show{transform:translateX(-50%) translateY(0)}
+#installBanner{display:none;position:fixed;bottom:0;left:0;right:0;z-index:500;padding:14px 16px calc(14px + env(safe-area-inset-bottom,0px));background:linear-gradient(160deg,#0d0820,#05050f);border-top:1px solid rgba(196,132,252,0.18);backdrop-filter:blur(14px);animation:slideUp 0.3s ease;flex-direction:row;align-items:center;gap:12px;}
 #installBanner.show{display:flex}
 .ib-icon{font-size:28px;flex-shrink:0}
 .ib-text{flex:1}
 .ib-title{font-size:14px;font-weight:500;color:#fff;margin-bottom:2px}
-.ib-sub{font-size:11px;color:rgba(255,255,255,0.35)}
-.ib-btn{
-  background:linear-gradient(135deg,#7c50e0,#c8aaff);
-  color:#fff;border:none;border-radius:10px;
-  padding:10px 16px;font-size:13px;font-weight:500;
-  font-family:'DM Sans',sans-serif;cursor:pointer;
-  box-shadow:0 4px 14px rgba(124,80,224,0.4);
-  flex-shrink:0;white-space:nowrap;
-}
-.ib-close{
-  background:none;border:none;color:rgba(255,255,255,0.25);
-  font-size:20px;cursor:pointer;padding:4px;flex-shrink:0;line-height:1;
-}
+.ib-sub{font-size:11px;color:rgba(255,255,255,0.28)}
+.ib-btn{background:var(--grad);color:#fff;border:none;border-radius:11px;padding:10px 16px;font-size:13px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;box-shadow:0 4px 14px rgba(168,85,247,0.33);flex-shrink:0;white-space:nowrap;}
+.ib-close{background:none;border:none;color:rgba(255,255,255,0.2);font-size:20px;cursor:pointer;padding:4px;flex-shrink:0;line-height:1;}
 </style>
 </head>
 <body>
 
-<div class="bg">
-  <div class="cloud c1"></div>
-  <div class="cloud c2"></div>
-  <div class="cloud c3"></div>
-  <div class="cloud c4"></div>
-  <div class="cloud c5"></div>
-  <div class="cloud c6"></div>
-</div>
+<canvas id="bgCanvas"></canvas>
+<canvas id="starCanvas"></canvas>
 <div class="noise"></div>
 
 <div class="app">
-
   <div class="header">
     <h1>MEINE LISTE</h1>
     <div class="date-str" id="dateStr"></div>
+    <button class="settings-btn" onclick="openSettings()" title="Einstellungen">⚙</button>
   </div>
 
   <div class="stats-bar">
@@ -563,26 +255,36 @@ h1{
       </button>
       <button class="store-clear-btn" id="storeClearBtn" onclick="clearStore()" title="Laden entfernen">✕</button>
     </div>
+    <button class="add-btn" onclick="addItem()">+ Hinzufügen</button>
   </div>
 
-  <!-- Store Popup -->
   <div class="store-popup-bg" id="storePopupBg" onclick="storePopupBgClick(event)">
     <div class="store-popup">
       <div class="store-popup-header">
         <span class="store-popup-title">LADEN WÄHLEN</span>
       </div>
-      <!-- Laden selbst hinzufügen -->
       <div class="store-add-row">
         <input class="store-add-inp" id="storeAddInp" type="text" placeholder="Eigenen Laden hinzufügen…" />
         <button class="store-add-btn" onclick="addCustomStore()" title="Hinzufügen">＋</button>
       </div>
-      <!-- Stadtsuche -->
-      <div class="store-search-row">
-        <input class="store-search-inp" id="storeSearchInp" type="text" placeholder="Stadt oder PLZ eingeben…" />
-        <button class="store-search-btn" onclick="searchStoresByCity()">Suchen</button>
-      </div>
-      <div class="store-search-hint" id="storeSearchHint"></div>
       <div id="storeListItems"></div>
+    </div>
+  </div>
+
+  <div class="modal-bg" id="settingsBg" onclick="settingsBgClick(event)">
+    <div class="settings-modal">
+      <h2>⚙ Einstellungen</h2>
+      <div class="settings-row">
+        <label>Postleitzahl</label>
+        <input id="settingsPlz" type="text" inputmode="numeric" placeholder="z.B. 17268" maxlength="10" />
+      </div>
+      <div class="settings-row">
+        <label>Ort / Stadt</label>
+        <input id="settingsCity" type="text" placeholder="z.B. Templin" />
+        <div class="settings-hint">Wird für die automatische Ladensuche verwendet.</div>
+      </div>
+      <button class="s-save" onclick="saveSettings()">Speichern & Läden laden</button>
+      <button class="s-cancel" onclick="closeSettings()">Abbrechen</button>
     </div>
   </div>
 
@@ -598,7 +300,6 @@ h1{
       <button class="sec-btn" onclick="clearAll()">Alle löschen</button>
     </div>
     <div id="listOpen"></div>
-
     <div id="doneSec" style="display:none">
       <div class="section-hd">
         <span class="section-lbl">Erledigt</span>
@@ -607,10 +308,8 @@ h1{
       <div id="listDone"></div>
     </div>
   </div>
-
 </div>
 
-<!-- Edit Modal -->
 <div class="modal-bg" id="modalBg" onclick="bgClick(event)">
   <div class="modal">
     <h2>Bearbeiten</h2>
@@ -627,7 +326,6 @@ h1{
 
 <div class="toast" id="toast"></div>
 
-<!-- PWA Install Banner -->
 <div id="installBanner">
   <div class="ib-icon">🛒</div>
   <div class="ib-text">
@@ -639,280 +337,337 @@ h1{
 </div>
 
 <script>
-let items=JSON.parse(localStorage.getItem('mylist_v6')||'[]');
-let qty=1;
-let editId=null;
-let toastTimer=null;
-let cdInterval=null;
-let selectedStore='';
+// ═══════════════════════════════════════════════════════
+//  HINTERGRUND v2
+//  – Alle Blobs ~30% dunkler (alpha reduziert)
+//  – Fundament noch tiefer
+//  – Sterne: kein harter Kern, nur 2-schichtiges weiches Glühen
+//    mit individueller max-Helligkeit + sehr langsamem Funkeln
+// ═══════════════════════════════════════════════════════
+(function(){
+  const bgC  = document.getElementById('bgCanvas');
+  const starC = document.getElementById('starCanvas');
+  const bg   = bgC.getContext('2d');
+  const sc   = starC.getContext('2d');
+  let W, H;
+  function resize(){
+    W = bgC.width = starC.width = window.innerWidth;
+    H = bgC.height = starC.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
 
-// ── Stores – aus localStorage oder Default ──
-const DEFAULT_STORES=[
-  'Edeka klein','Edeka groß','Penny','Lidl','Aldi',
-  'Netto Hund','Netto','Norma','Rewe','BayWa',
-  'McGeiz','Kik','Rossmann'
-];
-let customStores=JSON.parse(localStorage.getItem('customStores_v1')||'null');
-if(!customStores) customStores=[...DEFAULT_STORES];
+  const colors = [
+    [15,35,155],[8,12,90],[25,70,190],[130,6,22],[85,4,14],
+    [6,70,35],[10,95,48],[65,6,155],[45,4,110],[88,10,175],[18,25,130],[55,5,90],
+  ];
+  function lerp(a,b,t){return a+(b-a)*t;}
+  function smoothstep(t){return t*t*(3-2*t);}
+  function rnd(mn,mx){return mn+Math.random()*(mx-mn);}
+  function rndCol(){return [...colors[Math.floor(Math.random()*colors.length)]];}
 
-function saveStores(){ localStorage.setItem('customStores_v1',JSON.stringify(customStores)); }
+  // Schicht 1: Basis-Nebel – dunkler
+  const baseBlobs = Array.from({length:4},()=>({
+    bx:rnd(0.1,0.9),by:rnd(0.1,0.9),
+    ax:rnd(0.10,0.18),fx:rnd(0.0005,0.0012),px:rnd(0,Math.PI*2),
+    ay:rnd(0.06,0.12),fy:rnd(0.0004,0.0009),py:rnd(0,Math.PI*2),
+    r:rnd(0.9,1.4),
+    colA:rndCol(),colB:rndCol(),
+    colT:rnd(0,1),colSpeed:rnd(0.000006,0.000012),
+    alpha:rnd(0.15,0.25),  // dunkler
+  }));
 
-// Store-Popup aufbauen
-function buildStoreList(){
-  const list=document.getElementById('storeListItems');
-  list.innerHTML='';
-  customStores.forEach(s=>{
-    const d=document.createElement('div');
-    d.className='store-list-item';
-    d.id='sli-'+s.replace(/[\s\/]/g,'_');
-    if(s===selectedStore) d.classList.add('selected');
-    const isCustom=!DEFAULT_STORES.includes(s);
-    d.innerHTML=`<span>${s}</span><span class="s-check">✓</span>${isCustom?`<button class="store-del-btn" title="Entfernen" onclick="removeStore(event,'${s.replace(/'/g,"\\'")}')">✕</button>`:''}`;
-    d.addEventListener('click',(e)=>{
-      if(e.target.classList.contains('store-del-btn'))return;
-      selectStore(s);
+  // Schicht 2: Lava-Blobs – dunkler
+  const midBlobs = Array.from({length:7},()=>({
+    bx:rnd(0,1),by:rnd(0.1,1.4),
+    ax:rnd(0.06,0.14),fx:rnd(0.0008,0.0018),px:rnd(0,Math.PI*2),
+    ay:rnd(0.03,0.07),fy:rnd(0.0006,0.0013),py:rnd(0,Math.PI*2),
+    rise:rnd(0.000006,0.000012),
+    r:rnd(0.38,0.65),
+    colA:rndCol(),colB:rndCol(),
+    colT:rnd(0,1),colSpeed:rnd(0.000010,0.000020),
+    alpha:rnd(0.19,0.34),  // dunkler
+  }));
+
+  // Schicht 3: Nebel-Orbs – dunkler
+  const sparks = Array.from({length:8},()=>({
+    bx:rnd(0,1),by:rnd(0.1,1.3),
+    ax:rnd(0.04,0.09),fx:rnd(0.0008,0.0016),px:rnd(0,Math.PI*2),
+    rise:rnd(0.000007,0.000013),
+    r:rnd(0.10,0.22),
+    colA:rndCol(),colB:rndCol(),
+    colT:rnd(0,1),colSpeed:rnd(0.000012,0.000025),
+    alpha:rnd(0.07,0.14),  // dunkler
+    pulse:rnd(0,Math.PI*2),pulseF:rnd(0.08,0.18),
+  }));
+
+  // Sterne – nur weiches Glühen
+  const stars = Array.from({length:110},()=>({
+    x:rnd(0,1), y:rnd(0,1.2),
+    r: Math.random()<0.72 ? rnd(0.3,1.0) : rnd(1.0,2.2),
+    a: rnd(0, 0.55),
+    maxA: rnd(0.2, 0.55),  // individuelle Max-Helligkeit
+    da: rnd(0.00007,0.00022) * (Math.random()<0.5?1:-1),
+    rise: rnd(0.000003, 0.000008),
+  }));
+
+  function drawBlob(ctx,bx,by,r,cr,cg,cb,alpha){
+    const grd=ctx.createRadialGradient(bx,by,0,bx,by,r);
+    grd.addColorStop(0,`rgba(${cr},${cg},${cb},${alpha})`);
+    grd.addColorStop(0.3,`rgba(${cr},${cg},${cb},${(alpha*0.7).toFixed(3)})`);
+    grd.addColorStop(0.65,`rgba(${cr},${cg},${cb},${(alpha*0.2).toFixed(3)})`);
+    grd.addColorStop(1,`rgba(${cr},${cg},${cb},0)`);
+    ctx.fillStyle=grd;ctx.beginPath();ctx.arc(bx,by,r,0,Math.PI*2);ctx.fill();
+  }
+
+  function interpColor(b,dt){
+    b.colT+=b.colSpeed*dt;
+    if(b.colT>=1){b.colA=[...b.colB];b.colB=rndCol();b.colT=0;}
+    const s=smoothstep(b.colT);
+    return[Math.round(lerp(b.colA[0],b.colB[0],s)),Math.round(lerp(b.colA[1],b.colB[1],s)),Math.round(lerp(b.colA[2],b.colB[2],s))];
+  }
+
+  const FRAME_MS=1000/25;
+  let lastFrame=0,t=0;
+
+  function frame(ts){
+    requestAnimationFrame(frame);
+    const elapsed=ts-lastFrame;
+    if(elapsed<FRAME_MS)return;
+    const dt=Math.min(elapsed,80);
+    lastFrame=ts-(elapsed%FRAME_MS);
+    t=ts*0.001;
+
+    bg.clearRect(0,0,W,H);
+    bg.fillStyle='#02010a';
+    bg.fillRect(0,0,W,H);
+
+    const fog=bg.createRadialGradient(W*.5,H*.6,0,W*.5,H*.6,Math.max(W,H)*.85);
+    fog.addColorStop(0,'rgba(5,3,18,0.0)');
+    fog.addColorStop(0.5,'rgba(3,2,12,0.32)');
+    fog.addColorStop(1,'rgba(1,0,6,0.78)');
+    bg.fillStyle=fog;bg.fillRect(0,0,W,H);
+
+    bg.globalCompositeOperation='screen';
+
+    baseBlobs.forEach(b=>{
+      const[cr,cg,cb]=interpColor(b,dt);
+      const x=(b.bx+Math.sin(t*b.fx+b.px)*b.ax)*W;
+      const y=(b.by+Math.cos(t*b.fy+b.py)*b.ay)*H;
+      drawBlob(bg,x,y,b.r*Math.max(W,H)*0.75,cr,cg,cb,b.alpha);
     });
+
+    midBlobs.forEach(b=>{
+      b.by-=b.rise*dt;
+      if(b.by<-0.55){b.by=1.4+rnd(0,0.3);b.bx=rnd(0.05,0.95);}
+      const[cr,cg,cb]=interpColor(b,dt);
+      const x=(b.bx+Math.sin(t*b.fx+b.px)*b.ax)*W;
+      const y=(b.by+Math.sin(t*b.fy+b.py)*b.ay)*H;
+      drawBlob(bg,x,y,b.r*Math.max(W,H)*0.65,cr,cg,cb,b.alpha);
+    });
+
+    sparks.forEach(b=>{
+      b.by-=b.rise*dt;
+      if(b.by<-0.3){b.by=1.3+rnd(0,0.2);b.bx=rnd(0,1);}
+      const[cr,cg,cb]=interpColor(b,dt);
+      const x=(b.bx+Math.sin(t*b.fx+b.px)*b.ax)*W;
+      const y=b.by*H;
+      const pulse=0.88+0.12*Math.sin(t*b.pulseF+b.pulse);
+      const ra=b.r*Math.max(W,H)*0.45*pulse;
+      const g2=bg.createRadialGradient(x,y,0,x,y,ra);
+      g2.addColorStop(0,`rgba(${cr},${cg},${cb},${b.alpha})`);
+      g2.addColorStop(0.5,`rgba(${cr},${cg},${cb},${(b.alpha*0.4).toFixed(3)})`);
+      g2.addColorStop(1,`rgba(${cr},${cg},${cb},0)`);
+      bg.fillStyle=g2;bg.beginPath();bg.arc(x,y,ra,0,Math.PI*2);bg.fill();
+    });
+
+    bg.globalCompositeOperation='source-over';
+    const vig=bg.createRadialGradient(W/2,H/2,0,W/2,H/2,Math.max(W,H)*0.72);
+    vig.addColorStop(0,'rgba(0,0,0,0)');
+    vig.addColorStop(0.5,'rgba(0,0,0,0.14)');
+    vig.addColorStop(1,'rgba(0,0,0,0.74)');
+    bg.fillStyle=vig;bg.fillRect(0,0,W,H);
+
+    // ── STERNE – nur weiches Glühen ──
+    sc.clearRect(0,0,W,H);
+    stars.forEach(s=>{
+      s.y-=s.rise*dt;
+      if(s.y<-0.02){s.y=1.06+rnd(0,0.08);s.x=rnd(0,1);}
+      s.a+=s.da;
+      if(s.a>s.maxA){s.a=s.maxA;s.da=-Math.abs(s.da)*rnd(0.75,1.0);}
+      if(s.a<0){s.a=0;s.da=Math.abs(s.da)*rnd(0.75,1.0);}
+      if(s.a<0.02)return;
+
+      const px=s.x*W, py=s.y*H;
+
+      // Äußeres diffuses Leuchten
+      const outerR=s.r*9.5;
+      const og=sc.createRadialGradient(px,py,0,px,py,outerR);
+      og.addColorStop(0,`rgba(205,196,255,${(s.a*0.32).toFixed(3)})`);
+      og.addColorStop(0.35,`rgba(185,175,255,${(s.a*0.11).toFixed(3)})`);
+      og.addColorStop(1,'rgba(165,155,255,0)');
+      sc.fillStyle=og;sc.beginPath();sc.arc(px,py,outerR,0,Math.PI*2);sc.fill();
+
+      // Inneres, helleres Glühen – kein harter Kern
+      const innerR=s.r*3.8;
+      const ig=sc.createRadialGradient(px,py,0,px,py,innerR);
+      ig.addColorStop(0,`rgba(235,228,255,${(s.a*0.6).toFixed(3)})`);
+      ig.addColorStop(0.45,`rgba(215,208,255,${(s.a*0.2).toFixed(3)})`);
+      ig.addColorStop(1,'rgba(200,195,255,0)');
+      sc.fillStyle=ig;sc.beginPath();sc.arc(px,py,innerR,0,Math.PI*2);sc.fill();
+    });
+  }
+  requestAnimationFrame(frame);
+})();
+
+// ══════════════════════════════════════════
+//  APP LOGIC
+// ══════════════════════════════════════════
+let items=JSON.parse(localStorage.getItem('mylist_v6')||'[]');
+let qty=1,editId=null,toastTimer=null,cdInterval=null,selectedStore='';
+
+let customStores=JSON.parse(localStorage.getItem('customStores_v1')||'null');
+if(!customStores)customStores=[];
+function saveStores(){localStorage.setItem('customStores_v1',JSON.stringify(customStores));}
+
+function openSettings(){
+  const s=JSON.parse(localStorage.getItem('userSettings')||'{}');
+  document.getElementById('settingsPlz').value=s.plz||'';
+  document.getElementById('settingsCity').value=s.city||'';
+  document.getElementById('settingsBg').classList.add('open');
+  setTimeout(()=>document.getElementById('settingsPlz').focus(),120);
+}
+function closeSettings(){document.getElementById('settingsBg').classList.remove('open');}
+function settingsBgClick(e){if(e.target===document.getElementById('settingsBg'))closeSettings();}
+
+async function saveSettings(){
+  const plz=document.getElementById('settingsPlz').value.trim();
+  const city=document.getElementById('settingsCity').value.trim();
+  if(!plz&&!city){showToast('Bitte PLZ oder Ort eingeben');return;}
+  localStorage.setItem('userSettings',JSON.stringify({plz,city}));
+  closeSettings();
+  await loadStoresByLocation(city||plz);
+}
+
+async function loadStoresByLocation(query){
+  showToast('⏳ Läden werden gesucht…');
+  try{
+    const geoResp=await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1&countrycodes=de&accept-language=de`,{headers:{'User-Agent':'EinkaufslistePWA/1.0'}});
+    if(!geoResp.ok)throw new Error('geo');
+    const geoData=await geoResp.json();
+    if(!geoData.length){showToast('❌ Ort nicht gefunden');return;}
+    const{lat,lon,display_name}=geoData[0];
+    const stadtName=display_name.split(',')[0];
+    const radius=4000;
+    const q=`[out:json][timeout:18];(node["shop"="supermarket"](around:${radius},${lat},${lon});node["shop"="convenience"](around:${radius},${lat},${lon});node["shop"="chemist"](around:${radius},${lat},${lon});node["shop"="grocery"](around:${radius},${lat},${lon});node["shop"="discounter"](around:${radius},${lat},${lon});way["shop"="supermarket"](around:${radius},${lat},${lon});way["shop"="chemist"](around:${radius},${lat},${lon}););out tags;`;
+    const ovResp=await fetch('https://overpass-api.de/api/interpreter',{method:'POST',body:'data='+encodeURIComponent(q)});
+    if(!ovResp.ok)throw new Error('overpass');
+    const ovData=await ovResp.json();
+    const seen=new Set(customStores.map(s=>s.toLowerCase()));
+    const found=[];
+    ovData.elements.forEach(el=>{
+      const t=el.tags||{};
+      const name=(t.brand||t['brand:de']||t.name||t['name:de']||'').trim();
+      if(!name||seen.has(name.toLowerCase()))return;
+      seen.add(name.toLowerCase());found.push(name);
+    });
+    if(!found.length){showToast(`ℹ️ Keine neuen Läden in ${stadtName}`);return;}
+    found.forEach(n=>customStores.push(n));saveStores();
+    showToast(`✅ ${found.length} Läden aus ${stadtName} geladen`);
+  }catch(err){showToast('❌ Suche fehlgeschlagen');}
+}
+
+function buildStoreList(){
+  const list=document.getElementById('storeListItems');list.innerHTML='';
+  if(!customStores.length){list.innerHTML='<div style="padding:20px;text-align:center;color:rgba(255,255,255,0.26);font-size:14px">Noch keine Läden.<br>PLZ/Ort in den Einstellungen eingeben.</div>';return;}
+  customStores.forEach(s=>{
+    const d=document.createElement('div');d.className='store-list-item';d.id='sli-'+s.replace(/[\s\/]/g,'_');
+    if(s===selectedStore)d.classList.add('selected');
+    d.innerHTML=`<span>${s}</span><span class="s-check">✓</span><button class="store-del-btn" title="Entfernen" onclick="removeStore(event,'${s.replace(/'/g,"\\'")}')">✕</button>`;
+    d.addEventListener('click',(e)=>{if(e.target.classList.contains('store-del-btn'))return;selectStore(s);});
     list.appendChild(d);
   });
 }
-
 function addCustomStore(){
-  const inp=document.getElementById('storeAddInp');
-  const name=inp.value.trim();
-  if(!name)return;
-  if(customStores.includes(name)){showToast('Laden existiert schon');return;}
-  customStores.push(name);
-  saveStores();
-  buildStoreList();
-  inp.value='';
-  showToast('✅ '+name+' hinzugefügt');
+  const inp=document.getElementById('storeAddInp');const name=inp.value.trim();
+  if(!name){showToast('Bitte Namen eingeben');return;}
+  const n=name.charAt(0).toUpperCase()+name.slice(1);
+  if(customStores.map(s=>s.toLowerCase()).includes(n.toLowerCase())){showToast('Laden existiert schon');inp.value='';return;}
+  customStores.push(n);saveStores();buildStoreList();inp.value='';showToast('✅ '+n+' hinzugefügt');
 }
-
 function removeStore(e,name){
-  e.stopPropagation();
-  customStores=customStores.filter(s=>s!==name);
-  saveStores();
-  if(selectedStore===name) clearStore();
-  buildStoreList();
-  showToast('🗑 '+name+' entfernt');
+  e.stopPropagation();customStores=customStores.filter(s=>s!==name);saveStores();
+  if(selectedStore===name)clearStore();buildStoreList();showToast('🗑 '+name+' entfernt');
 }
-
-// Stadtsuche via Google Places Text Search (Places API New)
-async function searchStoresByCity(){
-  const hint=document.getElementById('storeSearchHint');
-  const cityVal=document.getElementById('storeSearchInp').value.trim();
-  if(!cityVal){hint.textContent='Bitte Stadt oder PLZ eingeben.';return;}
-  hint.textContent='Suche läuft…';
-
-  // Suchanfragen: Supermärkte + Drogerien in der Stadt
-  const queries=[
-    `Supermarkt ${cityVal}`,
-    `Discounter ${cityVal}`,
-    `Drogerie ${cityVal}`
-  ];
-
-  const found=new Set();
-  let searchedCity='';
-
-  try{
-    for(const q of queries){
-      const resp=await fetch(`https://api.anthropic.com/v1/messages`,{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({
-          model:'claude-sonnet-4-20250514',
-          max_tokens:400,
-          messages:[{
-            role:'user',
-            content:`Nenne mir alle Supermärkte, Discounter und Drogerien die es in "${cityVal}" gibt. Antworte NUR mit einer JSON-Liste von Store-Namen, keine Erklärung, kein Markdown. Nur echte bekannte Ketten die wahrscheinlich dort vorhanden sind (z.B. Edeka, Rewe, Aldi, Lidl, Penny, Netto, Rossmann, dm etc.). Beispiel: ["Edeka","Rewe","Aldi Süd","Lidl","Penny","Rossmann"]`
-          }]
-        })
-      });
-      const data=await resp.json();
-      const text=(data.content||[]).map(b=>b.text||'').join('');
-      // Parse JSON aus der Antwort
-      const match=text.match(/\[[\s\S]*\]/);
-      if(match){
-        try{
-          const arr=JSON.parse(match[0]);
-          arr.forEach(name=>{
-            if(typeof name==='string'&&name.trim()) found.add(name.trim());
-          });
-        }catch(e){}
-      }
-      break; // eine Anfrage reicht wenn Claude alle zurückgibt
-    }
-
-    if(!found.size){
-      hint.textContent='Keine Läden gefunden für "'+cityVal+'".';
-      return;
-    }
-
-    let addedCount=0;
-    found.forEach(name=>{
-      if(!customStores.includes(name)){
-        customStores.push(name);
-        addedCount++;
-      }
-    });
-    saveStores();buildStoreList();
-    hint.textContent=addedCount>0
-      ? `✅ ${addedCount} Läden für "${cityVal}" hinzugefügt!`
-      : `Alle gefundenen Läden sind schon in der Liste.`;
-  }catch(err){
-    hint.textContent='Fehler bei der Suche. Internetverbindung prüfen.';
-  }
-}
-
-function openStorePopup(){
-  buildStoreList();
-  document.getElementById('storePopupBg').classList.add('open');
-}
-function closeStorePopup(){
-  document.getElementById('storePopupBg').classList.remove('open');
-}
-function storePopupBgClick(e){
-  if(e.target===document.getElementById('storePopupBg')) closeStorePopup();
-}
-// Enter in den Popup-Inputs
+function openStorePopup(){buildStoreList();document.getElementById('storePopupBg').classList.add('open');}
+function closeStorePopup(){document.getElementById('storePopupBg').classList.remove('open');}
+function storePopupBgClick(e){if(e.target===document.getElementById('storePopupBg'))closeStorePopup();}
 document.getElementById('storeAddInp').addEventListener('keydown',e=>{if(e.key==='Enter')addCustomStore();});
-document.getElementById('storeSearchInp').addEventListener('keydown',e=>{if(e.key==='Enter')searchStoresByCity();});
-
 function selectStore(s){
-  selectedStore=s;
-  document.querySelectorAll('.store-list-item').forEach(el=>el.classList.remove('selected'));
-  const el=document.getElementById('sli-'+s.replace(/[\s\/]/g,'_'));
-  if(el) el.classList.add('selected');
+  selectedStore=s;document.querySelectorAll('.store-list-item').forEach(el=>el.classList.remove('selected'));
+  const el=document.getElementById('sli-'+s.replace(/[\s\/]/g,'_'));if(el)el.classList.add('selected');
   document.getElementById('storePickLabel').textContent=s;
   document.getElementById('storePickBtn').classList.add('has-store');
   document.getElementById('storeClearBtn').classList.add('show');
   closeStorePopup();
 }
 function clearStore(){
-  selectedStore='';
-  document.querySelectorAll('.store-list-item').forEach(el=>el.classList.remove('selected'));
+  selectedStore='';document.querySelectorAll('.store-list-item').forEach(el=>el.classList.remove('selected'));
   document.getElementById('storePickLabel').textContent='Laden wählen (optional)';
   document.getElementById('storePickBtn').classList.remove('has-store');
   document.getElementById('storeClearBtn').classList.remove('show');
 }
 
-document.getElementById('dateStr').textContent=
-  new Date().toLocaleDateString('de-DE',{weekday:'long',day:'numeric',month:'long'});
+document.getElementById('dateStr').textContent=new Date().toLocaleDateString('de-DE',{weekday:'long',day:'numeric',month:'long'});
 
-// Menge – +/- Buttons + tippbare Zahl
-function getQty(){
-  const v=document.getElementById('qtyVal').value.trim();
-  const n=parseInt(v);
-  return isNaN(n)||n<1?1:n;
-}
-function setQty(n){
-  qty=Math.max(1,n);
-  document.getElementById('qtyVal').value=qty;
-}
-function changeQty(d){ setQty(getQty()+d); }
-document.getElementById('qtyVal').addEventListener('change',()=>{ setQty(getQty()); });
-document.getElementById('qtyVal').addEventListener('blur',()=>{ setQty(getQty()); });
+function getQty(){const v=document.getElementById('qtyVal').value.trim();const n=parseInt(v);return isNaN(n)||n<1?1:n;}
+function setQty(n){qty=Math.max(1,n);document.getElementById('qtyVal').value=qty;}
+function changeQty(d){setQty(getQty()+d);}
+document.getElementById('qtyVal').addEventListener('change',()=>{setQty(getQty());});
+document.getElementById('qtyVal').addEventListener('blur',()=>{setQty(getQty());});
 
 function save(){localStorage.setItem('mylist_v6',JSON.stringify(items));}
 function cap(s){return s.charAt(0).toUpperCase()+s.slice(1);}
 
 function addItem(){
-  const inp=document.getElementById('inp');
-  const raw=inp.value.trim();
-  if(!raw) return;
-  let name=raw, itemQty=getQty();
+  const inp=document.getElementById('inp');const raw=inp.value.trim();if(!raw)return;
+  let name=raw,itemQty=getQty();
   const m=raw.match(/^(\d+)[x×\s]\s*(.+)$/i);
-  if(m){itemQty=parseInt(m[1]);name=cap(m[2].trim());}
-  else{name=cap(raw);}
+  if(m){itemQty=parseInt(m[1]);name=cap(m[2].trim());}else{name=cap(raw);}
   items.unshift({id:Date.now(),name,qty:itemQty,done:false,store:selectedStore});
-  save();render();
-  inp.value='';setQty(1);
-  inp.focus();
+  save();render();inp.value='';setQty(1);inp.focus();
   showToast('➕ '+name+(selectedStore?' · '+selectedStore:'')+' hinzugefügt');
 }
+document.getElementById('inp').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();addItem();}});
 
-document.getElementById('inp').addEventListener('keydown',e=>{
-  if(e.key==='Enter'){e.preventDefault();addItem();}
-});
-
-// Toggle – ganzes Item klickbar, Buttons stoppen Propagation
-function toggle(id){
-  const it=items.find(i=>i.id===id);
-  if(it){it.done=!it.done;save();render();checkAllDone();}
-}
-
-function del(id){
-  const it=items.find(i=>i.id===id);
-  items=items.filter(i=>i.id!==id);
-  save();render();
-  if(it) showToast('🗑 '+it.name+' gelöscht');
-  checkAllDone();
-}
-
-function clearDone(){
-  const n=items.filter(i=>i.done).length;
-  items=items.filter(i=>!i.done);
-  save();render();cancelAutoDelete();
-  showToast('✅ '+n+' Items geleert');
-}
-
-function clearAll(){
-  if(!items.length)return;
-  if(!confirm('Wirklich alle '+items.length+' Artikel löschen?'))return;
-  items=[];save();render();cancelAutoDelete();
-  showToast('🗑 Liste geleert');
-}
-
-function checkAllDone(){
-  if(items.length>0&&items.every(i=>i.done)) startCountdown();
-  else cancelAutoDelete();
-}
+function toggle(id){const it=items.find(i=>i.id===id);if(it){it.done=!it.done;save();render();checkAllDone();}}
+function del(id){const it=items.find(i=>i.id===id);items=items.filter(i=>i.id!==id);save();render();if(it)showToast('🗑 '+it.name+' gelöscht');checkAllDone();}
+function clearDone(){const n=items.filter(i=>i.done).length;items=items.filter(i=>!i.done);save();render();cancelAutoDelete();showToast('✅ '+n+' Items geleert');}
+function clearAll(){if(!items.length)return;if(!confirm('Wirklich alle '+items.length+' Artikel löschen?'))return;items=[];save();render();cancelAutoDelete();showToast('🗑 Liste geleert');}
+function checkAllDone(){if(items.length>0&&items.every(i=>i.done))startCountdown();else cancelAutoDelete();}
 
 function startCountdown(){
   cancelAutoDelete();
-  const bar=document.getElementById('cdBar');
-  const fill=document.getElementById('cdFill');
-  const txt=document.getElementById('cdText');
-  bar.classList.add('show');
-  let secs=5;
-  fill.style.width='100%';
-  txt.textContent='Liste wird in '+secs+'s geleert…';
+  const bar=document.getElementById('cdBar'),fill=document.getElementById('cdFill'),txt=document.getElementById('cdText');
+  bar.classList.add('show');let secs=5;fill.style.width='100%';txt.textContent='Liste wird in '+secs+'s geleert…';
   cdInterval=setInterval(()=>{
-    secs--;
-    fill.style.width=(secs/5*100)+'%';
-    txt.textContent='Liste wird in '+secs+'s geleert…';
-    if(secs<=0){
-      cancelAutoDelete();
-      items=[];save();render();
-      showToast('🎉 Alles erledigt – Liste geleert!');
-    }
+    secs--;fill.style.width=(secs/5*100)+'%';txt.textContent='Liste wird in '+secs+'s geleert…';
+    if(secs<=0){cancelAutoDelete();items=[];save();render();showToast('🎉 Alles erledigt – Liste geleert!');}
   },1000);
 }
+function cancelAutoDelete(){clearInterval(cdInterval);cdInterval=null;document.getElementById('cdBar').classList.remove('show');}
 
-function cancelAutoDelete(){
-  clearInterval(cdInterval);cdInterval=null;
-  document.getElementById('cdBar').classList.remove('show');
-}
-
-// Edit
 function openEdit(id){
-  const it=items.find(i=>i.id===id);
-  if(!it)return;
-  editId=id;
-  document.getElementById('editName').value=it.name;
-  document.getElementById('editQty').value=it.qty;
+  const it=items.find(i=>i.id===id);if(!it)return;
+  editId=id;document.getElementById('editName').value=it.name;document.getElementById('editQty').value=it.qty;
   document.getElementById('modalBg').classList.add('open');
   setTimeout(()=>document.getElementById('editName').focus(),120);
 }
 function saveEdit(){
-  const it=items.find(i=>i.id===editId);
-  if(!it)return;
-  const n=document.getElementById('editName').value.trim();
-  const q=document.getElementById('editQty').value.trim();
-  if(n)it.name=n;
-  if(q)it.qty=isNaN(q)?q:parseInt(q);
-  save();render();closeModal();
-  showToast('✏️ Gespeichert');
+  const it=items.find(i=>i.id===editId);if(!it)return;
+  const n=document.getElementById('editName').value.trim();const q=document.getElementById('editQty').value.trim();
+  if(n)it.name=n;if(q)it.qty=isNaN(q)?q:parseInt(q);
+  save();render();closeModal();showToast('✏️ Gespeichert');
 }
 function closeModal(){document.getElementById('modalBg').classList.remove('open');}
 function bgClick(e){if(e.target===document.getElementById('modalBg'))closeModal();}
@@ -920,19 +675,14 @@ document.getElementById('editName').addEventListener('keydown',e=>{if(e.key==='E
 document.getElementById('editQty').addEventListener('keydown',e=>{if(e.key==='Enter')saveEdit();});
 
 function showToast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg;t.classList.add('show');
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
   if(toastTimer)clearTimeout(toastTimer);
-  toastTimer=setTimeout(()=>t.classList.remove('show'),2200);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),2400);
 }
 
 function render(){
-  const open=items.filter(i=>!i.done);
-  const done=items.filter(i=>i.done);
-  const total=items.length;
-  const dn=done.length;
-  const pct=total?Math.round(dn/total*100):0;
-
+  const open=items.filter(i=>!i.done);const done=items.filter(i=>i.done);
+  const total=items.length,dn=done.length;const pct=total?Math.round(dn/total*100):0;
   document.getElementById('totalCount').textContent=total;
   document.getElementById('doneCount').textContent=dn;
   document.getElementById('progFill').style.width=pct+'%';
@@ -940,60 +690,62 @@ function render(){
   document.getElementById('openLbl').textContent='Offen'+(open.length?' ('+open.length+')':'');
 
   function makeItem(it){
-    const d=document.createElement('div');
-    d.className='item'+(it.done?' done':'');
-    const qtyDisplay=String(it.qty).trim();
-    const qtyHtml=qtyDisplay?`<span class="item-qty-badge">${qtyDisplay}×</span>`:'';
-    const storeHtml=it.store?`<div class="item-store-tag">📍 ${it.store}</div>`:'';
+    const d=document.createElement('div');d.className='item'+(it.done?' done':'');
+    const qtyStr=String(it.qty).trim();
+    const qtyHtml=qtyStr?`<div class="item-qty-badge">${qtyStr}×</div>`:'';
+    const storeHtml=it.store?`<div class="item-store-tag">${it.store}</div>`:'';
     d.innerHTML=`
-      <div class="chk${it.done?' on':''}"></div>
+      <div class="chk${it.done?' on':''}"><span class="chk-mark">✓</span></div>
       <div class="item-main">
-        <div class="item-name-row">
-          <span class="item-name">${it.name}</span>
-          ${qtyHtml}
-        </div>
+        <span class="item-name">${it.name}</span>
         ${storeHtml}
       </div>
+      ${qtyHtml}
       <div class="item-acts">
         <button class="act-btn edit-btn" title="Bearbeiten">✎</button>
         <button class="act-btn del-btn" title="Löschen">✕</button>
       </div>`;
-    // Klick auf ganzes Item = toggle
+
     d.addEventListener('click',function(e){
-      if(e.target.classList.contains('act-btn')||e.target.closest('.act-btn')) return;
+      if(e.target.classList.contains('act-btn')||e.target.closest('.act-btn'))return;
+      const chk=d.querySelector('.chk');
+      const wasOff=!chk.classList.contains('on');
+
+      if(wasOff){
+        // Erster Ripple
+        const r1=document.createElement('span');r1.className='chk-ripple';chk.appendChild(r1);
+        setTimeout(()=>r1.remove(),950);
+        // Zweiter Ripple – größer, verzögert
+        const r2=document.createElement('span');r2.className='chk-ripple2';chk.appendChild(r2);
+        setTimeout(()=>r2.remove(),1500);
+      }
+
+      // Glow-Flash auf der ganzen Kachel
+      d.classList.remove('flash');void d.offsetWidth;
+      d.classList.add('flash');
+      setTimeout(()=>d.classList.remove('flash'),1000);
+
       toggle(it.id);
     });
-    d.querySelector('.edit-btn').addEventListener('click',function(e){
-      e.stopPropagation();openEdit(it.id);
-    });
-    d.querySelector('.del-btn').addEventListener('click',function(e){
-      e.stopPropagation();del(it.id);
-    });
+    d.querySelector('.edit-btn').addEventListener('click',function(e){e.stopPropagation();openEdit(it.id);});
+    d.querySelector('.del-btn').addEventListener('click',function(e){e.stopPropagation();del(it.id);});
     return d;
   }
 
-  const lo=document.getElementById('listOpen');
-  lo.innerHTML='';
+  const lo=document.getElementById('listOpen');lo.innerHTML='';
   if(!open.length){
-    lo.innerHTML=`<div class="empty"><div class="empty-icon">${total===0?'🛒':'🎉'}</div>
-      <p>${total===0?'Noch nichts auf der Liste.<br>Füge deinen ersten Artikel hinzu!':'Alles erledigt!'}</p></div>`;
+    lo.innerHTML=`<div class="empty"><div class="empty-icon">${total===0?'🛒':'🎉'}</div><p>${total===0?'Noch nichts auf der Liste.<br>Füge deinen ersten Artikel hinzu!':'Alles erledigt!'}</p></div>`;
   } else {
     const groups={};
     open.forEach(i=>{const k=i.store||'';if(!groups[k])groups[k]=[];groups[k].push(i);});
     const keys=Object.keys(groups).sort((a,b)=>{if(!a)return 1;if(!b)return -1;return a.localeCompare(b,'de');});
     keys.forEach(key=>{
-      if(key){
-        const lbl=document.createElement('div');
-        lbl.className='store-group-lbl';
-        lbl.textContent=key;
-        lo.appendChild(lbl);
-      }
+      if(key){const lbl=document.createElement('div');lbl.className='store-group-lbl';lbl.textContent=key;lo.appendChild(lbl);}
       groups[key].forEach(i=>lo.appendChild(makeItem(i)));
     });
   }
 
-  const ld=document.getElementById('listDone');
-  ld.innerHTML='';
+  const ld=document.getElementById('listDone');ld.innerHTML='';
   const ds=document.getElementById('doneSec');
   if(done.length){ds.style.display='block';done.forEach(i=>ld.appendChild(makeItem(i)));}
   else{ds.style.display='none';}
@@ -1001,46 +753,15 @@ function render(){
 
 render();
 
-// ── PWA: Service Worker ──
-if('serviceWorker' in navigator){
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js').catch(()=>{});
-  });
-}
-
-// ── PWA: Install Banner ──
-let deferredPrompt = null;
-const banner = document.getElementById('installBanner');
-const installBtn = document.getElementById('installBtn');
-const dismissBtn = document.getElementById('dismissBtn');
-
-window.addEventListener('beforeinstallprompt', e => {
-  e.preventDefault();
-  deferredPrompt = e;
-  if(!localStorage.getItem('pwa_dismissed')){
-    banner.classList.add('show');
-  }
-});
-
-installBtn.addEventListener('click', async () => {
-  if(!deferredPrompt) return;
-  banner.classList.remove('show');
-  deferredPrompt.prompt();
-  const { outcome } = await deferredPrompt.userChoice;
-  if(outcome === 'accepted') showToast('✅ App installiert!');
-  deferredPrompt = null;
-});
-
-dismissBtn.addEventListener('click', () => {
-  banner.classList.remove('show');
-  localStorage.setItem('pwa_dismissed', String(Date.now()));
-});
-
-const isIos = /iphone|ipad|ipod/.test(navigator.userAgent.toLowerCase());
-const isStandalone = window.navigator.standalone;
-if(isIos && !isStandalone && !localStorage.getItem('pwa_dismissed')){
-  setTimeout(()=>showToast('📲 Installieren: Teilen → Zum Home-Bildschirm'), 2500);
-}
+if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('./sw.js').catch(()=>{});});}
+let deferredPrompt=null;
+const banner=document.getElementById('installBanner');
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;if(!localStorage.getItem('pwa_dismissed'))banner.classList.add('show');});
+document.getElementById('installBtn').addEventListener('click',async()=>{if(!deferredPrompt)return;banner.classList.remove('show');deferredPrompt.prompt();const{outcome}=await deferredPrompt.userChoice;if(outcome==='accepted')showToast('✅ App installiert!');deferredPrompt=null;});
+document.getElementById('dismissBtn').addEventListener('click',()=>{banner.classList.remove('show');localStorage.setItem('pwa_dismissed',String(Date.now()));});
+const isIos=/iphone|ipad|ipod/.test(navigator.userAgent.toLowerCase());
+const isStandalone=window.navigator.standalone;
+if(isIos&&!isStandalone&&!localStorage.getItem('pwa_dismissed')){setTimeout(()=>showToast('📲 Installieren: Teilen → Zum Home-Bildschirm'),2500);}
 </script>
 </body>
 </html>
