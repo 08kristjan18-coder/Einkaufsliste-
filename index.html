@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Meine Liste">
-<meta name="theme-color" content="#12091e">
+<meta name="theme-color" content="#0d0d18">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
 <title>Meine Liste</title>
@@ -21,96 +21,95 @@ body{
   font-size:16px; /* FESTE BASIS-SCHRIFTGRÖSSE – verhindert System-Font-Scaling */
   color:#fff;
   overflow-x:hidden;
-  background:#12091e;
+  background:#0d0d18;
 }
 
-/* ── BG – mittelhell, Rot + Blau + Gold vermischen sich ── */
-.bg{position:fixed;inset:0;z-index:0;overflow:hidden;background:#12091e}
+/* ── BG – wolkiger Nebel, fließt wie Wasser ── */
+.bg{
+  position:fixed;inset:0;z-index:0;overflow:hidden;
+  background:radial-gradient(ellipse at 30% 20%, #1a1035 0%, #0d0d18 60%);
+}
 
-.orb{
-  position:absolute;border-radius:50%;
+/* Große weiche Nebel-Wolken – kein harter Rand, alles Blur */
+.cloud{
+  position:absolute;
+  border-radius:50%;
+  filter:blur(var(--bl,120px));
   opacity:0;
-  animation:orbrise 3s ease forwards, drift var(--dr,18s) ease-in-out var(--ds,3s) infinite;
+  animation:
+    cloudrise 4s ease forwards,
+    flow var(--dr,28s) ease-in-out var(--ds,0s) infinite alternate;
+  will-change:transform,opacity;
 }
-@keyframes orbrise{to{opacity:var(--op,0.4)}}
-@keyframes drift{
-  0%,100%{transform:translate(0,0) scale(1)}
-  25%{transform:translate(var(--x1,20px),var(--y1,-30px)) scale(1.06)}
-  50%{transform:translate(var(--x2,-15px),var(--y2,20px)) scale(0.97)}
-  75%{transform:translate(var(--x3,10px),var(--y3,10px)) scale(1.03)}
-}
-
-/* Rot-Orb */
-.o1{
-  width:620px;height:620px;
-  background:radial-gradient(circle at 40% 40%, #c0182a 0%, #7a0010 45%, transparent 72%);
-  top:-200px;left:-160px;
-  filter:blur(100px);
-  --op:0.38;--dr:22s;--ds:0s;
-  --x1:50px;--y1:-25px;--x2:-30px;--y2:40px;--x3:20px;--y3:-15px;
-}
-/* Blau-Orb */
-.o2{
-  width:540px;height:540px;
-  background:radial-gradient(circle at 60% 50%, #1040c8 0%, #060e5e 55%, transparent 78%);
-  top:20%;right:-160px;
-  filter:blur(110px);
-  --op:0.42;--dr:26s;--ds:7s;
-  --x1:-35px;--y1:45px;--x2:25px;--y2:-30px;--x3:-12px;--y3:20px;
-}
-/* Gold/Orange-Orb */
-.o3{
-  width:480px;height:480px;
-  background:radial-gradient(circle at 50% 55%, #c87800 0%, #7a4400 50%, transparent 76%);
-  bottom:-130px;left:10%;
-  filter:blur(105px);
-  --op:0.35;--dr:24s;--ds:14s;
-  --x1:30px;--y1:-40px;--x2:-22px;--y2:25px;--x3:12px;--y3:30px;
-}
-/* Rot-Pink Misch-Orb */
-.o4{
-  width:360px;height:360px;
-  background:radial-gradient(circle at 45% 45%, #d43060 0%, #7a0830 60%, transparent 80%);
-  bottom:20%;right:0%;
-  filter:blur(90px);
-  --op:0.32;--dr:28s;--ds:5s;
-  --x1:-25px;--y1:30px;--x2:18px;--y2:-22px;--x3:-10px;--y3:14px;
-}
-/* Blau-Gold Misch-Orb Mitte */
-.o5{
-  width:300px;height:300px;
-  background:radial-gradient(circle at 50% 50%, #1a5a8e 0%, #0a2040 55%, transparent 80%);
-  top:12%;left:30%;
-  filter:blur(85px);
-  --op:0.28;--dr:32s;--ds:10s;
-  --x1:18px;--y1:35px;--x2:-28px;--y2:-18px;--x3:22px;--y3:-8px;
-}
-/* Gold-Rot Misch unten mitte */
-.o6{
-  width:280px;height:280px;
-  background:radial-gradient(circle at 50% 50%, #a06010 0%, #600800 55%, transparent 80%);
-  bottom:35%;left:20%;
-  filter:blur(80px);
-  --op:0.25;--dr:19s;--ds:3s;
-  --x1:22px;--y1:-28px;--x2:-15px;--y2:18px;--x3:10px;--y3:22px;
+@keyframes cloudrise{ to{opacity:var(--op,0.3)} }
+@keyframes flow{
+  0%  {transform:translate(0,0) scale(1) rotate(0deg)}
+  33% {transform:translate(var(--x1,40px),var(--y1,-50px)) scale(1.08) rotate(2deg)}
+  66% {transform:translate(var(--x2,-30px),var(--y2,35px)) scale(0.95) rotate(-1deg)}
+  100%{transform:translate(var(--x3,20px),var(--y3,-20px)) scale(1.04) rotate(1.5deg)}
 }
 
-/* noise overlay */
+/* Tief-Lila Wolke – Basis */
+.c1{
+  width:900px;height:700px;
+  background:radial-gradient(ellipse at 45% 45%,
+    #2e1060 0%, #1a0840 40%, transparent 70%);
+  top:-200px;left:-250px;
+  --bl:140px;--op:0.55;--dr:34s;--ds:0s;
+  --x1:60px;--y1:-40px;--x2:-45px;--y2:55px;--x3:30px;--y3:-25px;
+}
+/* Mitternachts-Blau rechts */
+.c2{
+  width:800px;height:800px;
+  background:radial-gradient(ellipse at 55% 50%,
+    #0d2a6e 0%, #060f3a 45%, transparent 72%);
+  top:10%;right:-280px;
+  --bl:130px;--op:0.45;--dr:40s;--ds:8s;
+  --x1:-50px;--y1:60px;--x2:35px;--y2:-40px;--x3:-20px;--y3:30px;
+}
+/* Warm-Violett unten links */
+.c3{
+  width:750px;height:600px;
+  background:radial-gradient(ellipse at 50% 55%,
+    #3d1260 0%, #200640 50%, transparent 74%);
+  bottom:-180px;left:-100px;
+  --bl:135px;--op:0.4;--dr:38s;--ds:16s;
+  --x1:45px;--y1:-55px;--x2:-30px;--y2:35px;--x3:20px;--y3:40px;
+}
+/* Indigo-Dunst Mitte */
+.c4{
+  width:600px;height:500px;
+  background:radial-gradient(ellipse at 50% 50%,
+    #1a2280 0%, #0a1050 55%, transparent 80%);
+  top:30%;left:10%;
+  --bl:120px;--op:0.3;--dr:44s;--ds:6s;
+  --x1:-35px;--y1:40px;--x2:28px;--y2:-35px;--x3:-18px;--y3:22px;
+}
+/* Zarter Aqua-Hauch ganz unten rechts */
+.c5{
+  width:500px;height:450px;
+  background:radial-gradient(ellipse at 50% 50%,
+    #0a2840 0%, #040e1e 55%, transparent 80%);
+  bottom:5%;right:-80px;
+  --bl:115px;--op:0.25;--dr:36s;--ds:22s;
+  --x1:25px;--y1:-30px;--x2:-20px;--y2:25px;--x3:14px;--y3:-18px;
+}
+/* Subtiles Lila Highlight oben rechts */
+.c6{
+  width:420px;height:380px;
+  background:radial-gradient(ellipse at 50% 50%,
+    #4a1878 0%, #260840 55%, transparent 80%);
+  top:-60px;right:5%;
+  --bl:110px;--op:0.28;--dr:30s;--ds:12s;
+  --x1:-22px;--y1:28px;--x2:18px;--y2:-22px;--x3:-12px;--y3:16px;
+}
+
+/* Leichte Körnigkeit für Tiefe */
 .noise{
   position:fixed;inset:0;z-index:0;
-  opacity:0.025;pointer-events:none;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size:200px 200px;
-}
-
-/* sparkles */
-.spark{
-  position:fixed;border-radius:50%;background:#fff;opacity:0;
-  animation:twinkle var(--d,7s) var(--dl,0s) ease-in-out infinite;
-}
-@keyframes twinkle{
-  0%,100%{opacity:0;transform:scale(0.3)}
-  50%{opacity:var(--op,0.5);transform:scale(1)}
+  opacity:0.018;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:300px 300px;
 }
 
 /* ── APP ── */
@@ -121,7 +120,7 @@ body{
 h1{
   font-family:'Bebas Neue',sans-serif;
   font-size:50px;letter-spacing:6px;
-  background:linear-gradient(135deg,#ff6a6a 0%,#ffc230 45%,#5ab4ff 100%);
+  background:linear-gradient(135deg,#c8aaff 0%,#8b7fff 45%,#a0d4ff 100%);
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
   line-height:1;margin-bottom:5px;
 }
@@ -141,7 +140,7 @@ h1{
 .prog-wrap{flex:1;height:3px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden}
 .prog-fill{
   height:100%;border-radius:2px;
-  background:linear-gradient(90deg,#ff6a6a,#ffc230,#5ab4ff);
+  background:linear-gradient(90deg,#c8aaff,#8b7fff,#a0d4ff);
   transition:width 0.45s cubic-bezier(.4,0,.2,1);
 }
 .prog-pct{font-size:12px;color:rgba(255,255,255,0.3);min-width:30px;text-align:right}
@@ -166,8 +165,8 @@ h1{
   transition:border-color 0.2s,box-shadow 0.2s;
 }
 .inp:focus{
-  border-color:rgba(255,194,48,0.6);
-  box-shadow:0 0 0 3px rgba(255,194,48,0.1);
+  border-color:rgba(200,170,255,0.6);
+  box-shadow:0 0 0 3px rgba(200,170,255,0.1);
 }
 .inp::placeholder{color:rgba(255,255,255,0.25)}
 
@@ -180,12 +179,12 @@ h1{
 }
 .qty-btn{
   background:none;border:none;
-  color:#ffc230;width:36px;height:100%;
+  color:#c8aaff;width:36px;height:100%;
   font-size:22px;cursor:pointer;
   display:flex;align-items:center;justify-content:center;
   transition:background 0.15s;flex-shrink:0;
 }
-.qty-btn:active{background:rgba(255,194,48,0.18)}
+.qty-btn:active{background:rgba(200,170,255,0.18)}
 .qty-num{
   font-size:16px;font-weight:500;
   min-width:30px;text-align:center;color:#fff;
@@ -206,7 +205,7 @@ h1{
 .cd-bar.show{display:flex}
 .cd-fill-wrap{flex:1;height:3px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden}
 .cd-fill{height:100%;background:#66bb6a;border-radius:2px;transition:width 0.1s linear}
-.cd-undo{background:none;border:none;color:#ffc230;font-size:12px;cursor:pointer;text-decoration:underline;font-family:'DM Sans',sans-serif;flex-shrink:0}
+.cd-undo{background:none;border:none;color:#c8aaff;font-size:12px;cursor:pointer;text-decoration:underline;font-family:'DM Sans',sans-serif;flex-shrink:0}
 
 /* ── LIST ── */
 .list-wrap{padding:0 16px}
@@ -231,7 +230,7 @@ h1{
 }
 .item::before{
   content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
-  background:linear-gradient(180deg,#ff6a6a,#ffc230);
+  background:linear-gradient(180deg,#c8aaff,#8b7fff);
   border-radius:3px 0 0 3px;opacity:0.8;
 }
 .item.done{opacity:0.35}
@@ -253,7 +252,7 @@ h1{
   margin-top:1px; /* align mit erster Textzeile */
 }
 .chk.on{
-  background:linear-gradient(135deg,#ff6a6a,#ffc230);
+  background:linear-gradient(135deg,#c8aaff,#8b7fff);
   border-color:transparent;
 }
 .chk.on::after{content:'✓';font-size:13px;color:#fff;font-weight:600}
@@ -278,7 +277,7 @@ h1{
 .item-qty-badge{
   font-size:14px;
   font-weight:500;
-  color:#ffc230;
+  color:#c8aaff;
   flex-shrink:0;
   white-space:nowrap;
 }
@@ -298,7 +297,7 @@ h1{
   /* verhindert dass Klick auf Button auch toggle auslöst – wird per JS gestoppt */
 }
 .act-btn:hover{background:rgba(255,255,255,0.07)}
-.edit-btn:hover{color:#ffc230!important}
+.edit-btn:hover{color:#c8aaff!important}
 .del-btn:hover{color:#ff5252!important}
 
 /* empty */
@@ -314,8 +313,8 @@ h1{
 }
 .modal-bg.open{display:flex}
 .modal{
-  background:linear-gradient(160deg,#1a0c10,#0c0818);
-  border:1px solid rgba(255,106,106,0.2);
+  background:linear-gradient(160deg,#120c28,#080818);
+  border:1px solid rgba(200,170,255,0.2);
   border-radius:22px 22px 0 0;
   padding:24px 20px calc(28px + env(safe-area-inset-bottom,0px));
   width:100%;max-width:480px;
@@ -324,7 +323,7 @@ h1{
 @keyframes slideUp{from{transform:translateY(50px)}to{transform:translateY(0)}}
 .modal h2{
   font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:2px;
-  background:linear-gradient(135deg,#ff6a6a,#ffc230);
+  background:linear-gradient(135deg,#c8aaff,#8b7fff);
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
   margin-bottom:16px;
 }
@@ -340,9 +339,9 @@ h1{
 .modal-btns{display:flex;gap:10px}
 .m-save{
   flex:1;padding:13px;border-radius:10px;border:none;cursor:pointer;
-  background:linear-gradient(135deg,#e04020,#ffc230);
+  background:linear-gradient(135deg,#7c50e0,#a0d4ff);
   color:#fff;font-size:15px;font-weight:500;font-family:'DM Sans',sans-serif;
-  box-shadow:0 4px 15px rgba(255,100,40,0.35);
+  box-shadow:0 4px 15px rgba(124,80,224,0.35);
 }
 .m-cancel{
   flex:1;padding:13px;border-radius:10px;cursor:pointer;
@@ -354,12 +353,12 @@ h1{
 .toast{
   position:fixed;bottom:30px;left:50%;
   transform:translateX(-50%) translateY(80px);
-  background:linear-gradient(135deg,#c03020,#ffc230);
+  background:linear-gradient(135deg,#7c50e0,#c8aaff);
   color:#fff;padding:10px 24px;border-radius:24px;
   font-size:13px;font-weight:500;
   transition:transform 0.3s cubic-bezier(.4,0,.2,1);
   z-index:400;white-space:nowrap;
-  box-shadow:0 6px 24px rgba(200,80,30,0.5);
+  box-shadow:0 6px 24px rgba(124,80,224,0.45);
 }
 .toast.show{transform:translateX(-50%) translateY(0)}
 
@@ -381,9 +380,9 @@ h1{
   display:flex;align-items:center;justify-content:space-between;
 }
 .store-pick-btn.has-store{
-  border-color:rgba(255,194,48,0.5);
-  color:#ffc230;
-  background:rgba(255,194,48,0.08);
+  border-color:rgba(200,170,255,0.5);
+  color:#c8aaff;
+  background:rgba(200,170,255,0.08);
 }
 .store-pick-btn .arrow{font-size:11px;opacity:0.5}
 .store-clear-btn{
@@ -403,8 +402,8 @@ h1{
 }
 .store-popup-bg.open{display:flex}
 .store-popup{
-  background:linear-gradient(160deg,#1a0c10,#0c0818);
-  border:1px solid rgba(255,106,106,0.2);
+  background:linear-gradient(160deg,#120c28,#080818);
+  border:1px solid rgba(200,170,255,0.2);
   border-radius:22px 22px 0 0;
   padding:20px 0 calc(20px + env(safe-area-inset-bottom,0px));
   width:100%;max-width:480px;
@@ -417,7 +416,7 @@ h1{
 }
 .store-popup-title{
   font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;
-  background:linear-gradient(135deg,#ff6a6a,#ffc230);
+  background:linear-gradient(135deg,#c8aaff,#8b7fff);
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
 }
 /* Laden hinzufügen Row */
@@ -435,7 +434,7 @@ h1{
 .store-add-inp:focus{border-color:rgba(255,194,48,0.5)}
 .store-add-inp::placeholder{color:rgba(255,255,255,0.25)}
 .store-add-btn{
-  background:linear-gradient(135deg,#c03020,#ffc230);
+  background:linear-gradient(135deg,#7c50e0,#c8aaff);
   border:none;border-radius:10px;
   color:#fff;font-size:20px;width:42px;
   cursor:pointer;display:flex;align-items:center;justify-content:center;
@@ -476,7 +475,7 @@ h1{
 }
 .store-list-item:last-child{border-bottom:none}
 .store-list-item:active{background:rgba(255,194,48,0.1)}
-.store-list-item.selected{color:#ffc230}
+.store-list-item.selected{color:#c8aaff}
 .store-list-item .s-check{margin-left:auto;font-size:14px;opacity:0}
 .store-list-item.selected .s-check{opacity:1}
 .store-del-btn{
@@ -489,7 +488,7 @@ h1{
 /* store group label in list */
 .store-group-lbl{
   font-size:11px;letter-spacing:0.13em;text-transform:uppercase;
-  color:#ffc230;
+  color:#c8aaff;
   margin:16px 0 6px;padding-left:4px;
   font-weight:500;
 }
@@ -498,8 +497,8 @@ h1{
 #installBanner{
   display:none;position:fixed;bottom:0;left:0;right:0;z-index:500;
   padding:14px 16px calc(14px + env(safe-area-inset-bottom,0px));
-  background:linear-gradient(160deg,#1a0c10,#0c0818);
-  border-top:1px solid rgba(255,106,106,0.25);
+  background:linear-gradient(160deg,#120c28,#080818);
+  border-top:1px solid rgba(200,170,255,0.25);
   backdrop-filter:blur(12px);
   animation:slideUp 0.3s ease;
   flex-direction:row;align-items:center;gap:12px;
@@ -510,11 +509,11 @@ h1{
 .ib-title{font-size:14px;font-weight:500;color:#fff;margin-bottom:2px}
 .ib-sub{font-size:11px;color:rgba(255,255,255,0.35)}
 .ib-btn{
-  background:linear-gradient(135deg,#c03020,#ffc230);
+  background:linear-gradient(135deg,#7c50e0,#c8aaff);
   color:#fff;border:none;border-radius:10px;
   padding:10px 16px;font-size:13px;font-weight:500;
   font-family:'DM Sans',sans-serif;cursor:pointer;
-  box-shadow:0 4px 14px rgba(200,80,30,0.4);
+  box-shadow:0 4px 14px rgba(124,80,224,0.4);
   flex-shrink:0;white-space:nowrap;
 }
 .ib-close{
@@ -526,15 +525,14 @@ h1{
 <body>
 
 <div class="bg">
-  <div class="orb o1"></div>
-  <div class="orb o2"></div>
-  <div class="orb o3"></div>
-  <div class="orb o4"></div>
-  <div class="orb o5"></div>
-  <div class="orb o6"></div>
+  <div class="cloud c1"></div>
+  <div class="cloud c2"></div>
+  <div class="cloud c3"></div>
+  <div class="cloud c4"></div>
+  <div class="cloud c5"></div>
+  <div class="cloud c6"></div>
 </div>
 <div class="noise"></div>
-<div id="sparks"></div>
 
 <div class="app">
 
@@ -641,18 +639,6 @@ h1{
 </div>
 
 <script>
-// ── Sparkles ──
-(function(){
-  const c=document.getElementById('sparks');
-  for(let i=0;i<35;i++){
-    const s=document.createElement('div');
-    s.className='spark';
-    const sz=Math.random()<0.5?2:1;
-    s.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--d:${5+Math.random()*9}s;--dl:${Math.random()*10}s;--op:${0.3+Math.random()*0.4};`;
-    c.appendChild(s);
-  }
-})();
-
 let items=JSON.parse(localStorage.getItem('mylist_v6')||'[]');
 let qty=1;
 let editId=null;
@@ -711,31 +697,68 @@ function removeStore(e,name){
   showToast('🗑 '+name+' entfernt');
 }
 
-// Stadtsuche via Nominatim / Overpass
+// Stadtsuche via Google Places Text Search (Places API New)
 async function searchStoresByCity(){
   const hint=document.getElementById('storeSearchHint');
   const cityVal=document.getElementById('storeSearchInp').value.trim();
   if(!cityVal){hint.textContent='Bitte Stadt oder PLZ eingeben.';return;}
   hint.textContent='Suche läuft…';
+
+  // Suchanfragen: Supermärkte + Drogerien in der Stadt
+  const queries=[
+    `Supermarkt ${cityVal}`,
+    `Discounter ${cityVal}`,
+    `Drogerie ${cityVal}`
+  ];
+
+  const found=new Set();
+  let searchedCity='';
+
   try{
-    // Geocoding: Stadt → Koordinaten
-    const geoResp=await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(cityVal)}&limit=1&countrycodes=de`,{headers:{'Accept-Language':'de'}});
-    const geoData=await geoResp.json();
-    if(!geoData.length){hint.textContent='Ort nicht gefunden. Versuch z.B. "Templin" oder "17268".';return;}
-    const {lat,lon,display_name}=geoData[0];
-    // Overpass: Supermärkte & Drogerien im Umkreis 3km
-    const query=`[out:json][timeout:10];(node["shop"~"supermarket|convenience|discounter|drogerie|chemist|grocery"](around:3000,${lat},${lon});way["shop"~"supermarket|convenience|discounter|drogerie|chemist|grocery"](around:3000,${lat},${lon}););out tags;`;
-    const ovResp=await fetch('https://overpass-api.de/api/interpreter',{method:'POST',body:'data='+encodeURIComponent(query)});
-    const ovData=await ovResp.json();
-    const found=[];
-    ovData.elements.forEach(el=>{
-      const name=el.tags&&(el.tags.name||el.tags.brand);
-      if(name&&!found.includes(name)&&!customStores.includes(name)) found.push(name);
+    for(const q of queries){
+      const resp=await fetch(`https://api.anthropic.com/v1/messages`,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+          model:'claude-sonnet-4-20250514',
+          max_tokens:400,
+          messages:[{
+            role:'user',
+            content:`Nenne mir alle Supermärkte, Discounter und Drogerien die es in "${cityVal}" gibt. Antworte NUR mit einer JSON-Liste von Store-Namen, keine Erklärung, kein Markdown. Nur echte bekannte Ketten die wahrscheinlich dort vorhanden sind (z.B. Edeka, Rewe, Aldi, Lidl, Penny, Netto, Rossmann, dm etc.). Beispiel: ["Edeka","Rewe","Aldi Süd","Lidl","Penny","Rossmann"]`
+          }]
+        })
+      });
+      const data=await resp.json();
+      const text=(data.content||[]).map(b=>b.text||'').join('');
+      // Parse JSON aus der Antwort
+      const match=text.match(/\[[\s\S]*\]/);
+      if(match){
+        try{
+          const arr=JSON.parse(match[0]);
+          arr.forEach(name=>{
+            if(typeof name==='string'&&name.trim()) found.add(name.trim());
+          });
+        }catch(e){}
+      }
+      break; // eine Anfrage reicht wenn Claude alle zurückgibt
+    }
+
+    if(!found.size){
+      hint.textContent='Keine Läden gefunden für "'+cityVal+'".';
+      return;
+    }
+
+    let addedCount=0;
+    found.forEach(name=>{
+      if(!customStores.includes(name)){
+        customStores.push(name);
+        addedCount++;
+      }
     });
-    if(!found.length){hint.textContent='Keine neuen Läden in '+display_name.split(',')[0]+' gefunden.';return;}
-    found.forEach(n=>customStores.push(n));
     saveStores();buildStoreList();
-    hint.textContent='✅ '+found.length+' Läden aus '+display_name.split(',')[0]+' hinzugefügt!';
+    hint.textContent=addedCount>0
+      ? `✅ ${addedCount} Läden für "${cityVal}" hinzugefügt!`
+      : `Alle gefundenen Läden sind schon in der Liste.`;
   }catch(err){
     hint.textContent='Fehler bei der Suche. Internetverbindung prüfen.';
   }
