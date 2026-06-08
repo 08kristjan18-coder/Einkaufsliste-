@@ -338,6 +338,82 @@ h1{
 }
 .toast.show{transform:translateX(-50%) translateY(0)}
 
+/* ── STORE PICKER ── */
+.store-pick-row{
+  display:flex;align-items:center;gap:8px;
+  margin-top:10px;
+}
+.store-pick-btn{
+  flex:1;
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:10px;
+  color:rgba(255,255,255,0.4);
+  font-size:14px;font-family:'DM Sans',sans-serif;
+  padding:10px 14px;cursor:pointer;
+  text-align:left;
+  transition:all 0.15s;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.store-pick-btn.has-store{
+  border-color:rgba(209,106,255,0.5);
+  color:#d16aff;
+  background:rgba(209,106,255,0.1);
+}
+.store-pick-btn .arrow{font-size:11px;opacity:0.5}
+.store-clear-btn{
+  background:none;border:none;
+  color:rgba(255,255,255,0.2);
+  font-size:18px;cursor:pointer;
+  padding:6px 8px;
+  display:none;
+}
+.store-clear-btn.show{display:block}
+
+/* Popup */
+.store-popup-bg{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);
+  z-index:350;align-items:flex-end;justify-content:center;
+}
+.store-popup-bg.open{display:flex}
+.store-popup{
+  background:linear-gradient(160deg,#150025,#0c0018);
+  border:1px solid rgba(209,106,255,0.2);
+  border-radius:22px 22px 0 0;
+  padding:20px 0 calc(20px + env(safe-area-inset-bottom,0px));
+  width:100%;max-width:480px;
+  animation:slideUp 0.22s ease;
+}
+.store-popup-title{
+  font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;
+  background:linear-gradient(135deg,#d16aff,#7c4dff);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  padding:0 20px 14px;display:block;
+}
+.store-list-item{
+  display:flex;align-items:center;
+  padding:13px 20px;
+  cursor:pointer;
+  font-size:16px;color:rgba(255,255,255,0.7);
+  font-family:'DM Sans',sans-serif;
+  border-bottom:1px solid rgba(255,255,255,0.05);
+  transition:background 0.12s;
+}
+.store-list-item:last-child{border-bottom:none}
+.store-list-item:active{background:rgba(209,106,255,0.12)}
+.store-list-item.selected{color:#d16aff}
+.store-list-item .s-check{margin-left:auto;font-size:14px;opacity:0}
+.store-list-item.selected .s-check{opacity:1}
+
+/* store group label in list */
+.store-group-lbl{
+  font-size:11px;letter-spacing:0.13em;text-transform:uppercase;
+  color:#4cd97b;
+  margin:16px 0 6px;padding-left:4px;
+  font-weight:500;
+}
+
 /* ── PWA INSTALL BANNER ── */
 #installBanner{
   display:none;position:fixed;bottom:0;left:0;right:0;z-index:500;
@@ -401,6 +477,21 @@ h1{
         <span class="qty-num" id="qtyVal">1</span>
         <button class="qty-btn" onclick="changeQty(1)">+</button>
       </div>
+    </div>
+    <div class="store-pick-row">
+      <button class="store-pick-btn" id="storePickBtn" onclick="openStorePopup()">
+        <span id="storePickLabel">Laden wählen (optional)</span>
+        <span class="arrow">▾</span>
+      </button>
+      <button class="store-clear-btn" id="storeClearBtn" onclick="clearStore()" title="Laden entfernen">✕</button>
+    </div>
+  </div>
+
+  <!-- Store Popup -->
+  <div class="store-popup-bg" id="storePopupBg" onclick="storePopupBgClick(event)">
+    <div class="store-popup">
+      <span class="store-popup-title">LADEN WÄHLEN</span>
+      <div id="storeListItems"></div>
     </div>
   </div>
 
@@ -477,6 +568,53 @@ let qty=1;
 let editId=null;
 let toastTimer=null;
 let cdInterval=null;
+let selectedStore='';
+
+const STORES=[
+  'Edeka klein','Edeka groß','Penny','Lidl','Aldi',
+  'Netto Hund','Netto','Norma','Rewe','BayWa',
+  'McGeiz','Kik','Rossmann'
+];
+
+// Store-Popup aufbauen
+(function(){
+  const list=document.getElementById('storeListItems');
+  STORES.forEach(s=>{
+    const d=document.createElement('div');
+    d.className='store-list-item';
+    d.id='sli-'+s.replace(/\s/g,'_');
+    d.innerHTML=`<span>${s}</span><span class="s-check">✓</span>`;
+    d.onclick=()=>selectStore(s);
+    list.appendChild(d);
+  });
+})();
+
+function openStorePopup(){
+  document.getElementById('storePopupBg').classList.add('open');
+}
+function closeStorePopup(){
+  document.getElementById('storePopupBg').classList.remove('open');
+}
+function storePopupBgClick(e){
+  if(e.target===document.getElementById('storePopupBg')) closeStorePopup();
+}
+function selectStore(s){
+  selectedStore=s;
+  document.querySelectorAll('.store-list-item').forEach(el=>el.classList.remove('selected'));
+  const el=document.getElementById('sli-'+s.replace(/\s/g,'_'));
+  if(el) el.classList.add('selected');
+  document.getElementById('storePickLabel').textContent=s;
+  document.getElementById('storePickBtn').classList.add('has-store');
+  document.getElementById('storeClearBtn').classList.add('show');
+  closeStorePopup();
+}
+function clearStore(){
+  selectedStore='';
+  document.querySelectorAll('.store-list-item').forEach(el=>el.classList.remove('selected'));
+  document.getElementById('storePickLabel').textContent='Laden wählen (optional)';
+  document.getElementById('storePickBtn').classList.remove('has-store');
+  document.getElementById('storeClearBtn').classList.remove('show');
+}
 
 document.getElementById('dateStr').textContent=
   new Date().toLocaleDateString('de-DE',{weekday:'long',day:'numeric',month:'long'});
@@ -497,12 +635,12 @@ function addItem(){
   const m=raw.match(/^(\d+)[x×\s]\s*(.+)$/i);
   if(m){itemQty=parseInt(m[1]);name=cap(m[2].trim());}
   else{name=cap(raw);}
-  items.unshift({id:Date.now(),name,qty:itemQty,done:false});
+  items.unshift({id:Date.now(),name,qty:itemQty,done:false,store:selectedStore});
   save();render();
   inp.value='';qty=1;
   document.getElementById('qtyVal').textContent='1';
   inp.focus();
-  showToast('➕ '+name+' hinzugefügt');
+  showToast('➕ '+name+(selectedStore?' · '+selectedStore:'')+' hinzugefügt');
 }
 
 // Enter-Taste
@@ -636,7 +774,20 @@ function render(){
   if(!open.length){
     lo.innerHTML=`<div class="empty"><div class="empty-icon">${total===0?'🛒':'🎉'}</div>
       <p>${total===0?'Noch nichts auf der Liste.<br>Füge deinen ersten Artikel hinzu!':'Alles erledigt!'}</p></div>`;
-  } else { open.forEach(i=>lo.appendChild(makeItem(i))); }
+  } else {
+    const groups={};
+    open.forEach(i=>{const k=i.store||'';if(!groups[k])groups[k]=[];groups[k].push(i);});
+    const keys=Object.keys(groups).sort((a,b)=>{if(!a)return 1;if(!b)return -1;return a.localeCompare(b,'de');});
+    keys.forEach(key=>{
+      if(key){
+        const lbl=document.createElement('div');
+        lbl.className='store-group-lbl';
+        lbl.textContent=key;
+        lo.appendChild(lbl);
+      }
+      groups[key].forEach(i=>lo.appendChild(makeItem(i)));
+    });
+  }
 
   const ld=document.getElementById('listDone');
   ld.innerHTML='';
