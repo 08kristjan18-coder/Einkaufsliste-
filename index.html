@@ -298,7 +298,19 @@ body{
 
       <div class="settings-hint" style="margin-top:10px;">Nur gewählte Kategorien werden durchsucht. Deine Artikel bleiben erhalten.</div>
       <div style="height:12px"></div>
-      <button class="s-save" onclick="saveSettings()">Läden aus diesem Ort laden</button>
+
+      <!-- Ladebalken -->
+      <div id="searchProgress" style="display:none;margin-bottom:12px;">
+        <div style="font-size:12px;color:rgba(255,255,255,0.45);margin-bottom:7px;display:flex;justify-content:space-between;align-items:center;">
+          <span id="searchProgressLabel">Ort wird gesucht…</span>
+          <span id="searchProgressPct" style="color:#a78bfa;font-weight:500;">0%</span>
+        </div>
+        <div style="height:5px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden;">
+          <div id="searchProgressBar" style="height:100%;width:0%;background:var(--grad);border-radius:3px;transition:width 0.4s ease;"></div>
+        </div>
+      </div>
+
+      <button class="s-save" id="searchBtn" onclick="saveSettings()">Läden aus diesem Ort laden</button>
     </div>
 
     <div class="divider"></div>
@@ -550,95 +562,91 @@ function deleteLocation(e,i){
 /* ═══════════════════════════════════════════════════
    OVERPASS-SUCHE: Kombiniert shop=type + brand=Name
 ═══════════════════════════════════════════════════ */
+function setSearchProgress(pct, label){
+  const bar=document.getElementById('searchProgressBar');
+  const lbl=document.getElementById('searchProgressLabel');
+  const pctEl=document.getElementById('searchProgressPct');
+  const wrap=document.getElementById('searchProgress');
+  if(!wrap)return;
+  wrap.style.display='block';
+  if(bar)bar.style.width=pct+'%';
+  if(label&&lbl)lbl.textContent=label;
+  if(pctEl)pctEl.textContent=Math.round(pct)+'%';
+}
+function hideSearchProgress(){
+  const wrap=document.getElementById('searchProgress');
+  if(wrap)wrap.style.display='none';
+  const bar=document.getElementById('searchProgressBar');
+  if(bar)bar.style.width='0%';
+}
+
 async function saveSettings(){
   const plz=document.getElementById('settingsPlz').value.trim();
   const city=document.getElementById('settingsCity').value.trim();
   if(!plz&&!city){showToast('Bitte PLZ oder Ort eingeben');return;}
-  // Wenn keine Filter aktiv: alle food+drug automatisch aktivieren statt abbrechen
-  if(!activeFilters.length){
-    activeFilters=['food','drug','diy','tech','drug'];
-    saveFilters();buildFilterChips();
-  }
-  closeSettings();
-  // PLZ+Stadt kombinieren für bessere Trefferquote
+  const btn=document.getElementById('searchBtn');
+  if(btn){btn.disabled=true;btn.textContent='Suche läuft…';}
+  // PLZ+Stadt kombiniert für bessere Trefferquote
   const searchQuery=(plz&&city)?`${plz} ${city}`:(city||plz);
   await loadStoresByLocation(searchQuery,plz,city);
+  if(btn){btn.disabled=false;btn.textContent='Läden aus diesem Ort laden';}
+  hideSearchProgress();
 }
 
 async function loadStoresByLocation(query,plz,city){
-  showToast('⏳ Läden werden gesucht…');
   try{
-    // SCHRITT 1: Koordinaten per Nominatim
+    setSearchProgress(15,'Ort wird gesucht…');
+
+    // Schritt 1: Koordinaten per Nominatim
     const geoResp=await fetch(
-      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=3&countrycodes=de&accept-language=de&addressdetails=1`
+      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1&countrycodes=de&accept-language=de`
     );
-    if(!geoResp.ok)throw new Error('geo');
+    if(!geoResp.ok)throw new Error('Ortssuche fehlgeschlagen');
     const geoData=await geoResp.json();
     if(!geoData.length){
-      // Letzter Versuch: nur mit PLZ
-      if(plz){
-        const plzResp=await fetch(`https://nominatim.openstreetmap.org/search?format=json&postalcode=${encodeURIComponent(plz)}&country=de&limit=1`);
-        const plzData=await plzResp.json();
-        if(!plzData.length){showToast('Ort nicht gefunden');return;}
-        geoData.push(plzData[0]);
-      } else {showToast('Ort nicht gefunden');return;}
+      showToast('❌ Ort nicht gefunden');hideSearchProgress();return;
     }
-    const{lat,lon,display_name,address}=geoData[0];
-    const stadtName=city||(address&&(address.city||address.town||address.village||address.municipality))||display_name.split(',')[0];
-    const radius=15000; // 15km – gut für kleinere Städte
 
-    // SCHRITT 2: Aktive Kategorien holen
-    const activeCats=SHOP_CATEGORIES.filter(c=>activeFilters.includes(c.id));
+    setSearchProgress(35,'Koordinaten gefunden…');
+    const{lat,lon,display_name}=geoData[0];
+    const stadtName=city||display_name.split(',')[0];
+    const radius=8000;
+
+    // Schritt 2: Aktive Kategorien → shop-Typen sammeln
+    const activeCats=activeFilters.length
+      ? SHOP_CATEGORIES.filter(c=>activeFilters.includes(c.id))
+      : SHOP_CATEGORIES; // Wenn keine Filter: alle
     const shopTypes=[...new Set(activeCats.flatMap(c=>c.types))];
-    const brandNames=[...new Set(activeCats.flatMap(c=>c.brands||[]))];
-    const topBrands=brandNames.slice(0,60);
 
-    // SCHRITT 3: Overpass-Query – Shops per Typ + bekannte Ketten per Name
+    // Schritt 3: Overpass-Query – nur shop=type, bewährt aus alter Version
+    setSearchProgress(50,'Läden werden gesucht…');
     const typeLines=shopTypes.flatMap(t=>[
       `node["shop"="${t}"](around:${radius},${lat},${lon});`,
       `way["shop"="${t}"](around:${radius},${lat},${lon});`
     ]).join('');
-    const brandRegex=topBrands.length?topBrands.map(b=>b.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|'):'';
-    const brandLines=brandRegex?[
-      `node["name"~"(${brandRegex})",i](around:${radius},${lat},${lon});`,
-      `way["name"~"(${brandRegex})",i](around:${radius},${lat},${lon});`
-    ].join(''):'';
+    const q=`[out:json][timeout:25];(${typeLines});out tags;`;
 
-    const q=`[out:json][timeout:45];(${typeLines}${brandLines});out tags;`;
+    const ovResp=await fetch('https://overpass-api.de/api/interpreter',{method:'POST',body:'data='+encodeURIComponent(q)});
+    if(!ovResp.ok)throw new Error('Overpass nicht erreichbar ('+ovResp.status+')');
 
-    // SCHRITT 4: Overpass mit 2 Mirror-Fallbacks
-    let ovData=null;
-    const mirrors=[
-      'https://overpass.kumi.systems/api/interpreter',
-      'https://overpass-api.de/api/interpreter',
-      'https://maps.mail.ru/osm/tools/overpass/api/interpreter'
-    ];
-    for(const mirror of mirrors){
-      try{
-        const r=await fetch(mirror,{method:'POST',body:'data='+encodeURIComponent(q)});
-        if(r.ok){ovData=await r.json();break;}
-      }catch(e){/* try next mirror */}
-    }
-    if(!ovData){throw new Error('Alle Overpass-Server nicht erreichbar');}
+    setSearchProgress(80,'Läden werden verarbeitet…');
+    const ovData=await ovResp.json();
 
-    // SCHRITT 5: Namen extrahieren & deduplizieren
+    // Schritt 4: Namen extrahieren, bewährt aus alter Version
     const seen=new Set();const found=[];
     ovData.elements.forEach(el=>{
-      const tg=el.tags||{};
-      // Priorisierung: brand > brand:de > name > name:de
-      const rawName=(tg.brand||tg['brand:de']||tg.name||tg['name:de']||'').trim();
+      const t=el.tags||{};
+      const rawName=(t.brand||t['brand:de']||t.name||t['name:de']||'').trim();
       if(!rawName)return;
-      // Generische OSM-Begriffe rausfiltern
       if(['yes','no','shop','store'].includes(rawName.toLowerCase()))return;
       const name=normalizeStoreName(rawName);
       if(!name||seen.has(name.toLowerCase()))return;
       seen.add(name.toLowerCase());found.push(name);
     });
-
-    // Alphabetisch sortieren
     found.sort((a,b)=>a.localeCompare(b,'de'));
 
-    // SCHRITT 6: Speichern
+    // Schritt 5: Speichern + UI aktualisieren
+    setSearchProgress(95,'Wird gespeichert…');
     const locName=stadtName+(plz?' ('+plz+')':'');
     const existIdx=savedLocations.findIndex(l=>l.name===locName);
     if(existIdx>=0){
@@ -651,12 +659,18 @@ async function loadStoresByLocation(query,plz,city){
     }
     saveLocations();saveActiveIdx();
     customStores=[...savedLocations[activeLocationIdx].stores];saveStores();
+
+    setSearchProgress(100,'Fertig!');
+    buildSavedLocationsList();
     render();
-    if(!found.length)showToast('Keine Läden gefunden – probiere mehr Kategorien');
-    else showToast('✓ '+found.length+' Läden in '+locName+' geladen');
+
+    if(!found.length)showToast('ℹ️ Keine Läden gefunden in '+stadtName);
+    else showToast('✅ '+found.length+' Läden in '+locName+' geladen');
+
   }catch(err){
     console.error('Suche Fehler:',err);
-    showToast('Suche fehlgeschlagen: '+err.message);
+    showToast('❌ '+err.message);
+    hideSearchProgress();
   }
 }
 
