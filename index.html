@@ -12,6 +12,7 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <title>Meine Liste</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
@@ -148,6 +149,7 @@ body{min-height:100vh;font-family:'DM Sans',sans-serif;font-size:16px;color:#fff
 .store-popup{background:linear-gradient(160deg,#2a1e3e,#18102e);border:1px solid rgba(232,138,255,0.26);border-radius:24px 24px 0 0;padding:20px 0 calc(20px + env(safe-area-inset-bottom,0px));width:100%;max-width:480px;max-height:78vh;overflow-y:auto;animation:slideUp 0.22s ease;box-shadow:0 -8px 40px rgba(0,0,0,0.60);}
 .store-popup-header{padding:0 20px 14px;}
 .store-popup-title{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:2px;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.store-popup-hint{font-size:11px;color:rgba(255,255,255,0.28);margin-top:4px;letter-spacing:0.02em;}
 .store-add-row{display:flex;gap:8px;padding:0 16px 12px;border-bottom:1px solid rgba(255,255,255,0.07);}
 .store-add-inp{flex:1;background:rgba(255,255,255,0.10);border:1px solid rgba(255,255,255,0.18);border-radius:11px;color:#fff;padding:11px 13px;font-size:15px;font-family:'DM Sans',sans-serif;outline:none;}
 .store-add-inp:focus{border-color:rgba(232,138,255,0.55)}
@@ -155,11 +157,12 @@ body{min-height:100vh;font-family:'DM Sans',sans-serif;font-size:16px;color:#fff
 .store-add-btn{background:var(--grad);border:none;border-radius:11px;color:#fff;font-size:20px;width:44px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 
 /* Store-Liste mit Inline-Rename */
-.store-list-item{display:flex;align-items:center;padding:12px 20px;font-size:16px;color:rgba(255,255,255,0.80);font-family:'DM Sans',sans-serif;border-bottom:1px solid rgba(255,255,255,0.07);transition:background 0.12s;gap:8px;cursor:pointer;}
+.store-list-item{display:flex;align-items:center;padding:12px 20px;font-size:16px;color:rgba(255,255,255,0.80);font-family:'DM Sans',sans-serif;border-bottom:1px solid rgba(255,255,255,0.07);transition:background 0.12s;gap:8px;cursor:pointer;user-select:none;}
 .store-list-item:last-child{border-bottom:none}
 .store-list-item:not(.renaming):active{background:rgba(232,138,255,0.07)}
 .store-list-item.selected{color:#e879f9}
 .store-list-item.renaming{background:rgba(232,138,255,0.05);cursor:default;}
+.store-list-item.long-pressing{background:rgba(192,132,252,0.10);}
 .s-name{flex:1;min-width:0;}
 .s-check{font-size:14px;opacity:0;flex-shrink:0;}
 .store-list-item.selected .s-check{opacity:1}
@@ -169,8 +172,33 @@ body{min-height:100vh;font-family:'DM Sans',sans-serif;font-size:16px;color:#fff
 .store-rename-btn{background:none;border:none;color:rgba(192,132,252,0.32);font-size:15px;cursor:pointer;padding:4px 6px;transition:color 0.15s;flex-shrink:0;}
 .store-rename-btn:hover{color:#e879f9}
 .s-rename-confirm{background:none;border:none;color:#4ade80;font-size:18px;cursor:pointer;padding:4px 6px;flex-shrink:0;line-height:1;}
+/* Karten-Icon in Store-Zeile */
+.store-map-btn{background:none;border:none;color:rgba(129,140,248,0.35);font-size:15px;cursor:pointer;padding:4px 6px;transition:color 0.15s;flex-shrink:0;}
+.store-map-btn:hover{color:#818cf8}
 
-.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(90px);background:var(--grad);color:#fff;padding:11px 26px;border-radius:26px;font-size:14px;font-weight:500;transition:transform 0.3s cubic-bezier(.4,0,.2,1);z-index:500;white-space:nowrap;box-shadow:0 6px 28px rgba(168,85,247,0.38);}
+/* MAP POPUP */
+.map-popup-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.88);backdrop-filter:blur(8px);z-index:500;align-items:center;justify-content:center;padding:16px;}
+.map-popup-bg.open{display:flex}
+.map-popup{background:linear-gradient(160deg,#1e1530,#12102a);border:1px solid rgba(129,140,248,0.35);border-radius:22px;width:100%;max-width:460px;overflow:hidden;animation:fadeScaleIn 0.20s ease;box-shadow:0 12px 60px rgba(0,0,0,0.80);}
+.map-popup-header{padding:16px 18px 12px;display:flex;align-items:center;justify-content:space-between;}
+.map-popup-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:#818cf8;}
+.map-popup-subtitle{font-size:12px;color:rgba(255,255,255,0.35);margin-top:2px;}
+.map-popup-close{background:none;border:none;color:rgba(255,255,255,0.30);font-size:22px;cursor:pointer;padding:4px;line-height:1;}
+.map-popup-close:hover{color:#fff}
+#mapContainer{width:100%;height:240px;background:#0d0b1a;}
+/* Leaflet Dark-Override */
+.leaflet-tile{filter:invert(1) hue-rotate(200deg) saturate(0.5) brightness(0.75);}
+.leaflet-container{background:#0d0b1a!important;}
+.map-popup-footer{padding:12px 16px 16px;display:flex;gap:10px;align-items:center;}
+.map-addr{flex:1;font-size:13px;color:rgba(255,255,255,0.50);line-height:1.4;min-width:0;}
+.map-addr strong{display:block;color:rgba(255,255,255,0.80);font-size:14px;margin-bottom:2px;}
+.map-route-btn{background:var(--grad);border:none;border-radius:11px;color:#fff;font-size:14px;font-weight:500;font-family:'DM Sans',sans-serif;padding:11px 18px;cursor:pointer;white-space:nowrap;flex-shrink:0;box-shadow:0 4px 16px rgba(129,140,248,0.30);}
+.map-route-btn:active{opacity:0.85}
+.map-loading{display:flex;align-items:center;justify-content:center;height:240px;color:rgba(255,255,255,0.35);font-size:14px;gap:8px;}
+.map-spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,0.12);border-top-color:#818cf8;border-radius:50%;animation:spin 0.7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(90px);background:var(--grad);color:#fff;padding:11px 26px;border-radius:26px;font-size:14px;font-weight:500;transition:transform 0.3s cubic-bezier(.4,0,.2,1);z-index:600;white-space:nowrap;box-shadow:0 6px 28px rgba(168,85,247,0.38);}
 .toast.show{transform:translateX(-50%) translateY(0)}
 
 #installBanner{display:none;position:fixed;bottom:0;left:0;right:0;z-index:500;padding:14px 16px calc(14px + env(safe-area-inset-bottom,0px));background:linear-gradient(160deg,#0f0a1e,#07060e);border-top:1px solid rgba(196,132,252,0.18);backdrop-filter:blur(14px);animation:slideUp 0.3s ease;flex-direction:row;align-items:center;gap:12px;}
@@ -278,6 +306,7 @@ body{min-height:100vh;font-family:'DM Sans',sans-serif;font-size:16px;color:#fff
   <div class="store-popup">
     <div class="store-popup-header">
       <div class="store-popup-title">LADEN WÄHLEN</div>
+      <div class="store-popup-hint">Lang drücken = Standort auf Karte anzeigen</div>
     </div>
     <div class="store-add-row">
       <input class="store-add-inp" id="storeAddInp" type="text" placeholder="Laden manuell hinzufügen…" />
@@ -302,6 +331,34 @@ body{min-height:100vh;font-family:'DM Sans',sans-serif;font-size:16px;color:#fff
   </div>
 </div>
 
+<!-- MAP POPUP -->
+<div class="map-popup-bg" id="mapPopupBg" onclick="mapPopupBgClick(event)">
+  <div class="map-popup">
+    <div class="map-popup-header">
+      <div>
+        <div class="map-popup-title" id="mapPopupTitle">LADEN</div>
+        <div class="map-popup-subtitle" id="mapPopupSubtitle">Nächste Filiale</div>
+      </div>
+      <button class="map-popup-close" onclick="closeMapPopup()">&#10005;</button>
+    </div>
+    <div id="mapContainer">
+      <div class="map-loading" id="mapLoading">
+        <div class="map-spinner"></div>
+        <span>Suche Filiale…</span>
+      </div>
+    </div>
+    <div class="map-popup-footer">
+      <div class="map-addr">
+        <strong id="mapAddrName">–</strong>
+        <span id="mapAddrStreet">–</span>
+      </div>
+      <button class="map-route-btn" id="mapRouteBtn" onclick="openRoute()" style="display:none">
+        &#128205; Route
+      </button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <div id="installBanner">
@@ -314,6 +371,7 @@ body{min-height:100vh;font-family:'DM Sans',sans-serif;font-size:16px;color:#fff
   <button class="ib-close" id="dismissBtn">&#10005;</button>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
 /* HINTERGRUND */
 (function(){
@@ -367,21 +425,90 @@ body{min-height:100vh;font-family:'DM Sans',sans-serif;font-size:16px;color:#fff
   requestAnimationFrame(frame);
 })();
 
-/* KATEGORIE-FILTER
-   ─── FIX: 'wholesale' als eigene Kategorie, aus 'misc' entfernt ─── */
+/* ═══════════════════════════════════════════════════
+   KATEGORIE-FILTER
+   Jede Kategorie hat:
+   - types:  OSM shop=* Typen (für Overpass)
+   - brands: Bekannte Kettennamen (für brand/name Suche)
+═══════════════════════════════════════════════════ */
 const SHOP_CATEGORIES=[
-  {id:'food',      label:'Lebensmittel', icon:'&#127811;',types:['supermarket','convenience','grocery','discounter','butcher','bakery','deli','greengrocer','dairy','frozen_food','health_food','pasta','alcohol','beverages','tea','coffee','chocolate','candy','ice_cream']},
-  {id:'drug',      label:'Drogerie',     icon:'&#129514;',types:['chemist','cosmetics','beauty','pharmacy','optician','hearing_aids']},
-  {id:'clothes',   label:'Mode',         icon:'&#128247;',types:['clothes','shoes','sports','outdoor','boutique','second_hand']},
-  {id:'tech',      label:'Elektronik',   icon:'&#128187;',types:['electronics','mobile_phone','computer','hifi','appliance','kitchen','bathroom','lighting','vacuum_cleaner']},
-  {id:'diy',       label:'Baumarkt',     icon:'&#128296;',types:['doityourself','hardware','garden_centre','florist','paint','tile','glaziery']},
-  {id:'home',      label:'Wohnen',       icon:'&#127968;',types:['furniture','interior_decoration','bed','curtain','carpet']},
-  {id:'office',    label:'Büro & Buch',  icon:'&#128218;',types:['stationery','books','art','music','newsagent','copyshop']},
-  {id:'kids',      label:'Kinder',       icon:'&#129528;',types:['toys','baby_goods','children']},
-  {id:'pets',      label:'Tiere',        icon:'&#128062;',types:['pet','agrarian']},
-  {id:'wholesale', label:'Großhandel',   icon:'&#127981;',types:['wholesale','superstore','cash_and_carry']},
-  {id:'misc',      label:'Sonstiges',    icon:'&#127978;',types:['department_store','mall','general','variety_store','fabric','sewing','wool','photo','frame','gift','party','tobacco','lottery','travel_agency','laundry','dry_cleaning']},
+  {
+    id:'food', label:'Lebensmittel', icon:'&#127811;',
+    types:['supermarket','convenience','grocery','discounter','butcher','bakery','deli',
+           'greengrocer','dairy','frozen_food','health_food','pasta','alcohol','beverages',
+           'tea','coffee','chocolate','candy','ice_cream'],
+    brands:['Lidl','Edeka','Rewe','Aldi','Netto','Penny','Kaufland','Norma','Aldi Süd',
+            'Aldi Nord','Real','Tegut','Globus','Hit','V-Markt','Combi','Famila',
+            'Marktkauf','E-Center','Nahkauf','Spar','Bäcker','Backwerk','Bäckerei',
+            'Metzgerei','Fleischerei','Getränkemarkt','Trinkgut','Hol ab']
+  },
+  {
+    id:'drug', label:'Drogerie', icon:'&#129514;',
+    types:['chemist','cosmetics','beauty','pharmacy','optician','hearing_aids'],
+    brands:['dm','Rossmann','Müller','Budni','Ihr Platz','Douglas','Parfümerie',
+            'Fielmann','McOptik','Apollo','Kind Hörgeräte','Boots']
+  },
+  {
+    id:'clothes', label:'Mode', icon:'&#128247;',
+    types:['clothes','shoes','sports','outdoor','boutique','second_hand'],
+    brands:['KiK','H&M','C&A','Zara','Primark','NKD','Takko','Ernsting\'s Family',
+            's.Oliver','Esprit','Vero Moda','Jack & Jones','New Yorker','Adidas',
+            'Nike','Deichmann','Salamander','Reno','Görtz','Sport Scheck','Intersport',
+            'Decathlon','Humana','Second Hand']
+  },
+  {
+    id:'tech', label:'Elektronik', icon:'&#128187;',
+    types:['electronics','mobile_phone','computer','hifi','appliance','kitchen',
+           'bathroom','lighting','vacuum_cleaner'],
+    brands:['Media Markt','Saturn','Expert','Euronics','EP:','Conrad','Gravis',
+            'Apple Store','Samsung','Telekom','Vodafone','O2','Mobilcom-Debitel',
+            'Notebooksbilliger','Cyberport']
+  },
+  {
+    id:'diy', label:'Baumarkt', icon:'&#128296;',
+    types:['doityourself','hardware','garden_centre','florist','paint','tile','glaziery'],
+    brands:['OBI','Bauhaus','Hornbach','Toom','Hagebau','Hagebaumarkt','Praktiker',
+            'Hellweg','Raiffeisen','Blume 2000','Floristen']
+  },
+  {
+    id:'home', label:'Wohnen', icon:'&#127968;',
+    types:['furniture','interior_decoration','bed','curtain','carpet'],
+    brands:['IKEA','Möbel Höffner','XXXLutz','Roller','Poco','Dänisches Bettenlager',
+            'Jysk','Bettenwelt','Sconto','Porta','Trends','Kare']
+  },
+  {
+    id:'office', label:'Büro & Buch', icon:'&#128218;',
+    types:['stationery','books','art','music','newsagent','copyshop'],
+    brands:['Thalia','Hugendubel','Weltbild','Mayersche','Bücher Pustet','Papeterie',
+            'Staples','McPaper','Müller','Libro','Osiander','Gravis','dm']
+  },
+  {
+    id:'kids', label:'Kinder', icon:'&#129528;',
+    types:['toys','baby_goods','children'],
+    brands:['Toys R Us','Smyths Toys','Die Spielzeugkiste','Baby Walz','Babymarkt',
+            'BabyOne','Ernsting\'s Family','Kids']
+  },
+  {
+    id:'pets', label:'Tiere', icon:'&#128062;',
+    types:['pet','agrarian'],
+    brands:['Fressnapf','Futterhaus','Das Futterhaus','Tierarzt','Zoologischer Garten',
+            'Zoo Rostock','Hornbach','Zoohandlung','Tierhandlung','animonde']
+  },
+  {
+    id:'wholesale', label:'Großhandel', icon:'&#127981;',
+    types:['wholesale','superstore','cash_and_carry'],
+    brands:['Metro','Selgros','Makro','Costco','Handelshof','Transgourmet','Lekkerland']
+  },
+  {
+    id:'misc', label:'Sonstiges', icon:'&#127978;',
+    types:['department_store','mall','general','variety_store','fabric','sewing','wool',
+           'photo','frame','gift','party','tobacco','lottery','travel_agency',
+           'laundry','dry_cleaning'],
+    brands:['Galeria','Karstadt','Kaufhof','Woolworth','EMP','Depot','Butlers',
+            'Tchibo','Tabak','Lotto','TUI','ADAC Reisebüro','Reinigung']
+  },
 ];
+
 let activeFilters=JSON.parse(localStorage.getItem('shopFilters')||'["food","drug"]');
 function saveFilters(){localStorage.setItem('shopFilters',JSON.stringify(activeFilters));}
 function buildFilterChips(){
@@ -458,6 +585,10 @@ function deleteLocation(e,i){
   buildSavedLocationsList();
   showToast('&#128465; '+name+' entfernt');
 }
+
+/* ═══════════════════════════════════════════════════
+   OVERPASS-SUCHE: Kombiniert shop=type + brand=Name
+═══════════════════════════════════════════════════ */
 async function saveSettings(){
   const plz=document.getElementById('settingsPlz').value.trim();
   const city=document.getElementById('settingsCity').value.trim();
@@ -466,20 +597,36 @@ async function saveSettings(){
   closeSettings();
   await loadStoresByLocation(city||plz,plz,city);
 }
+
 async function loadStoresByLocation(query,plz,city){
   showToast('&#9203; Läden werden gesucht…');
   try{
-    const geoResp=await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1&countrycodes=de&accept-language=de`,{headers:{'User-Agent':'EinkaufslistePWA/1.0'}});
+    const geoResp=await fetch(
+      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1&countrycodes=de&accept-language=de`,
+      {headers:{'User-Agent':'EinkaufslistePWA/1.0'}}
+    );
     if(!geoResp.ok)throw new Error('geo');
     const geoData=await geoResp.json();
     if(!geoData.length){showToast('Ort nicht gefunden');return;}
     const{lat,lon,display_name}=geoData[0];
     const stadtName=city||display_name.split(',')[0];
     const radius=5000;
-    const shopTypes=activeFilters.flatMap(id=>SHOP_CATEGORIES.find(c=>c.id===id)?.types||[]);
-    const nodeLines=shopTypes.map(t=>`node["shop"="${t}"](around:${radius},${lat},${lon});`).join('');
-    const wayLines=shopTypes.map(t=>`way["shop"="${t}"](around:${radius},${lat},${lon});`).join('');
-    const q=`[out:json][timeout:25];(${nodeLines}${wayLines});out tags;`;
+
+    // Aktive Kategorien holen
+    const activeCats=SHOP_CATEGORIES.filter(c=>activeFilters.includes(c.id));
+    const shopTypes=activeCats.flatMap(c=>c.types);
+    const brandNames=activeCats.flatMap(c=>c.brands||[]);
+
+    // Query: shop=type ODER name/brand enthält bekannten Kettennamen
+    const typeNodeLines=shopTypes.map(t=>`node["shop"="${t}"](around:${radius},${lat},${lon});`).join('');
+    const typeWayLines=shopTypes.map(t=>`way["shop"="${t}"](around:${radius},${lat},${lon});`).join('');
+    // Für Brands: name~"^(Lidl|Edeka|...)" – max 50 Brands um Query-Länge zu begrenzen
+    const topBrands=brandNames.slice(0,50);
+    const brandRegex=topBrands.map(b=>b.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|');
+    const brandNodeLine=topBrands.length?`node["name"~"${brandRegex}",i](around:${radius},${lat},${lon});`:'';
+    const brandWayLine=topBrands.length?`way["name"~"${brandRegex}",i](around:${radius},${lat},${lon});`:'';
+
+    const q=`[out:json][timeout:30];(${typeNodeLines}${typeWayLines}${brandNodeLine}${brandWayLine});out tags;`;
     const ovResp=await fetch('https://overpass-api.de/api/interpreter',{method:'POST',body:'data='+encodeURIComponent(q)});
     if(!ovResp.ok)throw new Error('overpass');
     const ovData=await ovResp.json();
@@ -499,7 +646,7 @@ async function loadStoresByLocation(query,plz,city){
       found.forEach(n=>{if(!existSet.has(n.toLowerCase()))savedLocations[existIdx].stores.push(n);});
       activeLocationIdx=existIdx;
     }else{
-      savedLocations.push({name:locName,plz,city:stadtName,stores:found});
+      savedLocations.push({name:locName,plz,city:stadtName,lat:parseFloat(lat),lon:parseFloat(lon),stores:found});
       activeLocationIdx=savedLocations.length-1;
     }
     saveLocations();saveActiveIdx();
@@ -507,10 +654,111 @@ async function loadStoresByLocation(query,plz,city){
     render();
     if(!found.length)showToast('Keine Läden gefunden in '+stadtName);
     else showToast(found.length+' Läden in '+locName+' geladen');
-  }catch(err){showToast('Suche fehlgeschlagen');}
+  }catch(err){console.error(err);showToast('Suche fehlgeschlagen');}
 }
 
-/* STORE POPUP mit Inline-Rename */
+/* ═══════════════════════════════════════════════════
+   KARTEN-POPUP
+═══════════════════════════════════════════════════ */
+let mapInstance=null;
+let currentMapLat=null;
+let currentMapLon=null;
+
+function mapPopupBgClick(e){if(e.target===document.getElementById('mapPopupBg'))closeMapPopup();}
+
+function closeMapPopup(){
+  document.getElementById('mapPopupBg').classList.remove('open');
+  if(mapInstance){mapInstance.remove();mapInstance=null;}
+}
+
+async function openMapForStore(storeName){
+  // Basis-Koordinaten aus aktivem Ort
+  const locLat=activeLocationIdx>=0?savedLocations[activeLocationIdx]?.lat:null;
+  const locLon=activeLocationIdx>=0?savedLocations[activeLocationIdx]?.lon:null;
+
+  document.getElementById('mapPopupTitle').textContent=storeName.toUpperCase();
+  document.getElementById('mapPopupSubtitle').textContent='Nächste Filiale suchen…';
+  document.getElementById('mapAddrName').textContent='–';
+  document.getElementById('mapAddrStreet').textContent='–';
+  document.getElementById('mapRouteBtn').style.display='none';
+  currentMapLat=null;currentMapLon=null;
+
+  // Karte zurücksetzen
+  if(mapInstance){mapInstance.remove();mapInstance=null;}
+  const mc=document.getElementById('mapContainer');
+  mc.innerHTML='<div class="map-loading" id="mapLoading"><div class="map-spinner"></div><span>Suche Filiale…</span></div>';
+
+  document.getElementById('mapPopupBg').classList.add('open');
+
+  // Koordinaten für Suche bestimmen
+  let searchLat=locLat||52.52;
+  let searchLon=locLon||13.40;
+
+  // Falls kein gespeicherter Ort: Geolocation versuchen
+  if(!locLat){
+    try{
+      const pos=await new Promise((res,rej)=>navigator.geolocation.getCurrentPosition(res,rej,{timeout:5000}));
+      searchLat=pos.coords.latitude;searchLon=pos.coords.longitude;
+    }catch(e){/* ignore */}
+  }
+
+  // Overpass: Filiale mit dem Namen suchen
+  try{
+    const safe=storeName.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+    const radius=20000;
+    const q=`[out:json][timeout:15];(node["name"~"^${safe}",i](around:${radius},${searchLat},${searchLon});way["name"~"^${safe}",i](around:${radius},${searchLat},${searchLon}););out center 1;`;
+    const resp=await fetch('https://overpass-api.de/api/interpreter',{method:'POST',body:'data='+encodeURIComponent(q)});
+    if(!resp.ok)throw new Error('overpass');
+    const data=await resp.json();
+
+    if(!data.elements||!data.elements.length){
+      mc.innerHTML='<div class="map-loading">&#128205; Kein Standort gefunden</div>';
+      document.getElementById('mapPopupSubtitle').textContent='Kein Eintrag in OpenStreetMap';
+      return;
+    }
+
+    const el=data.elements[0];
+    const lat=el.lat||el.center?.lat;
+    const lon=el.lon||el.center?.lon;
+    const tags=el.tags||{};
+    const name=tags.name||storeName;
+    const street=(tags['addr:street']?tags['addr:street']+(tags['addr:housenumber']?' '+tags['addr:housenumber']:''):'');
+    const city=tags['addr:city']||tags['addr:town']||'';
+    const addr=[street,city].filter(Boolean).join(', ')||'Adresse unbekannt';
+
+    currentMapLat=lat;currentMapLon=lon;
+    document.getElementById('mapAddrName').textContent=name;
+    document.getElementById('mapAddrStreet').textContent=addr;
+    document.getElementById('mapPopupSubtitle').textContent='Nächste Filiale';
+    document.getElementById('mapRouteBtn').style.display='';
+
+    // Karte initialisieren
+    mc.innerHTML='';mc.style.height='240px';
+    mapInstance=L.map('mapContainer',{zoomControl:true,attributionControl:false}).setView([lat,lon],16);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19}).addTo(mapInstance);
+
+    // Custom Marker
+    const icon=L.divIcon({
+      html:`<div style="background:linear-gradient(135deg,#c084fc,#818cf8);width:32px;height:32px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:3px solid #fff;box-shadow:0 3px 12px rgba(0,0,0,0.5)"></div>`,
+      iconSize:[32,32],iconAnchor:[16,32],className:''
+    });
+    L.marker([lat,lon],{icon}).addTo(mapInstance).bindPopup(name).openPopup();
+    setTimeout(()=>mapInstance.invalidateSize(),100);
+
+  }catch(err){
+    console.error(err);
+    mc.innerHTML='<div class="map-loading">Fehler beim Laden</div>';
+  }
+}
+
+function openRoute(){
+  if(currentMapLat===null)return;
+  window.open(`https://www.google.com/maps/dir/?api=1&destination=${currentMapLat},${currentMapLon}`,'_blank');
+}
+
+/* ═══════════════════════════════════════════════════
+   STORE POPUP mit Long-Press → Karte
+═══════════════════════════════════════════════════ */
 let selectedStore='';
 let renamingStore=null;
 
@@ -528,6 +776,7 @@ function makeStoreRow(s){
   const isRenaming=(renamingStore===s);
   d.className='store-list-item'+(s===selectedStore&&!isRenaming?' selected':'')+(isRenaming?' renaming':'');
   d.dataset.store=s;
+
   if(isRenaming){
     const safeVal=s.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
     d.innerHTML=`<input class="s-rename-inp" type="text" value="${safeVal}" /><button class="s-rename-confirm" title="Speichern">&#10003;</button><button class="store-del-btn">&#10005;</button>`;
@@ -544,15 +793,32 @@ function makeStoreRow(s){
       inp.addEventListener('blur',()=>setTimeout(()=>{if(renamingStore===s)confirmInlineRename(s);},200));
     },30);
   }else{
-    d.innerHTML=`<span class="s-name">${s}</span><span class="s-check">&#10003;</span><button class="store-rename-btn">&#9998;</button><button class="store-del-btn">&#10005;</button>`;
+    d.innerHTML=`<span class="s-name">${s}</span><span class="s-check">&#10003;</span><button class="store-map-btn" title="Auf Karte anzeigen">&#128205;</button><button class="store-rename-btn">&#9998;</button><button class="store-del-btn">&#10005;</button>`;
     d.querySelector('.store-rename-btn').addEventListener('click',e=>{e.stopPropagation();renamingStore=s;buildStoreList();});
     d.querySelector('.store-del-btn').addEventListener('click',e=>{e.stopPropagation();removeStore(s);});
+    d.querySelector('.store-map-btn').addEventListener('click',e=>{e.stopPropagation();openMapForStore(s);});
     d.addEventListener('click',()=>selectStore(s));
+
+    /* Long-Press */
+    let lpTimer=null;
+    let lpMoved=false;
+    d.addEventListener('touchstart',e=>{
+      lpMoved=false;
+      lpTimer=setTimeout(()=>{
+        if(!lpMoved){
+          d.classList.add('long-pressing');
+          setTimeout(()=>d.classList.remove('long-pressing'),400);
+          openMapForStore(s);
+        }
+      },600);
+    },{passive:true});
+    d.addEventListener('touchmove',()=>{lpMoved=true;clearTimeout(lpTimer);},{passive:true});
+    d.addEventListener('touchend',()=>clearTimeout(lpTimer),{passive:true});
+    d.addEventListener('touchcancel',()=>clearTimeout(lpTimer),{passive:true});
   }
   return d;
 }
 
-/* ─── FIX: Duplikat-Schutz beim Umbenennen ─── */
 function confirmInlineRename(oldName){
   const d=document.querySelector(`.store-list-item[data-store="${CSS.escape(oldName)}"]`);
   if(!d){renamingStore=null;buildStoreList();return;}
@@ -560,11 +826,8 @@ function confirmInlineRename(oldName){
   const newName=inp?inp.value.trim():oldName;
   renamingStore=null;
   if(!newName||newName===oldName){buildStoreList();return;}
-  /* Prüfen ob Name bereits existiert */
   if(customStores.some(s=>s.toLowerCase()===newName.toLowerCase())){
-    showToast('\"'+newName+'\" existiert bereits!');
-    buildStoreList();
-    return;
+    showToast('"'+newName+'" existiert bereits!');buildStoreList();return;
   }
   const idx=customStores.indexOf(oldName);
   if(idx!==-1){
@@ -627,7 +890,7 @@ function cap(s){return s.charAt(0).toUpperCase()+s.slice(1);}
 function addItem(){
   const inp=document.getElementById('inp');const raw=inp.value.trim();if(!raw)return;
   let name=raw,itemQty=getQty();
-  const m=raw.match(/^(\d+)[x\u00d7\s]\s*(.+)$/i);
+  const m=raw.match(/^(\d+)[x×\s]\s*(.+)$/i);
   if(m){itemQty=parseInt(m[1]);name=cap(m[2].trim());}else name=cap(raw);
   items.unshift({id:Date.now(),name,qty:itemQty,done:false,store:selectedStore});
   save();render();inp.value='';setQty(1);inp.focus();
