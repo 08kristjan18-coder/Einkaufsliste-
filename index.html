@@ -517,8 +517,39 @@ async function loadStoresByLocation(query, plz, city){
     if(!geoData.length){ showToast('❌ Ort nicht gefunden'); return; }
     const {lat, lon, display_name} = geoData[0];
     const stadtName = city || display_name.split(',')[0];
-    const radius = 4000;
-    const q=`[out:json][timeout:18];(node["shop"="supermarket"](around:${radius},${lat},${lon});node["shop"="convenience"](around:${radius},${lat},${lon});node["shop"="chemist"](around:${radius},${lat},${lon});node["shop"="grocery"](around:${radius},${lat},${lon});node["shop"="discounter"](around:${radius},${lat},${lon});way["shop"="supermarket"](around:${radius},${lat},${lon});way["shop"="chemist"](around:${radius},${lat},${lon}););out tags;`;
+    const radius = 5000;
+    const shopTypes = [
+      /* Lebensmittel */
+      'supermarket','convenience','grocery','discounter','butcher','bakery',
+      'deli','greengrocer','dairy','frozen_food','health_food','pasta',
+      /* Drogerie & Gesundheit */
+      'chemist','cosmetics','beauty','pharmacy','optician','hearing_aids',
+      /* Kleidung & Schuhe */
+      'clothes','shoes','sports','outdoor','boutique','second_hand',
+      /* Elektronik & Haushalt */
+      'electronics','mobile_phone','computer','hifi','appliance',
+      'kitchen','bathroom','lighting','vacuum_cleaner',
+      /* Baumarkt & Garten */
+      'doityourself','hardware','garden_centre','florist','glaziery',
+      'paint','tile','glaziery',
+      /* Möbel & Wohnen */
+      'furniture','interior_decoration','bed','curtain','carpet',
+      /* Schule & Büro */
+      'stationery','books','art','music','newsagent','copyshop',
+      /* Kinder & Spielzeug */
+      'toys','baby_goods','children',
+      /* Tiere */
+      'pet','agrarian',
+      /* Lebensmittel Spezial */
+      'alcohol','beverages','tea','coffee','chocolate','candy','ice_cream',
+      /* Sonstiges Nützliches */
+      'department_store','mall','general','variety_store','wholesale',
+      'fabric','sewing','wool','photo','frame','gift','party',
+      'tobacco','lottery','travel_agency','laundry','dry_cleaning',
+    ];
+    const nodeLines = shopTypes.map(t=>`node["shop"="${t}"](around:${radius},${lat},${lon});`).join('');
+    const wayLines  = shopTypes.map(t=>`way["shop"="${t}"](around:${radius},${lat},${lon});`).join('');
+    const q=`[out:json][timeout:25];(${nodeLines}${wayLines});out tags;`;
     const ovResp = await fetch('https://overpass-api.de/api/interpreter',{method:'POST',body:'data='+encodeURIComponent(q)});
     if(!ovResp.ok) throw new Error('overpass');
     const ovData = await ovResp.json();
