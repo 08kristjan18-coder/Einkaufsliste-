@@ -4,8 +4,8 @@
   "description": "Einkaufsliste als App – immer dabei",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#08000f",
-  "theme_color": "#08000f",
+  "background_color": "#1a1a22",
+  "theme_color": "#1a1a22",
   "orientation": "portrait",
   "icons": [
     {
