@@ -79,8 +79,8 @@ body{
 .sec-btn{background:none;border:none;color:rgba(255,255,255,0.18);font-size:11px;cursor:pointer;text-decoration:underline;font-family:'DM Sans',sans-serif}
 .sec-btn:hover{color:#a78bfa}
 
-.item{display:flex;align-items:center;gap:13px;background:rgba(44,44,58,0.98);border:1px solid rgba(180,160,240,0.26);border-radius:16px;padding:16px;margin-bottom:8px;position:relative;overflow:hidden;backdrop-filter:blur(14px);cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,0.55),0 1px 0 rgba(255,255,255,0.06) inset,0 0 0 1px rgba(255,255,255,0.03);}
-.item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--grad);border-radius:4px 0 0 4px;opacity:0.90;}
+.item{display:flex;align-items:center;gap:13px;background:rgba(44,44,58,0.98);border:1px solid rgba(180,160,240,0.26);border-radius:16px;padding:16px;margin-bottom:8px;position:relative;overflow:visible;backdrop-filter:blur(14px);cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,0.55),0 1px 0 rgba(255,255,255,0.06) inset,0 0 0 1px rgba(255,255,255,0.03);}
+.item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--grad);border-radius:4px 0 0 4px;opacity:0.90;pointer-events:none;}
 .item.done{opacity:0.22;}
 .item.done .item-name{text-decoration:line-through;color:rgba(255,255,255,0.26)}
 .item.done::before{background:rgba(255,255,255,0.08);}
@@ -96,10 +96,46 @@ body{
 .act-btn:hover{background:rgba(255,255,255,0.07)}
 .edit-btn:hover{color:#e879f9!important}.del-btn:hover{color:#ff5252!important}
 
-.store-group-lbl{font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#4ade80;margin:16px 0 7px;padding-left:2px;font-weight:500;display:flex;align-items:center;gap:7px;}
+/* ITEM ACTION BUTTONS - unter dem Namen */
+.item-acts{display:flex;gap:1px;flex-shrink:0;align-items:center;}
+.act-btn{background:none;border:none;cursor:pointer;padding:7px 8px;border-radius:9px;font-size:16px;transition:background 0.15s,color 0.15s;color:rgba(255,255,255,0.18);line-height:1;flex-shrink:0;}
+.act-btn:active{background:rgba(255,255,255,0.08)}
+.edit-btn:hover,.edit-btn:active{color:#e879f9!important}
+.maps-btn:hover,.maps-btn:active{color:#818cf8!important}
+.del-btn:hover,.del-btn:active{color:#ff5252!important}
+
+.item-name-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.item-inline-acts{display:flex;gap:0px;align-items:center;flex-shrink:0;}
+.iact-btn{background:none;border:none;cursor:pointer;padding:5px 7px;border-radius:8px;font-size:15px;color:rgba(255,255,255,0.20);line-height:1;transition:color 0.15s,background 0.15s;}
+.iact-btn:active{background:rgba(255,255,255,0.08)}
+.iact-edit:active,.iact-edit:hover{color:#e879f9}
+.iact-maps:active,.iact-maps:hover{color:#818cf8}
+.iact-del:active,.iact-del:hover{color:#ff5252}
+
+/* MAPS POPUP */
+.maps-popup-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(6px);z-index:500;align-items:center;justify-content:center;padding:16px;}
+.maps-popup-bg.open{display:flex}
+.maps-popup{background:#1c1c28;border:1px solid rgba(167,139,250,0.28);border-radius:20px;width:100%;max-width:460px;overflow:hidden;animation:fadeScaleIn 0.18s ease;box-shadow:0 12px 60px rgba(0,0,0,0.80);}
+.maps-popup-header{padding:14px 16px 12px;display:flex;align-items:center;justify-content:space-between;}
+.maps-popup-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:#a78bfa;}
+.maps-popup-close{background:none;border:none;color:rgba(255,255,255,0.30);font-size:22px;cursor:pointer;padding:4px;line-height:1;}
+.maps-popup-close:active{color:#fff}
+.maps-iframe-wrap{width:100%;height:300px;background:#0d0b1a;position:relative;}
+.maps-iframe-wrap iframe{width:100%;height:100%;border:none;display:block;}
+.maps-popup-footer{padding:12px 14px 14px;display:flex;gap:10px;}
+.maps-open-btn{flex:1;padding:12px;border-radius:12px;border:none;cursor:pointer;background:var(--grad);color:#fff;font-size:15px;font-weight:500;font-family:'DM Sans',sans-serif;box-shadow:0 4px 16px rgba(124,58,237,0.35);}
+.maps-open-btn:active{opacity:0.85}
+
+.store-group-lbl{font-size:13px;letter-spacing:0.12em;text-transform:uppercase;color:#4ade80;margin:16px 0 7px;padding-left:2px;font-weight:600;display:flex;align-items:center;gap:8px;}
 .store-group-lbl::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(74,222,128,0.28),transparent);}
 .store-group-lbl.everywhere{color:#818cf8;}
 .store-group-lbl.everywhere::after{background:linear-gradient(90deg,rgba(129,140,248,0.28),transparent);}
+.grp-acts{display:flex;gap:2px;align-items:center;flex-shrink:0;margin-left:2px;}
+.grp-btn{background:none;border:none;cursor:pointer;padding:5px 7px;border-radius:7px;font-size:16px;color:rgba(74,222,128,0.45);line-height:1;transition:color 0.15s,background 0.15s;}
+.grp-btn:active,.grp-btn:hover{background:rgba(74,222,128,0.10);}
+.grp-maps:active,.grp-maps:hover{color:#4ade80;}
+.grp-edit:active,.grp-edit:hover{color:#e879f9;}
+.grp-del:active,.grp-del:hover{color:#ff5252;}
 .empty{text-align:center;padding:2.5rem 1rem;color:rgba(255,255,255,0.22)}
 .empty-icon{font-size:44px;margin-bottom:12px}
 .empty p{font-size:15px;line-height:1.7}
@@ -382,6 +418,22 @@ body{
   </div>
 </div>
 
+<!-- MAPS POPUP -->
+<div class="maps-popup-bg" id="mapsPopupBg" onclick="if(event.target===this)closeMapsPopup()">
+  <div class="maps-popup">
+    <div class="maps-popup-header">
+      <div class="maps-popup-title" id="mapsPopupTitle">LADEN</div>
+      <button class="maps-popup-close" onclick="closeMapsPopup()">&#10005;</button>
+    </div>
+    <div class="maps-iframe-wrap">
+      <iframe id="mapsIframe" src="" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
+    <div class="maps-popup-footer">
+      <button class="maps-open-btn" id="mapsOpenBtn">&#128205; In Google Maps öffnen</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <div id="installBanner">
@@ -407,13 +459,10 @@ body{
 const SHOP_CATEGORIES=[
   {
     id:'food', label:'Lebensmittel', icon:'&#127811;',
-    types:['supermarket','convenience','grocery','discounter','butcher','bakery','deli',
-           'greengrocer','dairy','frozen_food','health_food','pasta','alcohol','beverages',
-           'tea','coffee','chocolate','candy','ice_cream'],
+    types:['supermarket','discounter','grocery'],
     brands:['Lidl','Edeka','Rewe','Aldi','Netto','Penny','Kaufland','Norma','Aldi Süd',
             'Aldi Nord','Real','Tegut','Globus','Hit','V-Markt','Combi','Famila',
-            'Marktkauf','E-Center','Nahkauf','Spar','Bäcker','Backwerk','Bäckerei',
-            'Metzgerei','Fleischerei','Getränkemarkt','Trinkgut','Hol ab']
+            'Marktkauf','E-Center','Nahkauf','Spar','Trinkgut','Hol ab']
   },
   {
     id:'drug', label:'Drogerie', icon:'&#129514;',
@@ -444,22 +493,10 @@ const SHOP_CATEGORIES=[
             'Hellweg','Raiffeisen','Blume 2000','Floristen']
   },
   {
-    id:'home', label:'Wohnen', icon:'&#127968;',
-    types:['furniture','interior_decoration','bed','curtain','carpet'],
-    brands:['IKEA','Möbel Höffner','XXXLutz','Roller','Poco','Dänisches Bettenlager',
-            'Jysk','Bettenwelt','Sconto','Porta','Trends','Kare']
-  },
-  {
     id:'office', label:'Büro & Buch', icon:'&#128218;',
     types:['stationery','books','art','music','newsagent','copyshop'],
     brands:['Thalia','Hugendubel','Weltbild','Mayersche','Bücher Pustet','Papeterie',
             'Staples','McPaper','Müller','Libro','Osiander','Gravis','dm']
-  },
-  {
-    id:'kids', label:'Kinder', icon:'&#129528;',
-    types:['toys','baby_goods','children'],
-    brands:['Toys R Us','Smyths Toys','Die Spielzeugkiste','Baby Walz','Babymarkt',
-            'BabyOne','Ernsting\'s Family','Kids']
   },
   {
     id:'pets', label:'Tiere', icon:'&#128062;',
@@ -474,15 +511,14 @@ const SHOP_CATEGORIES=[
   },
   {
     id:'misc', label:'Sonstiges', icon:'&#127978;',
-    types:['department_store','mall','general','variety_store','fabric','sewing','wool',
-           'photo','frame','gift','party','tobacco','lottery','travel_agency',
-           'laundry','dry_cleaning'],
-    brands:['Galeria','Karstadt','Kaufhof','Woolworth','EMP','Depot','Butlers',
-            'Tchibo','Tabak','Lotto','TUI','ADAC Reisebüro','Reinigung']
+    types:['convenience','newsagent','kiosk','variety_store','general','tobacco',
+           'lottery','laundry','dry_cleaning','gift','party','photo'],
+    brands:['Woolworth','Tchibo','Tabak','Lotto','Kiosk','Spätverkauf','Späti',
+            'Nah & Gut','tegut…','Tante Emma','Edeka Nahversorger','Reinigung']
   },
 ];
 
-let activeFilters=JSON.parse(localStorage.getItem('shopFilters')||'["food","drug"]');
+let activeFilters=JSON.parse(localStorage.getItem('shopFilters')||'["food","drug","misc"]');
 function saveFilters(){localStorage.setItem('shopFilters',JSON.stringify(activeFilters));}
 function buildFilterChips(){
   const el=document.getElementById('filterChips');el.innerHTML='';
@@ -675,130 +711,47 @@ async function loadStoresByLocation(query,plz,city){
 }
 
 /* ═══════════════════════════════════════════════════
-   KARTEN-POPUP
+   MAPS: direkt Google Maps öffnen
 ═══════════════════════════════════════════════════ */
-let mapInstance=null;
-let currentMapLat=null;
-let currentMapLon=null;
 
-function mapPopupBgClick(e){if(e.target===document.getElementById('mapPopupBg'))closeMapPopup();}
-
-function closeMapPopup(){
-  document.getElementById('mapPopupBg').classList.remove('open');
-  if(mapInstance){mapInstance.remove();mapInstance=null;}
+function openMapForStore(storeName){
+  const cityHint=activeLocationIdx>=0?savedLocations[activeLocationIdx]?.city:'';
+  const query=storeName+(cityHint?' in '+cityHint:'');
+  const q=encodeURIComponent(query);
+  document.getElementById('mapsPopupTitle').textContent=storeName.toUpperCase();
+  // Direkte Google Maps Suche als iframe – kein API Key
+  document.getElementById('mapsIframe').src='https://maps.google.com/maps?q='+q+'&output=embed&hl=de';
+  document.getElementById('mapsOpenBtn').onclick=()=>
+    window.open('https://www.google.com/maps/search/?api=1&query='+q,'_blank');
+  document.getElementById('mapsPopupBg').classList.add('open');
+}
+function closeMapsPopup(){
+  document.getElementById('mapsPopupBg').classList.remove('open');
+  document.getElementById('mapsIframe').src='';
 }
 
-async function openMapForStore(storeName){
-  // Basis-Koordinaten aus aktivem Ort
-  const locLat=activeLocationIdx>=0?savedLocations[activeLocationIdx]?.lat:null;
-  const locLon=activeLocationIdx>=0?savedLocations[activeLocationIdx]?.lon:null;
-
-  document.getElementById('mapPopupTitle').textContent=storeName.toUpperCase();
-  document.getElementById('mapPopupSubtitle').textContent='Nächste Filiale suchen…';
-  document.getElementById('mapAddrName').textContent='–';
-  document.getElementById('mapAddrStreet').textContent='–';
-  document.getElementById('mapRouteBtn').style.display='none';
-  currentMapLat=null;currentMapLon=null;
-
-  // Karte zurücksetzen
-  if(mapInstance){mapInstance.remove();mapInstance=null;}
-  const mc=document.getElementById('mapContainer');
-  mc.innerHTML='<div class="map-loading" id="mapLoading"><div class="map-spinner"></div><span>Suche Filiale…</span></div>';
-
-  document.getElementById('mapPopupBg').classList.add('open');
-
-  // Koordinaten für Suche bestimmen
-  let searchLat=locLat||52.52;
-  let searchLon=locLon||13.40;
-
-  // Falls kein gespeicherter Ort: Geolocation versuchen
-  if(!locLat){
-    try{
-      const pos=await new Promise((res,rej)=>navigator.geolocation.getCurrentPosition(res,rej,{timeout:5000}));
-      searchLat=pos.coords.latitude;searchLon=pos.coords.longitude;
-    }catch(e){/* ignore */}
-  }
-
-  // Overpass: Filiale mit dem Namen suchen
-  try{
-    const safe=storeName.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
-    const radius=30000;
-    // Suche: name beginnt mit storeName ODER brand enthält storeName
-    const q=`[out:json][timeout:20];(node["name"~"${safe}",i](around:${radius},${searchLat},${searchLon});way["name"~"${safe}",i](around:${radius},${searchLat},${searchLon});node["brand"~"${safe}",i](around:${radius},${searchLat},${searchLon});way["brand"~"${safe}",i](around:${radius},${searchLat},${searchLon}););out center 5;`;
-    const resp=await fetch('https://overpass.kumi.systems/api/interpreter',{method:'POST',body:'data='+encodeURIComponent(q)});
-    if(!resp.ok)throw new Error('overpass');
-    const data=await resp.json();
-
-    if(!data.elements||!data.elements.length){
-      // Fallback: Nominatim Geocoding mit Suchbegriff + Stadt
-      const cityHint=activeLocationIdx>=0?savedLocations[activeLocationIdx]?.city:'';
-      const fallbackQ=encodeURIComponent(storeName+(cityHint?' '+cityHint:''));
-      const nmResp=await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${fallbackQ}&limit=3&countrycodes=de&accept-language=de`);
-      if(!nmResp.ok)throw new Error('nominatim');
-      const nmData=await nmResp.json();
-      if(!nmData.length){
-        mc.innerHTML='<div class="map-loading">&#128205; Kein Standort gefunden</div>';
-        document.getElementById('mapPopupSubtitle').textContent='Nicht in OpenStreetMap gefunden';
-        return;
-      }
-      // Nächsten Treffer nehmen
-      const el=nmData[0];
-      const lat=parseFloat(el.lat);const lon=parseFloat(el.lon);
-      const name=el.display_name.split(',')[0];
-      const addr=el.display_name.split(',').slice(1,3).join(',').trim();
-      currentMapLat=lat;currentMapLon=lon;
-      document.getElementById('mapAddrName').textContent=name;
-      document.getElementById('mapAddrStreet').textContent=addr||'';
-      document.getElementById('mapPopupSubtitle').textContent='Gefundener Standort';
-      document.getElementById('mapRouteBtn').style.display='';
-      mc.innerHTML='';mc.style.height='240px';
-      mapInstance=L.map('mapContainer',{zoomControl:true,attributionControl:false}).setView([lat,lon],16);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19}).addTo(mapInstance);
-      const icon=L.divIcon({html:`<div style="background:linear-gradient(135deg,#a78bfa,#7c3aed);width:32px;height:32px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:3px solid #fff;box-shadow:0 3px 12px rgba(0,0,0,0.5)"></div>`,iconSize:[32,32],iconAnchor:[16,32],className:''});
-      L.marker([lat,lon],{icon}).addTo(mapInstance).bindPopup(name).openPopup();
-      setTimeout(()=>mapInstance.invalidateSize(),100);
-      return;
-    }
-
-    // Nächsten Eintrag nehmen (sortiert nach Distanz durch Overpass "out center N")
-    const el=data.elements[0];
-    const lat=el.lat||el.center?.lat;
-    const lon=el.lon||el.center?.lon;
-    const tags=el.tags||{};
-    const name=tags.name||storeName;
-    const street=(tags['addr:street']?tags['addr:street']+(tags['addr:housenumber']?' '+tags['addr:housenumber']:''):'');
-    const city=tags['addr:city']||tags['addr:town']||'';
-    const addr=[street,city].filter(Boolean).join(', ')||'Adresse unbekannt';
-
-    currentMapLat=lat;currentMapLon=lon;
-    document.getElementById('mapAddrName').textContent=name;
-    document.getElementById('mapAddrStreet').textContent=addr;
-    document.getElementById('mapPopupSubtitle').textContent='Nächste Filiale';
-    document.getElementById('mapRouteBtn').style.display='';
-
-    // Karte initialisieren
-    mc.innerHTML='';mc.style.height='240px';
-    mapInstance=L.map('mapContainer',{zoomControl:true,attributionControl:false}).setView([lat,lon],16);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19}).addTo(mapInstance);
-
-    // Custom Marker
-    const icon=L.divIcon({
-      html:`<div style="background:linear-gradient(135deg,#a78bfa,#7c3aed);width:32px;height:32px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:3px solid #fff;box-shadow:0 3px 12px rgba(0,0,0,0.5)"></div>`,
-      iconSize:[32,32],iconAnchor:[16,32],className:''
-    });
-    L.marker([lat,lon],{icon}).addTo(mapInstance).bindPopup(name).openPopup();
-    setTimeout(()=>mapInstance.invalidateSize(),100);
-
-  }catch(err){
-    console.error(err);
-    mc.innerHTML='<div class="map-loading">Fehler beim Laden</div>';
-  }
+function renameStoreGroup(oldName){
+  const newName=prompt('Laden umbenennen:',oldName);
+  if(!newName||newName.trim()===oldName)return;
+  const n=newName.trim();
+  // In customStores umbenennen
+  const idx=customStores.indexOf(oldName);
+  if(idx!==-1)customStores[idx]=n;
+  // In Items umbenennen
+  items.forEach(it=>{if(it.store===oldName)it.store=n;});
+  // In savedLocations
+  if(activeLocationIdx>=0){savedLocations[activeLocationIdx].stores=customStores;saveLocations();}
+  saveStores();save();render();showToast(oldName+' → '+n);
+}
+function deleteStoreGroup(storeName){
+  if(!confirm('"'+storeName+'" und alle zugehörigen Artikel löschen?'))return;
+  items=items.filter(i=>i.store!==storeName);
+  customStores=customStores.filter(s=>s!==storeName);
+  if(activeLocationIdx>=0){savedLocations[activeLocationIdx].stores=customStores;saveLocations();}
+  saveStores();save();render();showToast(storeName+' gelöscht');
 }
 
-function openRoute(){
-  if(currentMapLat===null)return;
-  window.open(`https://www.google.com/maps/dir/?api=1&destination=${currentMapLat},${currentMapLon}`,'_blank');
-}
+
 
 /* ═══════════════════════════════════════════════════
    STORE POPUP mit Long-Press → Karte
@@ -1006,22 +959,8 @@ function render(){
     d.innerHTML=`
       <div class="chk${it.done?' on':''}"><span class="chk-mark">&#10003;</span></div>
       <div class="item-main"><span class="item-name">${it.name}</span>${invalidTag}</div>
-      ${qtyHtml}
-      <div class="item-acts">
-        <button class="act-btn edit-btn">&#9998;</button>
-        <button class="act-btn del-btn">&#10005;</button>
-      </div>`;
-    d.addEventListener('click',e=>{if(e.target.classList.contains('act-btn')||e.target.closest('.act-btn'))return;toggle(it.id);});
-    d.querySelector('.edit-btn').addEventListener('click',e=>{e.stopPropagation();openEdit(it.id);});
-    d.querySelector('.del-btn').addEventListener('click',e=>{e.stopPropagation();del(it.id);});
-    // Long-Press auf Kachel → Laden auf Karte (wenn Laden gesetzt)
-    if(it.store){
-      let lpTimer=null;let lpMoved=false;
-      d.addEventListener('touchstart',e=>{lpMoved=false;lpTimer=setTimeout(()=>{if(!lpMoved){d.style.transform='scale(0.97)';setTimeout(()=>d.style.transform='',300);openMapForStore(it.store);}},600);},{passive:true});
-      d.addEventListener('touchmove',()=>{lpMoved=true;clearTimeout(lpTimer);},{passive:true});
-      d.addEventListener('touchend',()=>clearTimeout(lpTimer),{passive:true});
-      d.addEventListener('touchcancel',()=>clearTimeout(lpTimer),{passive:true});
-    }
+      ${qtyHtml}`;
+    d.addEventListener('click',()=>toggle(it.id));
     return d;
   }
 
@@ -1034,8 +973,21 @@ function render(){
     const keys=Object.keys(groups).sort((a,b)=>{if(!a)return 1;if(!b)return -1;return a.localeCompare(b,'de');});
     keys.forEach(key=>{
       const lbl=document.createElement('div');
-      if(key){lbl.className='store-group-lbl';lbl.textContent=key;}
-      else{lbl.className='store-group-lbl everywhere';lbl.textContent='Überall verfügbar';}
+      if(key){
+        lbl.className='store-group-lbl';
+        lbl.innerHTML=`<span>${key}</span>
+          <span class="grp-acts">
+            <button class="grp-btn grp-maps" title="Karte">&#128205;</button>
+            <button class="grp-btn grp-edit" title="Umbenennen">&#9998;</button>
+            <button class="grp-btn grp-del" title="Laden löschen">&#10005;</button>
+          </span>`;
+        lbl.querySelector('.grp-maps').addEventListener('click',e=>{e.stopPropagation();openMapForStore(key);});
+        lbl.querySelector('.grp-edit').addEventListener('click',e=>{e.stopPropagation();renameStoreGroup(key);});
+        lbl.querySelector('.grp-del').addEventListener('click',e=>{e.stopPropagation();deleteStoreGroup(key);});
+      } else {
+        lbl.className='store-group-lbl everywhere';
+        lbl.textContent='Überall verfügbar';
+      }
       lo.appendChild(lbl);
       groups[key].forEach(i=>lo.appendChild(makeItem(i)));
     });
