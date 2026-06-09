@@ -315,7 +315,7 @@ body{min-height:100vh;font-family:'DM Sans',sans-serif;font-size:16px;color:#fff
 </div>
 
 <script>
-/* HINTERGRUND – eine Stufe heller */
+/* HINTERGRUND */
 (function(){
   const cvs=document.getElementById('bgCanvas');
   const ctx=cvs.getContext('2d');
@@ -367,18 +367,20 @@ body{min-height:100vh;font-family:'DM Sans',sans-serif;font-size:16px;color:#fff
   requestAnimationFrame(frame);
 })();
 
-/* KATEGORIE-FILTER */
+/* KATEGORIE-FILTER
+   ─── FIX: 'wholesale' als eigene Kategorie, aus 'misc' entfernt ─── */
 const SHOP_CATEGORIES=[
-  {id:'food',   label:'Lebensmittel', icon:'&#127811;',types:['supermarket','convenience','grocery','discounter','butcher','bakery','deli','greengrocer','dairy','frozen_food','health_food','pasta','alcohol','beverages','tea','coffee','chocolate','candy','ice_cream']},
-  {id:'drug',   label:'Drogerie',     icon:'&#129514;',types:['chemist','cosmetics','beauty','pharmacy','optician','hearing_aids']},
-  {id:'clothes',label:'Mode',         icon:'&#128247;',types:['clothes','shoes','sports','outdoor','boutique','second_hand']},
-  {id:'tech',   label:'Elektronik',   icon:'&#128187;',types:['electronics','mobile_phone','computer','hifi','appliance','kitchen','bathroom','lighting','vacuum_cleaner']},
-  {id:'diy',    label:'Baumarkt',     icon:'&#128296;',types:['doityourself','hardware','garden_centre','florist','paint','tile','glaziery']},
-  {id:'home',   label:'Wohnen',       icon:'&#127968;',types:['furniture','interior_decoration','bed','curtain','carpet']},
-  {id:'office', label:'Büro & Buch',  icon:'&#128218;',types:['stationery','books','art','music','newsagent','copyshop']},
-  {id:'kids',   label:'Kinder',       icon:'&#129528;',types:['toys','baby_goods','children']},
-  {id:'pets',   label:'Tiere',        icon:'&#128062;',types:['pet','agrarian']},
-  {id:'misc',   label:'Sonstiges',    icon:'&#127978;',types:['department_store','mall','general','variety_store','wholesale','fabric','sewing','wool','photo','frame','gift','party','tobacco','lottery','travel_agency','laundry','dry_cleaning']},
+  {id:'food',      label:'Lebensmittel', icon:'&#127811;',types:['supermarket','convenience','grocery','discounter','butcher','bakery','deli','greengrocer','dairy','frozen_food','health_food','pasta','alcohol','beverages','tea','coffee','chocolate','candy','ice_cream']},
+  {id:'drug',      label:'Drogerie',     icon:'&#129514;',types:['chemist','cosmetics','beauty','pharmacy','optician','hearing_aids']},
+  {id:'clothes',   label:'Mode',         icon:'&#128247;',types:['clothes','shoes','sports','outdoor','boutique','second_hand']},
+  {id:'tech',      label:'Elektronik',   icon:'&#128187;',types:['electronics','mobile_phone','computer','hifi','appliance','kitchen','bathroom','lighting','vacuum_cleaner']},
+  {id:'diy',       label:'Baumarkt',     icon:'&#128296;',types:['doityourself','hardware','garden_centre','florist','paint','tile','glaziery']},
+  {id:'home',      label:'Wohnen',       icon:'&#127968;',types:['furniture','interior_decoration','bed','curtain','carpet']},
+  {id:'office',    label:'Büro & Buch',  icon:'&#128218;',types:['stationery','books','art','music','newsagent','copyshop']},
+  {id:'kids',      label:'Kinder',       icon:'&#129528;',types:['toys','baby_goods','children']},
+  {id:'pets',      label:'Tiere',        icon:'&#128062;',types:['pet','agrarian']},
+  {id:'wholesale', label:'Großhandel',   icon:'&#127981;',types:['wholesale','superstore','cash_and_carry']},
+  {id:'misc',      label:'Sonstiges',    icon:'&#127978;',types:['department_store','mall','general','variety_store','fabric','sewing','wool','photo','frame','gift','party','tobacco','lottery','travel_agency','laundry','dry_cleaning']},
 ];
 let activeFilters=JSON.parse(localStorage.getItem('shopFilters')||'["food","drug"]');
 function saveFilters(){localStorage.setItem('shopFilters',JSON.stringify(activeFilters));}
@@ -550,6 +552,7 @@ function makeStoreRow(s){
   return d;
 }
 
+/* ─── FIX: Duplikat-Schutz beim Umbenennen ─── */
 function confirmInlineRename(oldName){
   const d=document.querySelector(`.store-list-item[data-store="${CSS.escape(oldName)}"]`);
   if(!d){renamingStore=null;buildStoreList();return;}
@@ -557,6 +560,12 @@ function confirmInlineRename(oldName){
   const newName=inp?inp.value.trim():oldName;
   renamingStore=null;
   if(!newName||newName===oldName){buildStoreList();return;}
+  /* Prüfen ob Name bereits existiert */
+  if(customStores.some(s=>s.toLowerCase()===newName.toLowerCase())){
+    showToast('\"'+newName+'\" existiert bereits!');
+    buildStoreList();
+    return;
+  }
   const idx=customStores.indexOf(oldName);
   if(idx!==-1){
     customStores[idx]=newName;
@@ -564,7 +573,7 @@ function confirmInlineRename(oldName){
     if(selectedStore===oldName){selectedStore=newName;document.getElementById('storePickLabel').textContent=newName;}
     if(activeLocationIdx>=0){savedLocations[activeLocationIdx].stores=customStores;saveLocations();}
     save();saveStores();
-    showToast(oldName+' -> '+newName);
+    showToast(oldName+' → '+newName);
   }
   buildStoreList();render();
 }
