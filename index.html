@@ -24,12 +24,7 @@
 body{min-height:100vh;font-family:'DM Sans',sans-serif;font-size:16px;color:#fff;overflow-x:hidden;background:#040208;}
 #bgCanvas{position:fixed;inset:0;z-index:0;width:100%;height:100%;}
 .noise{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse 80% 70% at 50% 50%, transparent 30%, rgba(0,0,0,0.76) 100%);}
-.app{position:relative;z-index:2;max-width:480px;margin:0 auto;padding:0 0 80px}
-.header{padding:30px 20px 14px;text-align:center;position:relative}
-h1{font-family:'Bebas Neue',sans-serif;font-size:38px;letter-spacing:7px;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;margin-bottom:5px;filter:drop-shadow(0 0 14px rgba(192,132,252,0.38));}
-.date-str{font-size:12px;color:rgba(255,255,255,0.28);letter-spacing:0.1em}
-.settings-btn{position:absolute;right:20px;top:32px;background:rgba(255,255,255,0.05);border:1px solid rgba(200,160,255,0.16);border-radius:10px;color:rgba(200,160,255,0.58);width:38px;height:38px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.18s;backdrop-filter:blur(6px);}
-.settings-btn:hover{background:rgba(200,160,255,0.09);border-color:rgba(200,160,255,0.38);color:#e879f9}
+.app{position:relative;z-index:2;max-width:480px;margin:0 auto;padding:20px 0 80px}
 .stats-bar{margin:0 16px 14px;background:rgba(38,22,65,0.80);border:1px solid rgba(160,120,220,0.22);border-radius:16px;padding:12px 18px;display:flex;align-items:center;gap:12px;backdrop-filter:blur(14px);box-shadow:0 4px 24px rgba(0,0,0,0.50),inset 0 1px 0 rgba(255,255,255,0.06);}
 .stat-nums{font-size:14px;color:rgba(255,255,255,0.35);flex-shrink:0}
 .stat-nums b{color:rgba(255,255,255,0.82);font-weight:500}
@@ -55,6 +50,8 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:38px;letter-spacing:7px;backgro
 .store-pick-btn .arrow{font-size:11px;opacity:0.45}
 .store-clear-btn{background:none;border:none;color:rgba(255,255,255,0.16);font-size:18px;cursor:pointer;padding:6px 8px;display:none;}
 .store-clear-btn.show{display:block}
+.settings-inline-btn{background:rgba(255,255,255,0.06);border:1px solid rgba(200,160,255,0.16);border-radius:10px;color:rgba(200,160,255,0.50);width:40px;height:40px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.18s;flex-shrink:0;}
+.settings-inline-btn:hover{background:rgba(200,160,255,0.09);border-color:rgba(200,160,255,0.38);color:#e879f9}
 .cd-bar{display:none;margin:0 16px 10px;background:rgba(10,24,10,0.8);border:1px solid rgba(100,220,100,0.18);border-radius:14px;padding:11px 15px;font-size:13px;color:rgba(255,255,255,0.42);align-items:center;gap:10px;backdrop-filter:blur(8px);}
 .cd-bar.show{display:flex}
 .cd-fill-wrap{flex:1;height:3px;background:rgba(255,255,255,0.07);border-radius:2px;overflow:hidden}
@@ -65,8 +62,6 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:38px;letter-spacing:7px;backgro
 .section-lbl{font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.27);font-weight:500}
 .sec-btn{background:none;border:none;color:rgba(255,255,255,0.17);font-size:11px;cursor:pointer;text-decoration:underline;font-family:'DM Sans',sans-serif}
 .sec-btn:hover{color:#ff5252}
-
-/* ── ITEM KACHELN ── */
 .item{
   display:flex;align-items:center;gap:13px;
   background:var(--card-bg);
@@ -78,25 +73,17 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:38px;letter-spacing:7px;backgro
 }
 .item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--grad);border-radius:3px 0 0 3px;opacity:0.7;}
 .item::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,0.025) 0%,transparent 60%);pointer-events:none;}
-
-/* ── CHECK ── */
-.chk{
-  display:none;
-}
-.chk.on{
-  display:none;
-}
-.chk-mark{
-  font-size:14px;color:#fff;font-weight:700;
-  display:block;
-  opacity:0;
-}
+.chk{display:none;}
+.chk.on{display:none;}
+.chk-mark{font-size:14px;color:#fff;font-weight:700;display:block;opacity:0;}
 .chk.on .chk-mark{opacity:1;}
-
 .item.done{opacity:0.24;}
 .item.done .item-name{text-decoration:line-through;color:rgba(255,255,255,0.26)}
 .item.done::before{background:rgba(255,255,255,0.09);}
-
+/* Store ungültig – ausgegraut */
+.item.store-invalid{opacity:0.52;}
+.item.store-invalid::before{background:rgba(150,150,180,0.35);}
+.store-invalid-tag{font-size:11px;color:rgba(255,120,120,0.60);margin-top:2px;font-style:italic;}
 .item-main{flex:1;display:flex;flex-direction:column;gap:3px;min-width:0;}
 .item-name{font-size:20px;font-weight:400;line-height:1.3;word-break:break-word;letter-spacing:0.01em;color:#fff;}
 .item-store-tag{display:none;}
@@ -108,11 +95,11 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:38px;letter-spacing:7px;backgro
 .del-btn:hover{color:#ff5252!important}
 .store-group-lbl{font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#4ade80;margin:16px 0 7px;padding-left:2px;font-weight:500;display:flex;align-items:center;gap:7px;}
 .store-group-lbl::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(74,222,128,0.30),transparent);}
+.store-group-lbl.everywhere{color:#818cf8;}
+.store-group-lbl.everywhere::after{background:linear-gradient(90deg,rgba(129,140,248,0.30),transparent);}
 .empty{text-align:center;padding:2.5rem 1rem;color:rgba(255,255,255,0.2)}
 .empty-icon{font-size:44px;margin-bottom:12px}
 .empty p{font-size:15px;line-height:1.7}
-
-/* ── MODALS ── */
 .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.84);backdrop-filter:blur(6px);z-index:300;align-items:flex-end;justify-content:center;}
 .modal-bg.open{display:flex}
 .modal{background:linear-gradient(160deg,#2a1f3d,#1a1530);border:1px solid rgba(232,138,255,0.28);border-radius:24px 24px 0 0;padding:26px 22px calc(30px + env(safe-area-inset-bottom,0px));width:100%;max-width:480px;animation:slideUp 0.22s ease;box-shadow:0 -8px 40px rgba(0,0,0,0.55);}
@@ -125,7 +112,6 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:38px;letter-spacing:7px;backgro
 .m-save{flex:1;padding:14px;border-radius:12px;border:none;cursor:pointer;background:var(--grad);color:#fff;font-size:16px;font-weight:500;font-family:'DM Sans',sans-serif;box-shadow:0 4px 18px rgba(168,85,247,0.33);transition:opacity 0.15s,transform 0.1s;}
 .m-save:active{opacity:0.85;transform:scale(0.98)}
 .m-cancel{flex:1;padding:14px;border-radius:12px;cursor:pointer;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);color:rgba(255,255,255,0.28);font-size:16px;font-family:'DM Sans',sans-serif;}
-
 .settings-modal{background:linear-gradient(160deg,#2a1f3d,#1a1530);border:1px solid rgba(232,138,255,0.28);border-radius:24px 24px 0 0;padding:26px 22px calc(30px + env(safe-area-inset-bottom,0px));width:100%;max-width:480px;animation:slideUp 0.22s ease;box-shadow:0 -8px 40px rgba(0,0,0,0.55);}
 .settings-modal h2{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:2px;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:20px;}
 .settings-row{margin-bottom:16px;}
@@ -136,7 +122,6 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:38px;letter-spacing:7px;backgro
 .s-save{width:100%;padding:14px;border-radius:12px;border:none;cursor:pointer;background:var(--grad);color:#fff;font-size:16px;font-weight:500;font-family:'DM Sans',sans-serif;box-shadow:0 4px 18px rgba(168,85,247,0.33);margin-top:4px;transition:opacity 0.15s;}
 .s-save:active{opacity:0.85}
 .s-cancel{width:100%;padding:13px;border-radius:12px;cursor:pointer;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);color:rgba(255,255,255,0.26);font-size:15px;font-family:'DM Sans',sans-serif;margin-top:8px;}
-
 .store-popup-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(5px);z-index:350;align-items:flex-end;justify-content:center;}
 .store-popup-bg.open{display:flex}
 .store-popup{background:linear-gradient(160deg,#2a1f3d,#1a1530);border:1px solid rgba(232,138,255,0.28);border-radius:24px 24px 0 0;padding:20px 0 calc(20px + env(safe-area-inset-bottom,0px));width:100%;max-width:480px;max-height:78vh;overflow-y:auto;animation:slideUp 0.22s ease;box-shadow:0 -8px 40px rgba(0,0,0,0.55);}
@@ -175,12 +160,6 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:38px;letter-spacing:7px;backgro
 <div class="noise"></div>
 
 <div class="app">
-  <div class="header">
-    <h1>MEINE LISTE</h1>
-    <div class="date-str" id="dateStr"></div>
-    <button class="settings-btn" onclick="openSettings()" title="Einstellungen">⚙</button>
-  </div>
-
   <div class="stats-bar">
     <div class="stat-nums"><b id="doneCount">0</b> / <b id="totalCount">0</b> erledigt</div>
     <div class="prog-wrap"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
@@ -202,6 +181,7 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:38px;letter-spacing:7px;backgro
         <span class="arrow">▾</span>
       </button>
       <button class="store-clear-btn" id="storeClearBtn" onclick="clearStore()" title="Laden entfernen">✕</button>
+      <button class="settings-inline-btn" onclick="openSettings()" title="Einstellungen">⚙</button>
     </div>
   </div>
 
@@ -228,9 +208,9 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:38px;letter-spacing:7px;backgro
       <div class="settings-row">
         <label>Ort / Stadt</label>
         <input id="settingsCity" type="text" placeholder="z.B. Templin" />
-        <div class="settings-hint">Wird für die automatische Ladensuche verwendet.</div>
+        <div class="settings-hint">Läden werden hinzugefügt – deine Einträge bleiben erhalten.</div>
       </div>
-      <button class="s-save" onclick="saveSettings()">Speichern & Läden laden</button>
+      <button class="s-save" onclick="saveSettings()">Läden aus dieser Stadt laden</button>
       <button class="s-cancel" onclick="closeSettings()">Abbrechen</button>
     </div>
   </div>
@@ -296,6 +276,7 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:38px;letter-spacing:7px;backgro
 </div>
 
 <script>
+/* ── HINTERGRUND: statische Farbpools, keine Animation der Farben ── */
 (function(){
   const bgC = document.getElementById('bgCanvas');
   const bg  = bgC.getContext('2d');
@@ -303,331 +284,383 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:38px;letter-spacing:7px;backgro
   function resize(){
     W = bgC.width = window.innerWidth;
     H = bgC.height = window.innerHeight;
+    drawBg();
   }
   window.addEventListener('resize', resize);
-  resize();
 
-  const colors = [
-    // Dunkles Lila/Violett – Kachel-Basis
-    [32,18,58],[48,25,80],[38,20,65],[28,14,50],[55,32,88],
-    // Dunkles Rot – kein Pink
-    [90,8,12],[70,6,10],[110,10,15],[80,7,11],
-    // Lila-Rot Mischton
-    [75,12,55],[60,10,45],[85,15,65],
-    // Blau/Indigo
-    [45,50,160],[35,40,130],[55,60,180],
+  /* Festgelegte Farbpalette – bewegen sich, wechseln aber NIE die Farbe */
+  const palette = [
+    [58, 18, 100],   /* tiefes Violett */
+    [90, 15, 140],   /* kräftiges Lila */
+    [30, 10, 80],    /* dunkles Indigo */
+    [110, 20, 60],   /* Magenta-Violett */
+    [20, 8,  55],    /* fast Schwarz-Blau */
+    [70, 8,  90],    /* Purple-Pink */
+    [40, 50, 160],   /* tiefes Blau */
+    [50, 12, 110],   /* Medium Violet */
   ];
-  function lerp(a,b,t){return a+(b-a)*t;}
-  function smoothstep(t){return t*t*(3-2*t);}
-  function rnd(mn,mx){return mn+Math.random()*(mx-mn);}
-  function rndCol(){return [...colors[Math.floor(Math.random()*colors.length)]];}
 
-  const baseBlobs = Array.from({length:4},()=>({
-    bx:rnd(0.1,0.9),by:rnd(0.1,0.9),
-    ax:rnd(0.10,0.18),fx:rnd(0.0005,0.0012),px:rnd(0,Math.PI*2),
-    ay:rnd(0.06,0.12),fy:rnd(0.0004,0.0009),py:rnd(0,Math.PI*2),
-    r:rnd(0.9,1.4),
-    colA:rndCol(),colB:rndCol(),
-    colT:rnd(0,1),colSpeed:rnd(0.000006,0.000012),
-    alpha:rnd(0.21,0.31),
-  }));
-
-  const midBlobs = Array.from({length:7},()=>({
-    bx:rnd(0,1),by:rnd(0.1,1.4),
-    ax:rnd(0.06,0.14),fx:rnd(0.0008,0.0018),px:rnd(0,Math.PI*2),
-    ay:rnd(0.03,0.07),fy:rnd(0.0006,0.0013),py:rnd(0,Math.PI*2),
-    rise:rnd(0.000006,0.000012),
-    r:rnd(0.38,0.65),
-    colA:rndCol(),colB:rndCol(),
-    colT:rnd(0,1),colSpeed:rnd(0.000010,0.000020),
-    alpha:rnd(0.25,0.40),
-  }));
-
-  const sparks = Array.from({length:8},()=>({
-    bx:rnd(0,1),by:rnd(0.1,1.3),
-    ax:rnd(0.04,0.09),fx:rnd(0.0008,0.0016),px:rnd(0,Math.PI*2),
-    rise:rnd(0.000007,0.000013),
-    r:rnd(0.10,0.22),
-    colA:rndCol(),colB:rndCol(),
-    colT:rnd(0,1),colSpeed:rnd(0.000012,0.000025),
-    alpha:rnd(0.10,0.18),
-    pulse:rnd(0,Math.PI*2),pulseF:rnd(0.08,0.18),
-  }));
-
-  function drawBlob(ctx,bx,by,r,cr,cg,cb,alpha){
-    const grd=ctx.createRadialGradient(bx,by,0,bx,by,r);
-    grd.addColorStop(0,`rgba(${cr},${cg},${cb},${alpha})`);
-    grd.addColorStop(0.3,`rgba(${cr},${cg},${cb},${(alpha*0.7).toFixed(3)})`);
-    grd.addColorStop(0.65,`rgba(${cr},${cg},${cb},${(alpha*0.2).toFixed(3)})`);
-    grd.addColorStop(1,`rgba(${cr},${cg},${cb},0)`);
-    ctx.fillStyle=grd;ctx.beginPath();ctx.arc(bx,by,r,0,Math.PI*2);ctx.fill();
+  /* Blobs – jeder hat eine FESTE Farbe aus der Palette */
+  function makeBlob(type){
+    const col = palette[Math.floor(Math.random() * palette.length)];
+    const base = {
+      bx: Math.random(),
+      by: type === 'spark' ? 0.8 + Math.random() * 0.5 : Math.random(),
+      ax: 0.06 + Math.random() * (type==='base'?0.14:0.08),
+      fx: 0.0004 + Math.random() * (type==='base'?0.0008:0.0012),
+      px: Math.random() * Math.PI * 2,
+      ay: 0.03 + Math.random() * 0.08,
+      fy: 0.0003 + Math.random() * 0.0007,
+      py: Math.random() * Math.PI * 2,
+      r:  type==='base' ? 0.9+Math.random()*0.5 : type==='mid' ? 0.35+Math.random()*0.3 : 0.10+Math.random()*0.18,
+      cr: col[0], cg: col[1], cb: col[2],
+      alpha: type==='base' ? 0.22+Math.random()*0.12 : type==='mid' ? 0.26+Math.random()*0.18 : 0.10+Math.random()*0.12,
+      rise: type!=='base' ? 0.000005 + Math.random()*0.00001 : 0,
+      pulse: Math.random() * Math.PI * 2,
+      pulseF: 0.06 + Math.random() * 0.12,
+    };
+    return base;
   }
 
-  function interpColor(b,dt){
-    b.colT+=b.colSpeed*dt;
-    if(b.colT>=1){b.colA=[...b.colB];b.colB=rndCol();b.colT=0;}
-    const s=smoothstep(b.colT);
-    return[Math.round(lerp(b.colA[0],b.colB[0],s)),Math.round(lerp(b.colA[1],b.colB[1],s)),Math.round(lerp(b.colA[2],b.colB[2],s))];
+  const baseBlobs = Array.from({length:5}, ()=>makeBlob('base'));
+  const midBlobs  = Array.from({length:8}, ()=>makeBlob('mid'));
+  const sparks    = Array.from({length:10},()=>makeBlob('spark'));
+
+  function drawBlob(ctx, bx, by, r, cr, cg, cb, alpha){
+    const grd = ctx.createRadialGradient(bx,by,0,bx,by,r);
+    grd.addColorStop(0,   `rgba(${cr},${cg},${cb},${alpha})`);
+    grd.addColorStop(0.25,`rgba(${cr},${cg},${cb},${(alpha*0.75).toFixed(3)})`);
+    grd.addColorStop(0.55,`rgba(${cr},${cg},${cb},${(alpha*0.30).toFixed(3)})`);
+    grd.addColorStop(0.78,`rgba(${cr},${cg},${cb},${(alpha*0.08).toFixed(3)})`);
+    grd.addColorStop(1,   `rgba(${cr},${cg},${cb},0)`);
+    ctx.fillStyle = grd;
+    ctx.beginPath();
+    ctx.arc(bx, by, r, 0, Math.PI*2);
+    ctx.fill();
   }
 
-  const FRAME_MS=1000/25;
-  let lastFrame=0,t=0;
+  /* Vermischungsschicht: kombiniere benachbarte Blobs mit multiply-ähnlichem Effekt */
+  function drawMixLayer(ctx){
+    /* Extra-Schicht die Farbübergänge weicher macht */
+    const mix = [
+      {x:0.25,y:0.3,r:0.55*Math.max(W,H),cr:65,cg:10,cb:120,a:0.07},
+      {x:0.75,y:0.6,r:0.45*Math.max(W,H),cr:30,cg:5, cb:100,a:0.06},
+      {x:0.5, y:0.15,r:0.4*Math.max(W,H),cr:80,cg:15,cb:80, a:0.05},
+    ];
+    mix.forEach(m=>{
+      const g = ctx.createRadialGradient(m.x*W,m.y*H,0,m.x*W,m.y*H,m.r);
+      g.addColorStop(0,  `rgba(${m.cr},${m.cg},${m.cb},${m.a})`);
+      g.addColorStop(0.5,`rgba(${m.cr},${m.cg},${m.cb},${(m.a*0.4).toFixed(3)})`);
+      g.addColorStop(1,  `rgba(${m.cr},${m.cg},${m.cb},0)`);
+      ctx.fillStyle = g;
+      ctx.fillRect(0,0,W,H);
+    });
+  }
 
-  function frame(ts){
-    requestAnimationFrame(frame);
-    const elapsed=ts-lastFrame;
-    if(elapsed<FRAME_MS)return;
-    const dt=Math.min(elapsed,80);
-    lastFrame=ts-(elapsed%FRAME_MS);
-    t=ts*0.001;
+  const FRAME_MS = 1000/30;
+  let lastFrame = 0, t = 0;
 
+  function drawBg(ts){
     bg.clearRect(0,0,W,H);
-    bg.fillStyle='#040208';
+    bg.fillStyle = '#040208';
     bg.fillRect(0,0,W,H);
 
-    const fog=bg.createRadialGradient(W*.5,H*.6,0,W*.5,H*.6,Math.max(W,H)*.85);
-    fog.addColorStop(0,'rgba(5,3,18,0.0)');
-    fog.addColorStop(0.5,'rgba(3,2,12,0.28)');
-    fog.addColorStop(1,'rgba(1,0,6,0.72)');
-    bg.fillStyle=fog;bg.fillRect(0,0,W,H);
+    const fog = bg.createRadialGradient(W*.5,H*.55,0,W*.5,H*.55,Math.max(W,H)*.9);
+    fog.addColorStop(0,'rgba(8,4,20,0)');
+    fog.addColorStop(0.4,'rgba(4,2,14,0.15)');
+    fog.addColorStop(1,'rgba(1,0,6,0.65)');
+    bg.fillStyle = fog; bg.fillRect(0,0,W,H);
 
-    bg.globalCompositeOperation='screen';
+    bg.globalCompositeOperation = 'screen';
+
+    if(ts !== undefined) t = ts * 0.001;
 
     baseBlobs.forEach(b=>{
-      const[cr,cg,cb]=interpColor(b,dt);
-      const x=(b.bx+Math.sin(t*b.fx+b.px)*b.ax)*W;
-      const y=(b.by+Math.cos(t*b.fy+b.py)*b.ay)*H;
-      drawBlob(bg,x,y,b.r*Math.max(W,H)*0.75,cr,cg,cb,b.alpha);
+      const x = (b.bx + Math.sin(t*b.fx+b.px)*b.ax)*W;
+      const y = (b.by + Math.cos(t*b.fy+b.py)*b.ay)*H;
+      drawBlob(bg, x, y, b.r*Math.max(W,H)*0.72, b.cr, b.cg, b.cb, b.alpha);
     });
 
     midBlobs.forEach(b=>{
-      b.by-=b.rise*dt;
-      if(b.by<-0.55){b.by=1.4+rnd(0,0.3);b.bx=rnd(0.05,0.95);}
-      const[cr,cg,cb]=interpColor(b,dt);
-      const x=(b.bx+Math.sin(t*b.fx+b.px)*b.ax)*W;
-      const y=(b.by+Math.sin(t*b.fy+b.py)*b.ay)*H;
-      drawBlob(bg,x,y,b.r*Math.max(W,H)*0.65,cr,cg,cb,b.alpha);
+      if(ts !== undefined){
+        b.by -= b.rise * Math.min(ts - lastFrame, 80);
+        if(b.by < -0.6){ b.by = 1.4 + Math.random()*0.3; b.bx = Math.random(); }
+      }
+      const x = (b.bx + Math.sin(t*b.fx+b.px)*b.ax)*W;
+      const y = (b.by + Math.sin(t*b.fy+b.py)*b.ay)*H;
+      drawBlob(bg, x, y, b.r*Math.max(W,H)*0.60, b.cr, b.cg, b.cb, b.alpha);
     });
 
     sparks.forEach(b=>{
-      b.by-=b.rise*dt;
-      if(b.by<-0.3){b.by=1.3+rnd(0,0.2);b.bx=rnd(0,1);}
-      const[cr,cg,cb]=interpColor(b,dt);
-      const x=(b.bx+Math.sin(t*b.fx+b.px)*b.ax)*W;
-      const y=b.by*H;
-      const pulse=0.88+0.12*Math.sin(t*b.pulseF+b.pulse);
-      const ra=b.r*Math.max(W,H)*0.45*pulse;
-      const g2=bg.createRadialGradient(x,y,0,x,y,ra);
-      g2.addColorStop(0,`rgba(${cr},${cg},${cb},${b.alpha})`);
-      g2.addColorStop(0.5,`rgba(${cr},${cg},${cb},${(b.alpha*0.4).toFixed(3)})`);
-      g2.addColorStop(1,`rgba(${cr},${cg},${cb},0)`);
-      bg.fillStyle=g2;bg.beginPath();bg.arc(x,y,ra,0,Math.PI*2);bg.fill();
+      if(ts !== undefined){
+        b.by -= b.rise * Math.min(ts - lastFrame, 80);
+        if(b.by < -0.3){ b.by = 1.3 + Math.random()*0.2; b.bx = Math.random(); }
+      }
+      const x  = (b.bx + Math.sin(t*b.fx+b.px)*b.ax)*W;
+      const y  = b.by * H;
+      const pulse = 0.86 + 0.14*Math.sin(t*b.pulseF+b.pulse);
+      const ra = b.r*Math.max(W,H)*0.42*pulse;
+      const g2 = bg.createRadialGradient(x,y,0,x,y,ra);
+      g2.addColorStop(0,   `rgba(${b.cr},${b.cg},${b.cb},${b.alpha})`);
+      g2.addColorStop(0.45,`rgba(${b.cr},${b.cg},${b.cb},${(b.alpha*0.35).toFixed(3)})`);
+      g2.addColorStop(1,   `rgba(${b.cr},${b.cg},${b.cb},0)`);
+      bg.fillStyle = g2; bg.beginPath(); bg.arc(x,y,ra,0,Math.PI*2); bg.fill();
     });
 
-    bg.globalCompositeOperation='source-over';
-    const vig=bg.createRadialGradient(W/2,H/2,0,W/2,H/2,Math.max(W,H)*0.72);
+    /* Vermischungsschicht über alles */
+    drawMixLayer(bg);
+
+    bg.globalCompositeOperation = 'source-over';
+
+    /* Vignette */
+    const vig = bg.createRadialGradient(W/2,H/2,0,W/2,H/2,Math.max(W,H)*0.70);
     vig.addColorStop(0,'rgba(0,0,0,0)');
-    vig.addColorStop(0.5,'rgba(0,0,0,0.10)');
-    vig.addColorStop(1,'rgba(0,0,0,0.68)');
-    bg.fillStyle=vig;bg.fillRect(0,0,W,H);
+    vig.addColorStop(0.45,'rgba(0,0,0,0.08)');
+    vig.addColorStop(1,'rgba(0,0,0,0.72)');
+    bg.fillStyle = vig; bg.fillRect(0,0,W,H);
   }
+
+  function frame(ts){
+    requestAnimationFrame(frame);
+    const elapsed = ts - lastFrame;
+    if(elapsed < FRAME_MS) return;
+    lastFrame = ts - (elapsed % FRAME_MS);
+    drawBg(ts);
+  }
+  resize();
   requestAnimationFrame(frame);
 })();
 
-function normalizeStoreName(raw) {
+/* ── STORE HELPERS ── */
+function normalizeStoreName(raw){
   if(!raw) return raw;
   const name = raw.trim();
   return name.charAt(0).toUpperCase() + name.slice(1);
 }
 
-let items=JSON.parse(localStorage.getItem('mylist_v6')||'[]');
-let qty=1,editId=null,toastTimer=null,cdInterval=null,selectedStore='';
+let items = JSON.parse(localStorage.getItem('mylist_v6')||'[]');
+let qty = 1, editId = null, toastTimer = null, cdInterval = null, selectedStore = '';
 
-let customStores=JSON.parse(localStorage.getItem('customStores_v1')||'null');
-if(!customStores)customStores=[];
-function saveStores(){localStorage.setItem('customStores_v1',JSON.stringify(customStores));}
+let customStores = JSON.parse(localStorage.getItem('customStores_v1')||'null');
+if(!customStores) customStores = [];
+function saveStores(){ localStorage.setItem('customStores_v1', JSON.stringify(customStores)); }
 
+/* ── SETTINGS – Items IMMER erhalten ── */
 function openSettings(){
-  const s=JSON.parse(localStorage.getItem('userSettings')||'{}');
-  document.getElementById('settingsPlz').value=s.plz||'';
-  document.getElementById('settingsCity').value=s.city||'';
+  const s = JSON.parse(localStorage.getItem('userSettings')||'{}');
+  document.getElementById('settingsPlz').value  = s.plz  || '';
+  document.getElementById('settingsCity').value = s.city || '';
   document.getElementById('settingsBg').classList.add('open');
-  setTimeout(()=>document.getElementById('settingsPlz').focus(),120);
+  setTimeout(()=>document.getElementById('settingsPlz').focus(), 120);
 }
-function closeSettings(){document.getElementById('settingsBg').classList.remove('open');}
-function settingsBgClick(e){if(e.target===document.getElementById('settingsBg'))closeSettings();}
+function closeSettings(){ document.getElementById('settingsBg').classList.remove('open'); }
+function settingsBgClick(e){ if(e.target===document.getElementById('settingsBg')) closeSettings(); }
 
 async function saveSettings(){
-  const plz=document.getElementById('settingsPlz').value.trim();
-  const city=document.getElementById('settingsCity').value.trim();
-  if(!plz&&!city){showToast('Bitte PLZ oder Ort eingeben');return;}
-  localStorage.setItem('userSettings',JSON.stringify({plz,city}));
+  const plz  = document.getElementById('settingsPlz').value.trim();
+  const city = document.getElementById('settingsCity').value.trim();
+  if(!plz && !city){ showToast('Bitte PLZ oder Ort eingeben'); return; }
+  localStorage.setItem('userSettings', JSON.stringify({plz, city}));
   closeSettings();
-  await loadStoresByLocation(city||plz);
+  /* Items werden NICHT berührt – nur Läden werden geladen */
+  await loadStoresByLocation(city || plz);
 }
 
 async function loadStoresByLocation(query){
   showToast('⏳ Läden werden gesucht…');
   try{
-    const geoResp=await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1&countrycodes=de&accept-language=de`,{headers:{'User-Agent':'EinkaufslistePWA/1.0'}});
-    if(!geoResp.ok)throw new Error('geo');
-    const geoData=await geoResp.json();
-    if(!geoData.length){showToast('❌ Ort nicht gefunden');return;}
-    const{lat,lon,display_name}=geoData[0];
-    const stadtName=display_name.split(',')[0];
-    const radius=4000;
-    const q=`[out:json][timeout:18];(node["shop"="supermarket"](around:${radius},${lat},${lon});node["shop"="convenience"](around:${radius},${lat},${lon});node["shop"="chemist"](around:${radius},${lat},${lon});node["shop"="grocery"](around:${radius},${lat},${lon});node["shop"="discounter"](around:${radius},${lat},${lon});way["shop"="supermarket"](around:${radius},${lat},${lon});way["shop"="chemist"](around:${radius},${lat},${lon}););out tags;`;
-    const ovResp=await fetch('https://overpass-api.de/api/interpreter',{method:'POST',body:'data='+encodeURIComponent(q)});
-    if(!ovResp.ok)throw new Error('overpass');
-    const ovData=await ovResp.json();
-    const seen=new Set(customStores.map(s=>s.toLowerCase()));
-    const found=[];
+    const geoResp = await fetch(
+      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1&countrycodes=de&accept-language=de`,
+      {headers:{'User-Agent':'EinkaufslistePWA/1.0'}}
+    );
+    if(!geoResp.ok) throw new Error('geo');
+    const geoData = await geoResp.json();
+    if(!geoData.length){ showToast('❌ Ort nicht gefunden'); return; }
+    const {lat, lon, display_name} = geoData[0];
+    const stadtName = display_name.split(',')[0];
+    const radius = 4000;
+    const q = `[out:json][timeout:18];(node["shop"="supermarket"](around:${radius},${lat},${lon});node["shop"="convenience"](around:${radius},${lat},${lon});node["shop"="chemist"](around:${radius},${lat},${lon});node["shop"="grocery"](around:${radius},${lat},${lon});node["shop"="discounter"](around:${radius},${lat},${lon});way["shop"="supermarket"](around:${radius},${lat},${lon});way["shop"="chemist"](around:${radius},${lat},${lon}););out tags;`;
+    const ovResp = await fetch('https://overpass-api.de/api/interpreter',{method:'POST',body:'data='+encodeURIComponent(q)});
+    if(!ovResp.ok) throw new Error('overpass');
+    const ovData = await ovResp.json();
+    const seen = new Set(customStores.map(s=>s.toLowerCase()));
+    const found = [];
     ovData.elements.forEach(el=>{
-      const t=el.tags||{};
-      const rawName=(t.brand||t['brand:de']||t.name||t['name:de']||'').trim();
-      if(!rawName)return;
-      const name=normalizeStoreName(rawName);
-      if(!name||seen.has(name.toLowerCase()))return;
-      seen.add(name.toLowerCase());found.push(name);
+      const t = el.tags||{};
+      const rawName = (t.brand||t['brand:de']||t.name||t['name:de']||'').trim();
+      if(!rawName) return;
+      const name = normalizeStoreName(rawName);
+      if(!name || seen.has(name.toLowerCase())) return;
+      seen.add(name.toLowerCase()); found.push(name);
     });
-    if(!found.length){showToast(`ℹ️ Keine neuen Läden in ${stadtName}`);return;}
-    found.forEach(n=>customStores.push(n));saveStores();
+    if(!found.length){ showToast(`ℹ️ Keine neuen Läden in ${stadtName}`); return; }
+    found.forEach(n=>customStores.push(n)); saveStores();
+    /* Items mit diesem Laden NICHT markieren – sie gehören dazu */
     showToast(`✅ ${found.length} Läden aus ${stadtName} geladen`);
-  }catch(err){showToast('❌ Suche fehlgeschlagen');}
+  } catch(err){
+    showToast('❌ Suche fehlgeschlagen');
+  }
 }
 
+/* ── Prüfe ob Laden eines Items noch existiert ── */
+function isStoreValid(storeName){
+  if(!storeName) return true; /* kein Laden = immer OK */
+  return customStores.some(s=>s.toLowerCase()===storeName.toLowerCase());
+}
+
+/* ── STORE POPUP ── */
 function buildStoreList(){
-  const list=document.getElementById('storeListItems');list.innerHTML='';
-  if(!customStores.length){list.innerHTML='<div style="padding:20px;text-align:center;color:rgba(255,255,255,0.26);font-size:14px">Noch keine Läden.<br>PLZ/Ort in den Einstellungen eingeben.</div>';return;}
+  const list = document.getElementById('storeListItems'); list.innerHTML = '';
+  if(!customStores.length){
+    list.innerHTML='<div style="padding:20px;text-align:center;color:rgba(255,255,255,0.26);font-size:14px">Noch keine Läden.<br>⚙ Einstellungen → PLZ/Ort eingeben.</div>';
+    return;
+  }
   customStores.forEach(s=>{
-    const d=document.createElement('div');d.className='store-list-item';d.id='sli-'+s.replace(/[\s\/]/g,'_');
-    if(s===selectedStore)d.classList.add('selected');
-    d.innerHTML=`<span>${s}</span><span class="s-check">✓</span><button class="store-rename-btn" title="Umbenennen" onclick="openStoreRename(event,'${s.replace(/'/g,"\\'")}')">✎</button><button class="store-del-btn" title="Entfernen" onclick="removeStore(event,'${s.replace(/'/g,"\\'")}')">✕</button>`;
-    d.addEventListener('click',(e)=>{if(e.target.classList.contains('store-del-btn')||e.target.classList.contains('store-rename-btn'))return;selectStore(s);});
+    const d = document.createElement('div');
+    d.className = 'store-list-item';
+    d.id = 'sli-' + s.replace(/[\s\/]/g,'_');
+    if(s === selectedStore) d.classList.add('selected');
+    d.innerHTML = `<span>${s}</span><span class="s-check">✓</span><button class="store-rename-btn" title="Umbenennen" onclick="openStoreRename(event,'${s.replace(/'/g,"\\'")}')">✎</button><button class="store-del-btn" title="Entfernen" onclick="removeStore(event,'${s.replace(/'/g,"\\'")}')">✕</button>`;
+    d.addEventListener('click',(e)=>{ if(e.target.classList.contains('store-del-btn')||e.target.classList.contains('store-rename-btn')) return; selectStore(s); });
     list.appendChild(d);
   });
 }
 
-let storeRenameTarget='';
-function openStoreRename(e,name){
+let storeRenameTarget = '';
+function openStoreRename(e, name){
   e.stopPropagation();
-  storeRenameTarget=name;
-  document.getElementById('storeRenameInp').value=name;
+  storeRenameTarget = name;
+  document.getElementById('storeRenameInp').value = name;
   document.getElementById('storeRenameBg').classList.add('open');
-  setTimeout(()=>document.getElementById('storeRenameInp').focus(),120);
+  setTimeout(()=>document.getElementById('storeRenameInp').focus(), 120);
 }
-function closeStoreRename(){document.getElementById('storeRenameBg').classList.remove('open');}
-function storeRenameBgClick(e){if(e.target===document.getElementById('storeRenameBg'))closeStoreRename();}
+function closeStoreRename(){ document.getElementById('storeRenameBg').classList.remove('open'); }
+function storeRenameBgClick(e){ if(e.target===document.getElementById('storeRenameBg')) closeStoreRename(); }
 function saveStoreRename(){
-  const newName=document.getElementById('storeRenameInp').value.trim();
-  if(!newName){showToast('Bitte Namen eingeben');return;}
-  const idx=customStores.indexOf(storeRenameTarget);
-  if(idx===-1){closeStoreRename();return;}
-  customStores[idx]=newName;
-  items.forEach(it=>{if(it.store===storeRenameTarget)it.store=newName;});
-  if(selectedStore===storeRenameTarget){
-    selectedStore=newName;
-    document.getElementById('storePickLabel').textContent=newName;
+  const newName = document.getElementById('storeRenameInp').value.trim();
+  if(!newName){ showToast('Bitte Namen eingeben'); return; }
+  const idx = customStores.indexOf(storeRenameTarget);
+  if(idx === -1){ closeStoreRename(); return; }
+  customStores[idx] = newName;
+  items.forEach(it=>{ if(it.store===storeRenameTarget) it.store=newName; });
+  if(selectedStore === storeRenameTarget){
+    selectedStore = newName;
+    document.getElementById('storePickLabel').textContent = newName;
   }
-  save();saveStores();buildStoreList();closeStoreRename();showToast('✎ '+storeRenameTarget+' → '+newName);
+  save(); saveStores(); buildStoreList(); closeStoreRename();
+  showToast('✎ ' + storeRenameTarget + ' → ' + newName);
   render();
 }
-document.getElementById('storeRenameInp').addEventListener('keydown',e=>{if(e.key==='Enter')saveStoreRename();});
+document.getElementById('storeRenameInp').addEventListener('keydown',e=>{ if(e.key==='Enter') saveStoreRename(); });
+
 function addCustomStore(){
-  const inp=document.getElementById('storeAddInp');const name=inp.value.trim();
-  if(!name){showToast('Bitte Namen eingeben');return;}
-  const n=normalizeStoreName(name);
-  if(customStores.map(s=>s.toLowerCase()).includes(n.toLowerCase())){showToast('Laden existiert schon');inp.value='';return;}
-  customStores.push(n);saveStores();buildStoreList();inp.value='';showToast('✅ '+n+' hinzugefügt');
+  const inp = document.getElementById('storeAddInp'); const name = inp.value.trim();
+  if(!name){ showToast('Bitte Namen eingeben'); return; }
+  const n = normalizeStoreName(name);
+  if(customStores.map(s=>s.toLowerCase()).includes(n.toLowerCase())){ showToast('Laden existiert schon'); inp.value=''; return; }
+  customStores.push(n); saveStores(); buildStoreList(); inp.value = ''; showToast('✅ '+n+' hinzugefügt');
 }
-function removeStore(e,name){
-  e.stopPropagation();customStores=customStores.filter(s=>s!==name);saveStores();
-  if(selectedStore===name)clearStore();buildStoreList();showToast('🗑 '+name+' entfernt');
+function removeStore(e, name){
+  e.stopPropagation();
+  customStores = customStores.filter(s=>s!==name); saveStores();
+  /* Items mit diesem Laden bleiben – beim Rendern als "ungültig" markiert */
+  if(selectedStore === name) clearStore();
+  buildStoreList();
+  render();
+  showToast('🗑 '+name+' entfernt');
 }
-function openStorePopup(){buildStoreList();document.getElementById('storePopupBg').classList.add('open');}
-function closeStorePopup(){document.getElementById('storePopupBg').classList.remove('open');}
-function storePopupBgClick(e){if(e.target===document.getElementById('storePopupBg'))closeStorePopup();}
-document.getElementById('storeAddInp').addEventListener('keydown',e=>{if(e.key==='Enter')addCustomStore();});
+function openStorePopup(){ buildStoreList(); document.getElementById('storePopupBg').classList.add('open'); }
+function closeStorePopup(){ document.getElementById('storePopupBg').classList.remove('open'); }
+function storePopupBgClick(e){ if(e.target===document.getElementById('storePopupBg')) closeStorePopup(); }
+document.getElementById('storeAddInp').addEventListener('keydown',e=>{ if(e.key==='Enter') addCustomStore(); });
 function selectStore(s){
-  selectedStore=s;document.querySelectorAll('.store-list-item').forEach(el=>el.classList.remove('selected'));
-  const el=document.getElementById('sli-'+s.replace(/[\s\/]/g,'_'));if(el)el.classList.add('selected');
-  document.getElementById('storePickLabel').textContent=s;
+  selectedStore = s;
+  document.querySelectorAll('.store-list-item').forEach(el=>el.classList.remove('selected'));
+  const el = document.getElementById('sli-'+s.replace(/[\s\/]/g,'_'));
+  if(el) el.classList.add('selected');
+  document.getElementById('storePickLabel').textContent = s;
   document.getElementById('storePickBtn').classList.add('has-store');
   document.getElementById('storeClearBtn').classList.add('show');
   closeStorePopup();
 }
 function clearStore(){
-  selectedStore='';document.querySelectorAll('.store-list-item').forEach(el=>el.classList.remove('selected'));
-  document.getElementById('storePickLabel').textContent='Laden wählen (optional)';
+  selectedStore = '';
+  document.querySelectorAll('.store-list-item').forEach(el=>el.classList.remove('selected'));
+  document.getElementById('storePickLabel').textContent = 'Laden wählen (optional)';
   document.getElementById('storePickBtn').classList.remove('has-store');
   document.getElementById('storeClearBtn').classList.remove('show');
 }
 
-document.getElementById('dateStr').textContent=new Date().toLocaleDateString('de-DE',{weekday:'long',day:'numeric',month:'long'});
+/* ── MENGE ── */
+function getQty(){ const v=document.getElementById('qtyVal').value.trim(); const n=parseInt(v); return isNaN(n)||n<1?1:n; }
+function setQty(n){ qty=Math.max(1,n); document.getElementById('qtyVal').value=qty; }
+function changeQty(d){ setQty(getQty()+d); }
+document.getElementById('qtyVal').addEventListener('change', ()=>{ setQty(getQty()); });
+document.getElementById('qtyVal').addEventListener('blur',   ()=>{ setQty(getQty()); });
 
-function getQty(){const v=document.getElementById('qtyVal').value.trim();const n=parseInt(v);return isNaN(n)||n<1?1:n;}
-function setQty(n){qty=Math.max(1,n);document.getElementById('qtyVal').value=qty;}
-function changeQty(d){setQty(getQty()+d);}
-document.getElementById('qtyVal').addEventListener('change',()=>{setQty(getQty());});
-document.getElementById('qtyVal').addEventListener('blur',()=>{setQty(getQty());});
+function save(){ localStorage.setItem('mylist_v6', JSON.stringify(items)); }
+function cap(s){ return s.charAt(0).toUpperCase()+s.slice(1); }
 
-function save(){localStorage.setItem('mylist_v6',JSON.stringify(items));}
-function cap(s){return s.charAt(0).toUpperCase()+s.slice(1);}
-
+/* ── ITEM HINZUFÜGEN ── */
 function addItem(){
-  const inp=document.getElementById('inp');const raw=inp.value.trim();if(!raw)return;
-  let name=raw,itemQty=getQty();
-  const m=raw.match(/^(\d+)[x×\s]\s*(.+)$/i);
-  if(m){itemQty=parseInt(m[1]);name=cap(m[2].trim());}else{name=cap(raw);}
-  items.unshift({id:Date.now(),name,qty:itemQty,done:false,store:selectedStore});
-  save();render();inp.value='';setQty(1);inp.focus();
+  const inp = document.getElementById('inp'); const raw = inp.value.trim(); if(!raw) return;
+  let name = raw, itemQty = getQty();
+  const m = raw.match(/^(\d+)[x×\s]\s*(.+)$/i);
+  if(m){ itemQty=parseInt(m[1]); name=cap(m[2].trim()); } else { name=cap(raw); }
+  items.unshift({id:Date.now(), name, qty:itemQty, done:false, store:selectedStore});
+  save(); render(); inp.value=''; setQty(1); inp.focus();
   showToast('➕ '+name+(selectedStore?' · '+selectedStore:'')+' hinzugefügt');
 }
-document.getElementById('inp').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();addItem();}});
+document.getElementById('inp').addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); addItem(); } });
 
-function toggle(id){const it=items.find(i=>i.id===id);if(it){it.done=!it.done;save();render();checkAllDone();}}
-function del(id){const it=items.find(i=>i.id===id);items=items.filter(i=>i.id!==id);save();render();if(it)showToast('🗑 '+it.name+' gelöscht');checkAllDone();}
-function clearDone(){const n=items.filter(i=>i.done).length;items=items.filter(i=>!i.done);save();render();cancelAutoDelete();showToast('✅ '+n+' Items geleert');}
-function clearAll(){if(!items.length)return;if(!confirm('Wirklich alle '+items.length+' Artikel löschen?'))return;items=[];save();render();cancelAutoDelete();showToast('🗑 Liste geleert');}
-function checkAllDone(){if(items.length>0&&items.every(i=>i.done))startCountdown();else cancelAutoDelete();}
+function toggle(id){ const it=items.find(i=>i.id===id); if(it){ it.done=!it.done; save(); render(); checkAllDone(); } }
+function del(id){ const it=items.find(i=>i.id===id); items=items.filter(i=>i.id!==id); save(); render(); if(it) showToast('🗑 '+it.name+' gelöscht'); checkAllDone(); }
+function clearDone(){ const n=items.filter(i=>i.done).length; items=items.filter(i=>!i.done); save(); render(); cancelAutoDelete(); showToast('✅ '+n+' Items geleert'); }
+function clearAll(){ if(!items.length) return; if(!confirm('Wirklich alle '+items.length+' Artikel löschen?')) return; items=[]; save(); render(); cancelAutoDelete(); showToast('🗑 Liste geleert'); }
+function checkAllDone(){ if(items.length>0 && items.every(i=>i.done)) startCountdown(); else cancelAutoDelete(); }
 
 function startCountdown(){
   cancelAutoDelete();
   const bar=document.getElementById('cdBar'),fill=document.getElementById('cdFill'),txt=document.getElementById('cdText');
-  bar.classList.add('show');let secs=5;fill.style.width='100%';txt.textContent='Liste wird in '+secs+'s geleert…';
+  bar.classList.add('show'); let secs=5; fill.style.width='100%'; txt.textContent='Liste wird in '+secs+'s geleert…';
   cdInterval=setInterval(()=>{
-    secs--;fill.style.width=(secs/5*100)+'%';txt.textContent='Liste wird in '+secs+'s geleert…';
-    if(secs<=0){cancelAutoDelete();items=[];save();render();showToast('🎉 Alles erledigt – Liste geleert!');}
+    secs--; fill.style.width=(secs/5*100)+'%'; txt.textContent='Liste wird in '+secs+'s geleert…';
+    if(secs<=0){ cancelAutoDelete(); items=[]; save(); render(); showToast('🎉 Alles erledigt – Liste geleert!'); }
   },1000);
 }
-function cancelAutoDelete(){clearInterval(cdInterval);cdInterval=null;document.getElementById('cdBar').classList.remove('show');}
+function cancelAutoDelete(){ clearInterval(cdInterval); cdInterval=null; document.getElementById('cdBar').classList.remove('show'); }
 
+/* ── EDIT MODAL ── */
 function openEdit(id){
-  const it=items.find(i=>i.id===id);if(!it)return;
-  editId=id;document.getElementById('editName').value=it.name;document.getElementById('editQty').value=it.qty;
+  const it=items.find(i=>i.id===id); if(!it) return;
+  editId=id;
+  document.getElementById('editName').value=it.name;
+  document.getElementById('editQty').value=it.qty;
   document.getElementById('modalBg').classList.add('open');
   setTimeout(()=>document.getElementById('editName').focus(),120);
 }
 function saveEdit(){
-  const it=items.find(i=>i.id===editId);if(!it)return;
-  const n=document.getElementById('editName').value.trim();const q=document.getElementById('editQty').value.trim();
-  if(n)it.name=n;if(q)it.qty=isNaN(q)?q:parseInt(q);
-  save();render();closeModal();showToast('✏️ Gespeichert');
+  const it=items.find(i=>i.id===editId); if(!it) return;
+  const n=document.getElementById('editName').value.trim();
+  const q=document.getElementById('editQty').value.trim();
+  if(n) it.name=n; if(q) it.qty=isNaN(q)?q:parseInt(q);
+  save(); render(); closeModal(); showToast('✏️ Gespeichert');
 }
-function closeModal(){document.getElementById('modalBg').classList.remove('open');}
-function bgClick(e){if(e.target===document.getElementById('modalBg'))closeModal();}
-document.getElementById('editName').addEventListener('keydown',e=>{if(e.key==='Enter')saveEdit();});
-document.getElementById('editQty').addEventListener('keydown',e=>{if(e.key==='Enter')saveEdit();});
+function closeModal(){ document.getElementById('modalBg').classList.remove('open'); }
+function bgClick(e){ if(e.target===document.getElementById('modalBg')) closeModal(); }
+document.getElementById('editName').addEventListener('keydown',e=>{ if(e.key==='Enter') saveEdit(); });
+document.getElementById('editQty').addEventListener('keydown', e=>{ if(e.key==='Enter') saveEdit(); });
 
 function showToast(msg){
-  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
-  if(toastTimer)clearTimeout(toastTimer);
+  const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+  if(toastTimer) clearTimeout(toastTimer);
   toastTimer=setTimeout(()=>t.classList.remove('show'),2400);
 }
 
+/* ── RENDER ── */
 function render(){
-  const open=items.filter(i=>!i.done);const done=items.filter(i=>i.done);
-  const total=items.length,dn=done.length;const pct=total?Math.round(dn/total*100):0;
+  const open=items.filter(i=>!i.done); const done=items.filter(i=>i.done);
+  const total=items.length, dn=done.length; const pct=total?Math.round(dn/total*100):0;
   document.getElementById('totalCount').textContent=total;
   document.getElementById('doneCount').textContent=dn;
   document.getElementById('progFill').style.width=pct+'%';
@@ -635,15 +668,17 @@ function render(){
   document.getElementById('openLbl').textContent='Offen'+(open.length?' ('+open.length+')':'');
 
   function makeItem(it){
-    const d=document.createElement('div');d.className='item'+(it.done?' done':'');
+    const d=document.createElement('div');
+    const valid=isStoreValid(it.store);
+    d.className='item'+(it.done?' done':'')+(it.store&&!valid?' store-invalid':'');
     const qtyStr=String(it.qty).trim();
     const qtyHtml=qtyStr?`<div class="item-qty-badge">${qtyStr}×</div>`:'';
-    const storeHtml=it.store?`<div class="item-store-tag">${it.store}</div>`:'';
+    const invalidTag=it.store&&!valid?`<div class="store-invalid-tag">⚠ ${it.store} – nicht mehr in Läden</div>`:'';
     d.innerHTML=`
       <div class="chk${it.done?' on':''}"><span class="chk-mark">✓</span></div>
       <div class="item-main">
         <span class="item-name">${it.name}</span>
-        ${storeHtml}
+        ${invalidTag}
       </div>
       ${qtyHtml}
       <div class="item-acts">
@@ -651,44 +686,62 @@ function render(){
         <button class="act-btn del-btn" title="Löschen">✕</button>
       </div>`;
     d.addEventListener('click',function(e){
-      if(e.target.classList.contains('act-btn')||e.target.closest('.act-btn'))return;
+      if(e.target.classList.contains('act-btn')||e.target.closest('.act-btn')) return;
       toggle(it.id);
     });
-    d.querySelector('.edit-btn').addEventListener('click',function(e){e.stopPropagation();openEdit(it.id);});
-    d.querySelector('.del-btn').addEventListener('click',function(e){e.stopPropagation();del(it.id);});
+    d.querySelector('.edit-btn').addEventListener('click',function(e){ e.stopPropagation(); openEdit(it.id); });
+    d.querySelector('.del-btn').addEventListener('click', function(e){ e.stopPropagation(); del(it.id); });
     return d;
   }
 
-  const lo=document.getElementById('listOpen');lo.innerHTML='';
+  const lo=document.getElementById('listOpen'); lo.innerHTML='';
   if(!open.length){
     lo.innerHTML=`<div class="empty"><div class="empty-icon">${total===0?'🛒':'🎉'}</div><p>${total===0?'Noch nichts auf der Liste.<br>Füge deinen ersten Artikel hinzu!':'Alles erledigt!'}</p></div>`;
   } else {
+    /* Gruppe ohne Laden → "Überall verfügbar" */
     const groups={};
-    open.forEach(i=>{const k=i.store||'';if(!groups[k])groups[k]=[];groups[k].push(i);});
-    const keys=Object.keys(groups).sort((a,b)=>{if(!a)return 1;if(!b)return -1;return a.localeCompare(b,'de');});
+    open.forEach(i=>{
+      const k=i.store||'';
+      if(!groups[k]) groups[k]=[];
+      groups[k].push(i);
+    });
+    /* Sortierung: benannte Läden alphabetisch, "kein Laden" ans Ende */
+    const keys=Object.keys(groups).sort((a,b)=>{
+      if(!a) return 1; if(!b) return -1;
+      return a.localeCompare(b,'de');
+    });
     keys.forEach(key=>{
-      if(key){const lbl=document.createElement('div');lbl.className='store-group-lbl';lbl.textContent=key;lo.appendChild(lbl);}
+      const lbl=document.createElement('div');
+      if(key){
+        lbl.className='store-group-lbl';
+        lbl.textContent=key;
+      } else {
+        lbl.className='store-group-lbl everywhere';
+        lbl.textContent='Überall verfügbar';
+      }
+      lo.appendChild(lbl);
       groups[key].forEach(i=>lo.appendChild(makeItem(i)));
     });
   }
 
-  const ld=document.getElementById('listDone');ld.innerHTML='';
+  const ld=document.getElementById('listDone'); ld.innerHTML='';
   const ds=document.getElementById('doneSec');
-  if(done.length){ds.style.display='block';done.forEach(i=>ld.appendChild(makeItem(i)));}
-  else{ds.style.display='none';}
+  if(done.length){ ds.style.display='block'; done.forEach(i=>ld.appendChild(makeItem(i))); }
+  else{ ds.style.display='none'; }
 }
 
 render();
 
-if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('./sw.js').catch(()=>{});});}
+/* ── PWA ── */
+if('serviceWorker' in navigator){ window.addEventListener('load',()=>{ navigator.serviceWorker.register('./sw.js').catch(()=>{}); }); }
 let deferredPrompt=null;
 const banner=document.getElementById('installBanner');
-window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;if(!localStorage.getItem('pwa_dismissed'))banner.classList.add('show');});
-document.getElementById('installBtn').addEventListener('click',async()=>{if(!deferredPrompt)return;banner.classList.remove('show');deferredPrompt.prompt();const{outcome}=await deferredPrompt.userChoice;if(outcome==='accepted')showToast('✅ App installiert!');deferredPrompt=null;});
-document.getElementById('dismissBtn').addEventListener('click',()=>{banner.classList.remove('show');localStorage.setItem('pwa_dismissed',String(Date.now()));});
+window.addEventListener('beforeinstallprompt',e=>{ e.preventDefault(); deferredPrompt=e; if(!localStorage.getItem('pwa_dismissed')) banner.classList.add('show'); });
+document.getElementById('installBtn').addEventListener('click',async()=>{ if(!deferredPrompt) return; banner.classList.remove('show'); deferredPrompt.prompt(); const{outcome}=await deferredPrompt.userChoice; if(outcome==='accepted') showToast('✅ App installiert!'); deferredPrompt=null; });
+document.getElementById('dismissBtn').addEventListener('click',()=>{ banner.classList.remove('show'); localStorage.setItem('pwa_dismissed',String(Date.now())); });
 const isIos=/iphone|ipad|ipod/.test(navigator.userAgent.toLowerCase());
 const isStandalone=window.navigator.standalone;
-if(isIos&&!isStandalone&&!localStorage.getItem('pwa_dismissed')){setTimeout(()=>showToast('📲 Installieren: Teilen → Zum Home-Bildschirm'),2500);}
+if(isIos&&!isStandalone&&!localStorage.getItem('pwa_dismissed')){ setTimeout(()=>showToast('📲 Installieren: Teilen → Zum Home-Bildschirm'),2500); }
 </script>
 </body>
 </html>
