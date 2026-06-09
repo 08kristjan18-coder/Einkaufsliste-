@@ -18,9 +18,9 @@
 :root{
   --c1:#a78bfa;--c2:#7c3aed;--c3:#6d28d9;--c4:#8b5cf6;
   --grad:linear-gradient(135deg,#a78bfa 0%,#7c3aed 45%,#6d28d9 80%,#8b5cf6 100%);
-  --card-bg:rgba(32,32,40,0.90);
-  --card-border:rgba(160,140,210,0.20);
-  --bg-base:#1a1a22;
+  --card-bg:rgba(42,42,52,0.95);
+  --card-border:rgba(180,160,240,0.28);
+  --bg-base:#252528;
 }
 body{
   min-height:100vh;
@@ -28,28 +28,25 @@ body{
   font-size:16px;
   color:#fff;
   overflow-x:hidden;
-  background:
-    radial-gradient(ellipse 100% 70% at 20% 20%, rgba(80,60,120,0.30) 0%, transparent 60%),
-    radial-gradient(ellipse 80% 80% at 85% 80%, rgba(60,50,100,0.22) 0%, transparent 55%),
-    linear-gradient(160deg, #1e1e28 0%, #181820 40%, #141418 70%, #1c1c24 100%);
+  /* Heller, gleichmäßiges Dunkelgrau – kein Lila-Stich */
+  background: linear-gradient(180deg, #2c2c30 0%, #262628 50%, #222224 100%);
   background-attachment:fixed;
 }
 #bgCanvas{display:none;}
 .noise{position:fixed;inset:0;z-index:1;pointer-events:none;
-  background:
-    radial-gradient(ellipse 70% 60% at 50% 50%, transparent 20%, rgba(0,0,0,0.30) 100%);
+  background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(255,255,255,0.03) 0%, transparent 70%);
 }
 .app{position:relative;z-index:2;max-width:480px;margin:0 auto;padding:20px 0 80px}
 
-.stats-bar{margin:0 16px 14px;background:rgba(30,30,42,0.92);border:1px solid rgba(160,140,210,0.20);border-radius:16px;padding:12px 18px;display:flex;align-items:center;gap:12px;backdrop-filter:blur(14px);box-shadow:0 4px 24px rgba(0,0,0,0.50),inset 0 1px 0 rgba(255,255,255,0.06);}
+.stats-bar{margin:0 16px 14px;background:rgba(42,42,54,0.97);border:1px solid rgba(180,160,240,0.22);border-radius:16px;padding:12px 18px;display:flex;align-items:center;gap:12px;backdrop-filter:blur(14px);box-shadow:0 4px 20px rgba(0,0,0,0.55),0 0 0 1px rgba(255,255,255,0.04),inset 0 1px 0 rgba(255,255,255,0.08);}
 .stat-nums{font-size:14px;color:rgba(255,255,255,0.40);flex-shrink:0}
 .stat-nums b{color:rgba(255,255,255,0.88);font-weight:500}
 .prog-wrap{flex:1;height:4px;background:rgba(255,255,255,0.10);border-radius:2px;overflow:hidden}
 .prog-fill{height:100%;border-radius:2px;background:var(--grad);transition:width 0.45s cubic-bezier(.4,0,.2,1);}
 .prog-pct{font-size:12px;color:rgba(255,255,255,0.32);min-width:30px;text-align:right}
 
-.input-card{margin:0 16px 14px;background:rgba(30,30,42,0.92);border:1px solid rgba(160,140,210,0.20);border-radius:18px;padding:14px;backdrop-filter:blur(14px);box-shadow:0 4px 28px rgba(0,0,0,0.45),inset 0 1px 0 rgba(255,255,255,0.06);transition:border-color 0.3s;}
-.input-card:focus-within{border-color:rgba(167,139,250,0.50)}
+.input-card{margin:0 16px 14px;background:rgba(42,42,54,0.97);border:1px solid rgba(180,160,240,0.22);border-radius:18px;padding:14px;backdrop-filter:blur(14px);box-shadow:0 4px 20px rgba(0,0,0,0.55),0 0 0 1px rgba(255,255,255,0.04),inset 0 1px 0 rgba(255,255,255,0.08);transition:border-color 0.3s;}
+.input-card:focus-within{border-color:rgba(167,139,250,0.55);box-shadow:0 4px 20px rgba(0,0,0,0.55),0 0 18px rgba(124,58,237,0.15),inset 0 1px 0 rgba(255,255,255,0.08);}
 .input-row{display:flex;gap:8px;align-items:stretch;flex-wrap:wrap}
 .inp{flex:1;min-width:120px;background:rgba(255,255,255,0.09);border:1px solid rgba(255,255,255,0.14);border-radius:12px;color:#fff;padding:14px 16px;font-size:17px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color 0.2s,box-shadow 0.2s;}
 .inp:focus{border-color:rgba(167,139,250,0.60);box-shadow:0 0 0 3px rgba(167,139,250,0.10);}
@@ -82,8 +79,8 @@ body{
 .sec-btn{background:none;border:none;color:rgba(255,255,255,0.18);font-size:11px;cursor:pointer;text-decoration:underline;font-family:'DM Sans',sans-serif}
 .sec-btn:hover{color:#a78bfa}
 
-.item{display:flex;align-items:center;gap:13px;background:rgba(32,32,44,0.92);border:1px solid rgba(160,140,210,0.18);border-radius:16px;padding:16px;margin-bottom:8px;position:relative;overflow:hidden;backdrop-filter:blur(14px);cursor:pointer;box-shadow:0 2px 16px rgba(0,0,0,0.45),inset 0 1px 0 rgba(255,255,255,0.05);}
-.item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--grad);border-radius:3px 0 0 3px;opacity:0.80;}
+.item{display:flex;align-items:center;gap:13px;background:rgba(44,44,58,0.98);border:1px solid rgba(180,160,240,0.26);border-radius:16px;padding:16px;margin-bottom:8px;position:relative;overflow:hidden;backdrop-filter:blur(14px);cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,0.55),0 1px 0 rgba(255,255,255,0.06) inset,0 0 0 1px rgba(255,255,255,0.03);}
+.item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--grad);border-radius:4px 0 0 4px;opacity:0.90;}
 .item.done{opacity:0.22;}
 .item.done .item-name{text-decoration:line-through;color:rgba(255,255,255,0.26)}
 .item.done::before{background:rgba(255,255,255,0.08);}
@@ -557,52 +554,91 @@ async function saveSettings(){
   const plz=document.getElementById('settingsPlz').value.trim();
   const city=document.getElementById('settingsCity').value.trim();
   if(!plz&&!city){showToast('Bitte PLZ oder Ort eingeben');return;}
-  if(!activeFilters.length){showToast('Mindestens eine Kategorie wählen');return;}
+  // Wenn keine Filter aktiv: alle food+drug automatisch aktivieren statt abbrechen
+  if(!activeFilters.length){
+    activeFilters=['food','drug','diy','tech','drug'];
+    saveFilters();buildFilterChips();
+  }
   closeSettings();
-  await loadStoresByLocation(city||plz,plz,city);
+  // PLZ+Stadt kombinieren für bessere Trefferquote
+  const searchQuery=(plz&&city)?`${plz} ${city}`:(city||plz);
+  await loadStoresByLocation(searchQuery,plz,city);
 }
 
 async function loadStoresByLocation(query,plz,city){
-  showToast('&#9203; Läden werden gesucht…');
+  showToast('⏳ Läden werden gesucht…');
   try{
+    // SCHRITT 1: Koordinaten per Nominatim
     const geoResp=await fetch(
-      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1&countrycodes=de&accept-language=de`,
-      {headers:{'User-Agent':'EinkaufslistePWA/1.0'}}
+      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=3&countrycodes=de&accept-language=de&addressdetails=1`
     );
     if(!geoResp.ok)throw new Error('geo');
     const geoData=await geoResp.json();
-    if(!geoData.length){showToast('Ort nicht gefunden');return;}
-    const{lat,lon,display_name}=geoData[0];
-    const stadtName=city||display_name.split(',')[0];
-    const radius=5000;
+    if(!geoData.length){
+      // Letzter Versuch: nur mit PLZ
+      if(plz){
+        const plzResp=await fetch(`https://nominatim.openstreetmap.org/search?format=json&postalcode=${encodeURIComponent(plz)}&country=de&limit=1`);
+        const plzData=await plzResp.json();
+        if(!plzData.length){showToast('Ort nicht gefunden');return;}
+        geoData.push(plzData[0]);
+      } else {showToast('Ort nicht gefunden');return;}
+    }
+    const{lat,lon,display_name,address}=geoData[0];
+    const stadtName=city||(address&&(address.city||address.town||address.village||address.municipality))||display_name.split(',')[0];
+    const radius=15000; // 15km – gut für kleinere Städte
 
-    // Aktive Kategorien holen
+    // SCHRITT 2: Aktive Kategorien holen
     const activeCats=SHOP_CATEGORIES.filter(c=>activeFilters.includes(c.id));
-    const shopTypes=activeCats.flatMap(c=>c.types);
-    const brandNames=activeCats.flatMap(c=>c.brands||[]);
+    const shopTypes=[...new Set(activeCats.flatMap(c=>c.types))];
+    const brandNames=[...new Set(activeCats.flatMap(c=>c.brands||[]))];
+    const topBrands=brandNames.slice(0,60);
 
-    // Query: shop=type ODER name/brand enthält bekannten Kettennamen
-    const typeNodeLines=shopTypes.map(t=>`node["shop"="${t}"](around:${radius},${lat},${lon});`).join('');
-    const typeWayLines=shopTypes.map(t=>`way["shop"="${t}"](around:${radius},${lat},${lon});`).join('');
-    // Für Brands: name~"^(Lidl|Edeka|...)" – max 50 Brands um Query-Länge zu begrenzen
-    const topBrands=brandNames.slice(0,50);
-    const brandRegex=topBrands.map(b=>b.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|');
-    const brandNodeLine=topBrands.length?`node["name"~"${brandRegex}",i](around:${radius},${lat},${lon});`:'';
-    const brandWayLine=topBrands.length?`way["name"~"${brandRegex}",i](around:${radius},${lat},${lon});`:'';
+    // SCHRITT 3: Overpass-Query – Shops per Typ + bekannte Ketten per Name
+    const typeLines=shopTypes.flatMap(t=>[
+      `node["shop"="${t}"](around:${radius},${lat},${lon});`,
+      `way["shop"="${t}"](around:${radius},${lat},${lon});`
+    ]).join('');
+    const brandRegex=topBrands.length?topBrands.map(b=>b.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|'):'';
+    const brandLines=brandRegex?[
+      `node["name"~"(${brandRegex})",i](around:${radius},${lat},${lon});`,
+      `way["name"~"(${brandRegex})",i](around:${radius},${lat},${lon});`
+    ].join(''):'';
 
-    const q=`[out:json][timeout:30];(${typeNodeLines}${typeWayLines}${brandNodeLine}${brandWayLine});out tags;`;
-    const ovResp=await fetch('https://overpass-api.de/api/interpreter',{method:'POST',body:'data='+encodeURIComponent(q)});
-    if(!ovResp.ok)throw new Error('overpass');
-    const ovData=await ovResp.json();
+    const q=`[out:json][timeout:45];(${typeLines}${brandLines});out tags;`;
+
+    // SCHRITT 4: Overpass mit 2 Mirror-Fallbacks
+    let ovData=null;
+    const mirrors=[
+      'https://overpass.kumi.systems/api/interpreter',
+      'https://overpass-api.de/api/interpreter',
+      'https://maps.mail.ru/osm/tools/overpass/api/interpreter'
+    ];
+    for(const mirror of mirrors){
+      try{
+        const r=await fetch(mirror,{method:'POST',body:'data='+encodeURIComponent(q)});
+        if(r.ok){ovData=await r.json();break;}
+      }catch(e){/* try next mirror */}
+    }
+    if(!ovData){throw new Error('Alle Overpass-Server nicht erreichbar');}
+
+    // SCHRITT 5: Namen extrahieren & deduplizieren
     const seen=new Set();const found=[];
     ovData.elements.forEach(el=>{
       const tg=el.tags||{};
+      // Priorisierung: brand > brand:de > name > name:de
       const rawName=(tg.brand||tg['brand:de']||tg.name||tg['name:de']||'').trim();
       if(!rawName)return;
+      // Generische OSM-Begriffe rausfiltern
+      if(['yes','no','shop','store'].includes(rawName.toLowerCase()))return;
       const name=normalizeStoreName(rawName);
       if(!name||seen.has(name.toLowerCase()))return;
       seen.add(name.toLowerCase());found.push(name);
     });
+
+    // Alphabetisch sortieren
+    found.sort((a,b)=>a.localeCompare(b,'de'));
+
+    // SCHRITT 6: Speichern
     const locName=stadtName+(plz?' ('+plz+')':'');
     const existIdx=savedLocations.findIndex(l=>l.name===locName);
     if(existIdx>=0){
@@ -616,9 +652,12 @@ async function loadStoresByLocation(query,plz,city){
     saveLocations();saveActiveIdx();
     customStores=[...savedLocations[activeLocationIdx].stores];saveStores();
     render();
-    if(!found.length)showToast('Keine Läden gefunden in '+stadtName);
-    else showToast(found.length+' Läden in '+locName+' geladen');
-  }catch(err){console.error(err);showToast('Suche fehlgeschlagen');}
+    if(!found.length)showToast('Keine Läden gefunden – probiere mehr Kategorien');
+    else showToast('✓ '+found.length+' Läden in '+locName+' geladen');
+  }catch(err){
+    console.error('Suche Fehler:',err);
+    showToast('Suche fehlgeschlagen: '+err.message);
+  }
 }
 
 /* ═══════════════════════════════════════════════════
@@ -672,7 +711,7 @@ async function openMapForStore(storeName){
     const radius=30000;
     // Suche: name beginnt mit storeName ODER brand enthält storeName
     const q=`[out:json][timeout:20];(node["name"~"${safe}",i](around:${radius},${searchLat},${searchLon});way["name"~"${safe}",i](around:${radius},${searchLat},${searchLon});node["brand"~"${safe}",i](around:${radius},${searchLat},${searchLon});way["brand"~"${safe}",i](around:${radius},${searchLat},${searchLon}););out center 5;`;
-    const resp=await fetch('https://overpass-api.de/api/interpreter',{method:'POST',body:'data='+encodeURIComponent(q)});
+    const resp=await fetch('https://overpass.kumi.systems/api/interpreter',{method:'POST',body:'data='+encodeURIComponent(q)});
     if(!resp.ok)throw new Error('overpass');
     const data=await resp.json();
 
@@ -680,7 +719,7 @@ async function openMapForStore(storeName){
       // Fallback: Nominatim Geocoding mit Suchbegriff + Stadt
       const cityHint=activeLocationIdx>=0?savedLocations[activeLocationIdx]?.city:'';
       const fallbackQ=encodeURIComponent(storeName+(cityHint?' '+cityHint:''));
-      const nmResp=await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${fallbackQ}&limit=3&countrycodes=de&accept-language=de`,{headers:{'User-Agent':'EinkaufslistePWA/1.0'}});
+      const nmResp=await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${fallbackQ}&limit=3&countrycodes=de&accept-language=de`);
       if(!nmResp.ok)throw new Error('nominatim');
       const nmData=await nmResp.json();
       if(!nmData.length){
