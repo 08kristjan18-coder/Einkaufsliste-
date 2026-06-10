@@ -18,9 +18,9 @@
 :root{
   --c1:#a78bfa;--c2:#7c3aed;--c3:#6d28d9;--c4:#8b5cf6;
   --grad:linear-gradient(135deg,#a78bfa 0%,#7c3aed 45%,#6d28d9 80%,#8b5cf6 100%);
-  --card-bg:rgba(42,42,52,0.95);
-  --card-border:rgba(180,160,240,0.28);
-  --bg-base:#252528;
+  --card-bg:rgba(36,36,50,0.97);
+  --card-border:rgba(167,139,250,0.22);
+  --bg-base:#1e1e24;
 }
 body{
   min-height:100vh;
@@ -28,25 +28,28 @@ body{
   font-size:16px;
   color:#fff;
   overflow-x:hidden;
-  /* Heller, gleichmäßiges Dunkelgrau – kein Lila-Stich */
-  background: linear-gradient(180deg, #2c2c30 0%, #262628 50%, #222224 100%);
+  background: #1a1a22;
   background-attachment:fixed;
 }
 #bgCanvas{display:none;}
+/* Blau-lila Glow-Akzent in der Mitte */
 .noise{position:fixed;inset:0;z-index:1;pointer-events:none;
-  background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(255,255,255,0.03) 0%, transparent 70%);
+  background:
+    radial-gradient(ellipse 70% 45% at 50% 38%, rgba(109,40,217,0.18) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 30% at 20% 70%, rgba(59,130,246,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 25% at 80% 20%, rgba(167,139,250,0.07) 0%, transparent 55%);
 }
 .app{position:relative;z-index:2;max-width:480px;margin:0 auto;padding:20px 0 80px}
 
-.stats-bar{margin:0 16px 14px;background:rgba(42,42,54,0.97);border:1px solid rgba(180,160,240,0.22);border-radius:16px;padding:12px 18px;display:flex;align-items:center;gap:12px;backdrop-filter:blur(14px);box-shadow:0 4px 20px rgba(0,0,0,0.55),0 0 0 1px rgba(255,255,255,0.04),inset 0 1px 0 rgba(255,255,255,0.08);}
+.stats-bar{margin:0 16px 14px;background:linear-gradient(135deg,rgba(40,38,58,0.98),rgba(32,30,48,0.98));border:1px solid rgba(167,139,250,0.28);border-radius:18px;padding:13px 18px;display:flex;align-items:center;gap:12px;backdrop-filter:blur(20px);box-shadow:0 8px 32px rgba(0,0,0,0.55),0 0 0 1px rgba(255,255,255,0.04),inset 0 1px 0 rgba(255,255,255,0.09),0 0 24px rgba(109,40,217,0.10);}
 .stat-nums{font-size:14px;color:rgba(255,255,255,0.40);flex-shrink:0}
 .stat-nums b{color:rgba(255,255,255,0.88);font-weight:500}
 .prog-wrap{flex:1;height:4px;background:rgba(255,255,255,0.10);border-radius:2px;overflow:hidden}
 .prog-fill{height:100%;border-radius:2px;background:var(--grad);transition:width 0.45s cubic-bezier(.4,0,.2,1);}
 .prog-pct{font-size:12px;color:rgba(255,255,255,0.32);min-width:30px;text-align:right}
 
-.input-card{margin:0 16px 14px;background:rgba(42,42,54,0.97);border:1px solid rgba(180,160,240,0.22);border-radius:18px;padding:14px;backdrop-filter:blur(14px);box-shadow:0 4px 20px rgba(0,0,0,0.55),0 0 0 1px rgba(255,255,255,0.04),inset 0 1px 0 rgba(255,255,255,0.08);transition:border-color 0.3s;}
-.input-card:focus-within{border-color:rgba(167,139,250,0.55);box-shadow:0 4px 20px rgba(0,0,0,0.55),0 0 18px rgba(124,58,237,0.15),inset 0 1px 0 rgba(255,255,255,0.08);}
+.input-card{margin:0 16px 14px;background:linear-gradient(160deg,rgba(40,38,60,0.98),rgba(30,28,46,0.98));border:1px solid rgba(167,139,250,0.26);border-radius:20px;padding:15px;backdrop-filter:blur(20px);box-shadow:0 8px 32px rgba(0,0,0,0.55),0 0 0 1px rgba(255,255,255,0.04),inset 0 1px 0 rgba(255,255,255,0.10),0 0 28px rgba(109,40,217,0.10);transition:border-color 0.3s,box-shadow 0.3s;}
+.input-card:focus-within{border-color:rgba(167,139,250,0.60);box-shadow:0 8px 32px rgba(0,0,0,0.55),0 0 30px rgba(124,58,237,0.22),inset 0 1px 0 rgba(255,255,255,0.10);}
 .input-row{display:flex;gap:8px;align-items:stretch;flex-wrap:wrap}
 .inp{flex:1;min-width:120px;background:rgba(255,255,255,0.09);border:1px solid rgba(255,255,255,0.14);border-radius:12px;color:#fff;padding:14px 16px;font-size:17px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color 0.2s,box-shadow 0.2s;}
 .inp:focus{border-color:rgba(167,139,250,0.60);box-shadow:0 0 0 3px rgba(167,139,250,0.10);}
@@ -79,8 +82,9 @@ body{
 .sec-btn{background:none;border:none;color:rgba(255,255,255,0.18);font-size:11px;cursor:pointer;text-decoration:underline;font-family:'DM Sans',sans-serif}
 .sec-btn:hover{color:#a78bfa}
 
-.item{display:flex;align-items:center;gap:13px;background:rgba(44,44,58,0.98);border:1px solid rgba(180,160,240,0.26);border-radius:16px;padding:16px;margin-bottom:8px;position:relative;overflow:visible;backdrop-filter:blur(14px);cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,0.55),0 1px 0 rgba(255,255,255,0.06) inset,0 0 0 1px rgba(255,255,255,0.03);}
-.item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--grad);border-radius:4px 0 0 4px;opacity:0.90;pointer-events:none;}
+.item{display:flex;align-items:center;gap:13px;background:linear-gradient(160deg,rgba(42,40,62,0.99),rgba(32,30,50,0.99));border:1px solid rgba(167,139,250,0.28);border-radius:18px;padding:16px 16px 16px 20px;margin-bottom:9px;position:relative;overflow:hidden;backdrop-filter:blur(16px);cursor:pointer;box-shadow:0 8px 32px rgba(0,0,0,0.60),0 2px 0 rgba(255,255,255,0.08) inset,0 0 0 1px rgba(255,255,255,0.05),0 0 20px rgba(109,40,217,0.08);transition:border-color 0.2s,box-shadow 0.2s,transform 0.15s;}
+.item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--grad);border-radius:0;opacity:1;pointer-events:none;}
+.item:active{transform:scale(0.985);box-shadow:0 3px 14px rgba(0,0,0,0.50);}
 .item.done{opacity:0.22;}
 .item.done .item-name{text-decoration:line-through;color:rgba(255,255,255,0.26)}
 .item.done::before{background:rgba(255,255,255,0.08);}
@@ -200,6 +204,8 @@ body{
 .store-popup-hint{font-size:11px;color:rgba(255,255,255,0.28);margin-top:4px;letter-spacing:0.02em;}
 .store-add-row{display:flex;gap:8px;padding:0 16px 12px;border-bottom:1px solid rgba(255,255,255,0.07);}
 .store-add-inp{flex:1;background:rgba(255,255,255,0.09);border:1px solid rgba(255,255,255,0.16);border-radius:11px;color:#fff;padding:11px 13px;font-size:15px;font-family:'DM Sans',sans-serif;outline:none;}
+.store-fchip{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.13);border-radius:20px;color:rgba(255,255,255,0.48);font-size:13px;font-family:'DM Sans',sans-serif;padding:6px 13px;cursor:pointer;transition:all 0.15s;user-select:none;}
+.store-fchip.active{background:rgba(167,139,250,0.18);border-color:rgba(167,139,250,0.55);color:#a78bfa;font-weight:500;}
 .store-add-inp:focus{border-color:rgba(167,139,250,0.55)}
 .store-add-inp::placeholder{color:rgba(255,255,255,0.20)}
 .store-add-btn{background:var(--grad);border:none;border-radius:11px;color:#fff;font-size:20px;width:44px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
@@ -326,13 +332,9 @@ body{
       <div class="filter-section">
         <div class="filter-section-title">Welche Läden suchen?</div>
         <div class="filter-chips" id="filterChips"></div>
-        <div class="filter-toggle-row">
-          <button class="filter-all-btn" onclick="setAllFilters(true)">Alle wählen</button>
-          <button class="filter-all-btn" onclick="setAllFilters(false)">Alle abwählen</button>
-        </div>
       </div>
 
-      <div class="settings-hint" style="margin-top:10px;">Nur gewählte Kategorien werden durchsucht. Deine Artikel bleiben erhalten.</div>
+      <div class="settings-hint" style="margin-top:10px;">Wähle ob Supermärkte, Drogerien oder beide gesucht werden sollen.</div>
       <div style="height:12px"></div>
 
       <!-- Ladebalken -->
@@ -367,7 +369,19 @@ body{
       <div class="store-popup-title">LADEN WÄHLEN</div>
       <div class="store-popup-hint">Lang drücken = Standort auf Karte anzeigen</div>
     </div>
+    <!-- Suchfeld -->
     <div class="store-add-row">
+      <input class="store-add-inp" id="storeSearchInp" type="text" placeholder="&#128269; Laden suchen…" oninput="filterStoreSearch()" autocomplete="off" />
+    </div>
+    <!-- Kategorie-Filter Chips -->
+    <div id="storeFilterBar" style="display:flex;gap:7px;padding:0 16px 12px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,0.07);">
+      <button class="store-fchip active" data-cat="all" onclick="setStoreFilter(this,'all')">Alle</button>
+      <button class="store-fchip" data-cat="food" onclick="setStoreFilter(this,'food')">&#127811; Supermarkt</button>
+      <button class="store-fchip" data-cat="drug" onclick="setStoreFilter(this,'drug')">&#129514; Drogerie</button>
+      <button class="store-fchip" data-cat="other" onclick="setStoreFilter(this,'other')">&#10022; Sonstiges</button>
+    </div>
+    <!-- Manuell hinzufügen -->
+    <div class="store-add-row" style="border-bottom:none;padding-top:10px;">
       <input class="store-add-inp" id="storeAddInp" type="text" placeholder="Laden manuell hinzufügen…" />
       <button class="store-add-btn" onclick="addCustomStore()">+</button>
     </div>
@@ -458,67 +472,29 @@ body{
 ═══════════════════════════════════════════════════ */
 const SHOP_CATEGORIES=[
   {
-    id:'food', label:'Lebensmittel', icon:'&#127811;',
+    id:'food', label:'Supermarkt', icon:'&#127811;',
     types:['supermarket','discounter','grocery'],
-    brands:['Lidl','Edeka','Rewe','Aldi','Netto','Penny','Kaufland','Norma','Aldi Süd',
-            'Aldi Nord','Real','Tegut','Globus','Hit','V-Markt','Combi','Famila',
-            'Marktkauf','E-Center','Nahkauf','Spar','Trinkgut','Hol ab']
+    brands:['Aldi','Aldi Nord','Aldi Süd','Edeka','Rewe','Lidl','Netto',
+            'Netto Marken-Discount','Penny','Kaufland','Norma','Globus','Real',
+            'Tegut','Hit','Famila','Marktkauf','E-Center','Combi','V-Markt',
+            'Trinkgut','Hol ab','Nahkauf','Spar','Wasgau','Konsum','Selgros','Metro']
   },
   {
     id:'drug', label:'Drogerie', icon:'&#129514;',
-    types:['chemist','cosmetics','beauty','pharmacy','optician','hearing_aids'],
-    brands:['dm','Rossmann','Müller','Budni','Ihr Platz','Douglas','Parfümerie',
-            'Fielmann','McOptik','Apollo','Kind Hörgeräte','Boots']
+    types:['chemist','cosmetics','beauty'],
+    brands:['dm','Rossmann','Müller','Budni','Ihr Platz']
   },
   {
-    id:'clothes', label:'Mode', icon:'&#128247;',
-    types:['clothes','shoes','sports','outdoor','boutique','second_hand'],
-    brands:['KiK','H&M','C&A','Zara','Primark','NKD','Takko','Ernsting\'s Family',
-            's.Oliver','Esprit','Vero Moda','Jack & Jones','New Yorker','Adidas',
-            'Nike','Deichmann','Salamander','Reno','Görtz','Sport Scheck','Intersport',
-            'Decathlon','Humana','Second Hand']
-  },
-  {
-    id:'tech', label:'Elektronik', icon:'&#128187;',
-    types:['electronics','mobile_phone','computer','hifi','appliance','kitchen',
-           'bathroom','lighting','vacuum_cleaner'],
-    brands:['Media Markt','Saturn','Expert','Euronics','EP:','Conrad','Gravis',
-            'Apple Store','Samsung','Telekom','Vodafone','O2','Mobilcom-Debitel',
-            'Notebooksbilliger','Cyberport']
-  },
-  {
-    id:'diy', label:'Baumarkt', icon:'&#128296;',
-    types:['doityourself','hardware','garden_centre','florist','paint','tile','glaziery'],
-    brands:['OBI','Bauhaus','Hornbach','Toom','Hagebau','Hagebaumarkt','Praktiker',
-            'Hellweg','Raiffeisen','Blume 2000','Floristen']
-  },
-  {
-    id:'office', label:'Büro & Buch', icon:'&#128218;',
-    types:['stationery','books','art','music','newsagent','copyshop'],
-    brands:['Thalia','Hugendubel','Weltbild','Mayersche','Bücher Pustet','Papeterie',
-            'Staples','McPaper','Müller','Libro','Osiander','Gravis','dm']
-  },
-  {
-    id:'pets', label:'Tiere', icon:'&#128062;',
-    types:['pet','agrarian'],
-    brands:['Fressnapf','Futterhaus','Das Futterhaus','Tierarzt','Zoologischer Garten',
-            'Zoo Rostock','Hornbach','Zoohandlung','Tierhandlung','animonde']
-  },
-  {
-    id:'wholesale', label:'Großhandel', icon:'&#127981;',
-    types:['wholesale','superstore','cash_and_carry'],
-    brands:['Metro','Selgros','Makro','Costco','Handelshof','Transgourmet','Lekkerland']
-  },
-  {
-    id:'misc', label:'Sonstiges', icon:'&#127978;',
-    types:['convenience','newsagent','kiosk','variety_store','general','tobacco',
-           'lottery','laundry','dry_cleaning','gift','party','photo'],
-    brands:['Woolworth','Tchibo','Tabak','Lotto','Kiosk','Spätverkauf','Späti',
-            'Nah & Gut','tegut…','Tante Emma','Edeka Nahversorger','Reinigung']
+    id:'other', label:'Sonstiges', icon:'&#127978;',
+    types:['hardware','doityourself','furniture','electronics','department_store','variety_store','discount'],
+    brands:['OBI','Bauhaus','Hornbach','Toom','Hagebaumarkt','Hellweg','Globus Baumarkt',
+            'Poco','Ikea','XXXL','Roller','MediaMarkt','Saturn','Expert','Euronics',
+            'Mac Geiz','Tedi','Action','Woolworth','Euroshop',
+            'H&M','Zara','C&A','Primark','KiK','Takko','Deichmann']
   },
 ];
 
-let activeFilters=JSON.parse(localStorage.getItem('shopFilters')||'["food","drug","misc"]');
+let activeFilters=JSON.parse(localStorage.getItem('shopFilters')||'["food","drug"]');
 function saveFilters(){localStorage.setItem('shopFilters',JSON.stringify(activeFilters));}
 function buildFilterChips(){
   const el=document.getElementById('filterChips');el.innerHTML='';
@@ -758,14 +734,89 @@ function deleteStoreGroup(storeName){
 ═══════════════════════════════════════════════════ */
 let selectedStore='';
 let renamingStore=null;
+let storeFilterCat='all';
+let storeSearchQuery='';
+
+// Kategorie eines Ladens erkennen
+function getStoreCat(name){
+  const nl=name.toLowerCase();
+  const food=['aldi','edeka','rewe','lidl','netto','penny','kaufland','norma','globus','real','tegut','hit','famila','marktkauf','combi','spar','nahkauf','v-markt','trinkgut','hol ab','e-center','wasgau','konsum','ratioland','selgros','metro','costco','aldi süd','aldi nord'];
+  const drug=['dm','rossmann','müller','budni','ihr platz','schlecker','watsons','notino'];
+  const home=['obi','bauhaus','hornbach','toom','hagebau','hagebaumarkt','hellweg','praktiker','bauking','globus baumarkt','poco','möbel höffner','ikea','xxxl','roller','mondo','medimax','expert','saturn','mediamarkt','euronics','netto'];
+  const fashion=['h&m','zara','c&a','primark','kik','takko','zeeman','nkd','ernsting','ernstings','deichmann','görtz','footlocker','foot locker','snipes'];
+  const health=['apotheke','pharmacy','dm','rossmann'];
+  const discount=['mac geiz','tedi','action','woolworth','euro-shop','euro shop','euroshop','pfennigpfeiffer','nanu-nana','tiger','flying tiger','pepco'];
+  if(food.some(b=>nl.includes(b)))return 'food';
+  if(drug.some(b=>nl===b||nl.startsWith(b+' ')||nl.startsWith(b+'-')||nl.includes(b)))return 'drug';
+  if(home.some(b=>nl.includes(b)))return 'other';
+  if(fashion.some(b=>nl.includes(b)))return 'other';
+  if(discount.some(b=>nl.includes(b)))return 'other';
+  return 'other';
+}
+function setStoreFilter(btn,cat){
+  document.querySelectorAll('.store-fchip').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  storeFilterCat=cat;
+  buildStoreList();
+}
+function filterStoreSearch(){
+  storeSearchQuery=(document.getElementById('storeSearchInp')?.value||'').toLowerCase().trim();
+  buildStoreList();
+}
+
+const STATIC_STORE_SUGGESTIONS={
+  food:['Aldi','Aldi Nord','Aldi Süd','Edeka','Rewe','Lidl','Netto','Penny','Kaufland','Norma','Globus','Tegut','Hit','Famila','Marktkauf','E-Center','Combi','Spar','Nahkauf','V-Markt','Trinkgut','Hol ab','Wasgau','Konsum','Selgros','Metro'],
+  drug:['dm','Rossmann','Müller','Budni','Ihr Platz'],
+  other:['Mac Geiz','Tedi','Action','Woolworth','Euroshop','Pfennigpfeiffer','Nanu-Nana','Tiger',
+         'OBI','Bauhaus','Hornbach','Toom','Hagebaumarkt','Hellweg','Globus Baumarkt',
+         'Poco','Ikea','XXXL','Roller','Mondo',
+         'MediaMarkt','Saturn','Expert','Euronics','Medimax',
+         'H&M','Zara','C&A','Primark','KiK','Takko','NKD','Ernstings Family','Deichmann','Görtz','Snipes',
+         'Apotheke','Tankstelle']
+};
 
 function buildStoreList(){
   const list=document.getElementById('storeListItems');list.innerHTML='';
-  if(!customStores.length){
-    list.innerHTML='<div style="padding:20px;text-align:center;color:rgba(255,255,255,0.26);font-size:14px;line-height:1.7">Noch keine Läden.<br>&#9881; Einstellungen → Ort eingeben.</div>';
+  
+  // Wenn keine Läden geladen: statische Vorschläge zeigen
+  const sourceList=customStores.length?customStores:Object.values(STATIC_STORE_SUGGESTIONS).flat();
+  const isSuggestion=!customStores.length;
+  
+  if(isSuggestion){
+    const hint=document.createElement('div');
+    hint.style.cssText='padding:10px 20px 4px;font-size:11px;color:rgba(255,255,255,0.30);letter-spacing:0.08em;text-transform:uppercase;';
+    hint.textContent='Bekannte Ketten – tippen zum Hinzufügen';
+    list.appendChild(hint);
+  }
+  
+  const filtered=sourceList.filter(s=>{
+    if(storeSearchQuery&&!s.toLowerCase().includes(storeSearchQuery))return false;
+    if(storeFilterCat!=='all'&&getStoreCat(s)!==storeFilterCat)return false;
+    return true;
+  });
+  if(!filtered.length){
+    list.innerHTML='<div style="padding:16px 20px;color:rgba(255,255,255,0.28);font-size:14px;">Keine Treffer.</div>';
     return;
   }
-  customStores.forEach(s=>list.appendChild(makeStoreRow(s)));
+  filtered.forEach(s=>{
+    if(isSuggestion){
+      // Suggestion-Modus: Tippen fügt Laden hinzu
+      const d=document.createElement('div');
+      d.className='store-list-item';
+      d.innerHTML=`<span class="s-name">${s}</span><span style="font-size:12px;color:rgba(167,139,250,0.45);">＋</span>`;
+      d.addEventListener('click',()=>{
+        const n=normalizeStoreName(s);
+        if(!customStores.map(x=>x.toLowerCase()).includes(n.toLowerCase())){
+          customStores.push(n);saveStores();
+          if(activeLocationIdx>=0){savedLocations[activeLocationIdx]={...savedLocations[activeLocationIdx],stores:customStores};saveLocations();}
+        }
+        selectStore(n);
+      });
+      list.appendChild(d);
+    }else{
+      list.appendChild(makeStoreRow(s));
+    }
+  });
 }
 
 function makeStoreRow(s){
@@ -838,7 +889,15 @@ function confirmInlineRename(oldName){
   buildStoreList();render();
 }
 
-function openStorePopup(){renamingStore=null;buildStoreList();document.getElementById('storePopupBg').classList.add('open');}
+function openStorePopup(){
+  renamingStore=null;storeFilterCat='food';storeSearchQuery='';
+  const si=document.getElementById('storeSearchInp');if(si)si.value='';
+  document.querySelectorAll('.store-fchip').forEach(b=>{
+    const cat=b.dataset.cat;
+    b.classList.toggle('active',cat==='food');
+  });
+  buildStoreList();document.getElementById('storePopupBg').classList.add('open');
+}
 function closeStorePopup(){document.getElementById('storePopupBg').classList.remove('open');}
 function storePopupBgClick(e){if(e.target===document.getElementById('storePopupBg'))closeStorePopup();}
 
