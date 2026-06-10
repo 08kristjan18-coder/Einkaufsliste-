@@ -378,6 +378,7 @@ body{
       <button class="store-fchip active" data-cat="all" onclick="setStoreFilter(this,'all')">Alle</button>
       <button class="store-fchip" data-cat="food" onclick="setStoreFilter(this,'food')">&#127811; Supermarkt</button>
       <button class="store-fchip" data-cat="drug" onclick="setStoreFilter(this,'drug')">&#129514; Drogerie</button>
+      <button class="store-fchip" data-cat="wholesale" onclick="setStoreFilter(this,'wholesale')">&#128666; Großhandel</button>
       <button class="store-fchip" data-cat="other" onclick="setStoreFilter(this,'other')">&#10022; Sonstiges</button>
     </div>
     <!-- Manuell hinzufügen -->
@@ -477,20 +478,33 @@ const SHOP_CATEGORIES=[
     brands:['Aldi','Aldi Nord','Aldi Süd','Edeka','Rewe','Lidl','Netto',
             'Netto Marken-Discount','Penny','Kaufland','Norma','Globus','Real',
             'Tegut','Hit','Famila','Marktkauf','E-Center','Combi','V-Markt',
-            'Trinkgut','Hol ab','Nahkauf','Spar','Wasgau','Konsum','Selgros','Metro']
+            'Trinkgut','Hol ab','Nahkauf','Spar','Wasgau','Konsum','Ratioland',
+            'Feneberg','Dodenhof','Bartels-Langness']
   },
   {
     id:'drug', label:'Drogerie', icon:'&#129514;',
-    types:['chemist','cosmetics','beauty'],
-    brands:['dm','Rossmann','Müller','Budni','Ihr Platz']
+    types:['chemist','cosmetics','beauty','pharmacy'],
+    brands:['dm','Rossmann','Müller','Budni','Ihr Platz','Watsons',
+            'Notino','Douglas','Parfümerie Douglas','Marionnaud',
+            'The Body Shop','Lush',
+            'Apotheke','DocMorris','Shop Apotheke']
+  },
+  {
+    id:'wholesale', label:'Großhandel', icon:'&#128666;',
+    types:['wholesale','cash_and_carry'],
+    brands:['Metro','Selgros','Costco','Lekkerland','Transgourmet',
+            'Handelshof','Ratio','Makro','Chefs Culinar']
   },
   {
     id:'other', label:'Sonstiges', icon:'&#127978;',
     types:['hardware','doityourself','furniture','electronics','department_store','variety_store','discount'],
     brands:['OBI','Bauhaus','Hornbach','Toom','Hagebaumarkt','Hellweg','Globus Baumarkt',
-            'Poco','Ikea','XXXL','Roller','MediaMarkt','Saturn','Expert','Euronics',
-            'Mac Geiz','Tedi','Action','Woolworth','Euroshop',
-            'H&M','Zara','C&A','Primark','KiK','Takko','Deichmann']
+            'Poco','Ikea','XXXL','Roller','Mondo',
+            'MediaMarkt','Saturn','Expert','Euronics','Medimax',
+            'Mac Geiz','Tedi','Action','Woolworth','Euroshop','Pfennigpfeiffer','Nanu-Nana',
+            'H&M','Zara','C&A','Primark','KiK','Takko','NKD','Ernstings Family',
+            'Deichmann','Görtz','Snipes','Foot Locker',
+            'Tankstelle','Kiosk']
   },
 ];
 
@@ -740,17 +754,12 @@ let storeSearchQuery='';
 // Kategorie eines Ladens erkennen
 function getStoreCat(name){
   const nl=name.toLowerCase();
-  const food=['aldi','edeka','rewe','lidl','netto','penny','kaufland','norma','globus','real','tegut','hit','famila','marktkauf','combi','spar','nahkauf','v-markt','trinkgut','hol ab','e-center','wasgau','konsum','ratioland','selgros','metro','costco','aldi süd','aldi nord'];
-  const drug=['dm','rossmann','müller','budni','ihr platz','schlecker','watsons','notino'];
-  const home=['obi','bauhaus','hornbach','toom','hagebau','hagebaumarkt','hellweg','praktiker','bauking','globus baumarkt','poco','möbel höffner','ikea','xxxl','roller','mondo','medimax','expert','saturn','mediamarkt','euronics','netto'];
-  const fashion=['h&m','zara','c&a','primark','kik','takko','zeeman','nkd','ernsting','ernstings','deichmann','görtz','footlocker','foot locker','snipes'];
-  const health=['apotheke','pharmacy','dm','rossmann'];
-  const discount=['mac geiz','tedi','action','woolworth','euro-shop','euro shop','euroshop','pfennigpfeiffer','nanu-nana','tiger','flying tiger','pepco'];
+  const food=['aldi','aldi nord','aldi süd','edeka','rewe','lidl','netto','penny','kaufland','norma','globus','real','tegut','hit','famila','marktkauf','combi','spar','nahkauf','v-markt','trinkgut','hol ab','e-center','wasgau','konsum','ratioland','feneberg','bartels','dodenhof'];
+  const drug=['dm','rossmann','müller','budni','ihr platz','schlecker','watsons','notino','douglas','marionnaud','body shop','lush','apotheke','docmorris','shop apotheke'];
+  const wholesale=['metro','selgros','costco','lekkerland','transgourmet','handelshof','makro','chefs culinar','ratio'];
   if(food.some(b=>nl.includes(b)))return 'food';
-  if(drug.some(b=>nl===b||nl.startsWith(b+' ')||nl.startsWith(b+'-')||nl.includes(b)))return 'drug';
-  if(home.some(b=>nl.includes(b)))return 'other';
-  if(fashion.some(b=>nl.includes(b)))return 'other';
-  if(discount.some(b=>nl.includes(b)))return 'other';
+  if(drug.some(b=>nl.includes(b)))return 'drug';
+  if(wholesale.some(b=>nl.includes(b)))return 'wholesale';
   return 'other';
 }
 function setStoreFilter(btn,cat){
@@ -765,14 +774,15 @@ function filterStoreSearch(){
 }
 
 const STATIC_STORE_SUGGESTIONS={
-  food:['Aldi','Aldi Nord','Aldi Süd','Edeka','Rewe','Lidl','Netto','Penny','Kaufland','Norma','Globus','Tegut','Hit','Famila','Marktkauf','E-Center','Combi','Spar','Nahkauf','V-Markt','Trinkgut','Hol ab','Wasgau','Konsum','Selgros','Metro'],
-  drug:['dm','Rossmann','Müller','Budni','Ihr Platz'],
-  other:['Mac Geiz','Tedi','Action','Woolworth','Euroshop','Pfennigpfeiffer','Nanu-Nana','Tiger',
+  food:['Aldi','Aldi Nord','Aldi Süd','Edeka','Rewe','Lidl','Netto','Penny','Kaufland','Norma','Globus','Real','Tegut','Hit','Famila','Marktkauf','E-Center','Combi','Spar','Nahkauf','V-Markt','Trinkgut','Hol ab','Wasgau','Konsum','Ratioland','Feneberg'],
+  drug:['dm','Rossmann','Müller','Budni','Ihr Platz','Watsons','Notino','Douglas','Marionnaud','The Body Shop','Lush','Apotheke','DocMorris','Shop Apotheke'],
+  wholesale:['Metro','Selgros','Costco','Lekkerland','Transgourmet','Handelshof','Makro','Chefs Culinar'],
+  other:['Mac Geiz','Tedi','Action','Woolworth','Euroshop','Pfennigpfeiffer','Nanu-Nana',
          'OBI','Bauhaus','Hornbach','Toom','Hagebaumarkt','Hellweg','Globus Baumarkt',
          'Poco','Ikea','XXXL','Roller','Mondo',
          'MediaMarkt','Saturn','Expert','Euronics','Medimax',
          'H&M','Zara','C&A','Primark','KiK','Takko','NKD','Ernstings Family','Deichmann','Görtz','Snipes',
-         'Apotheke','Tankstelle']
+         'Tankstelle','Kiosk']
 };
 
 function buildStoreList(){
