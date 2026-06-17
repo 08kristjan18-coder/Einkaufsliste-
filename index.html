@@ -1091,7 +1091,7 @@ render();
 /* ═══════════════════════════════════════════════════
    DATENSICHERUNG: Export & Import
 ═══════════════════════════════════════════════════ */
-function exportBackup(){
+async function exportBackup(){
   const data={
     version:1,
     exportDate:new Date().toISOString(),
@@ -1102,14 +1102,29 @@ function exportBackup(){
     shopFilters:activeFilters
   };
   const json=JSON.stringify(data,null,2);
+  const date=new Date().toISOString().slice(0,10);
+  const fileName='meine-liste-backup-'+date+'.json';
+  if(window.showSaveFilePicker){
+    try{
+      const fh=await window.showSaveFilePicker({
+        suggestedName:fileName,
+        types:[{description:'JSON Backup',accept:{'application/json':['.json']}}]
+      });
+      const writable=await fh.createWritable();
+      await writable.write(json);
+      await writable.close();
+      showToast('✅ Backup gespeichert!');
+      return;
+    }catch(e){
+      if(e.name==='AbortError')return; // Nutzer hat abgebrochen
+    }
+  }
+  // Fallback: normaler Download
   const blob=new Blob([json],{type:'application/json'});
   const url=URL.createObjectURL(blob);
   const a=document.createElement('a');
-  const date=new Date().toISOString().slice(0,10);
-  a.href=url;
-  a.download='meine-liste-backup-'+date+'.json';
-  document.body.appendChild(a);
-  a.click();
+  a.href=url;a.download=fileName;
+  document.body.appendChild(a);a.click();
   setTimeout(()=>{URL.revokeObjectURL(url);document.body.removeChild(a);},1000);
   showToast('✅ Backup gespeichert!');
 }
