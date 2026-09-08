@@ -1,4 +1,4 @@
-const CACHE = 'einkaufsliste-v8';
+const CACHE = 'liste-v2';
 const ASSETS = [
   './index.html',
   './manifest.json',
@@ -13,6 +13,14 @@ self.addEventListener('install', e => {
     )
   );
   self.skipWaiting();
+});
+
+self.addEventListener('activate', e => {
+  e.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
+    ).then(() => self.clients.claim())
+  );
 });
 
 self.addEventListener('fetch', e => {
