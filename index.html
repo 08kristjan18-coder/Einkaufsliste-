@@ -1358,9 +1358,28 @@ function importBackup(event){
   reader.onload=e=>{
     try{
       const d=JSON.parse(e.target.result);
-      if(!d.lists || !Array.isArray(d.lists)){showToast('Ungültige Datei');return;}
+      let converted;
+      if(d.lists && Array.isArray(d.lists)){
+        converted=d;
+      }else if(Array.isArray(d.items)){
+        // altes Backup-Format (Version 1, ohne Mehrfachlisten)
+        converted={
+          version:2,
+          activeListId:'default',
+          lists:[{id:'default', name:'Einkauf', items:d.items||[], budget:null}],
+          customStores:d.customStores||[],
+          savedLocations:d.savedLocations||[],
+          activeLocationIdx:d.activeLocationIdx??-1,
+          activeFilters:d.activeFilters||d.shopFilters||['food','drug'],
+          favorites:d.favorites||[]
+        };
+      }else{
+        showToast('Ungültige Datei');
+        event.target.value='';
+        return;
+      }
       if(!confirm('Backup laden? Aktuelle Daten werden überschrieben.')){event.target.value='';return;}
-      data=d;
+      data=converted;
       activeListId=data.activeListId||data.lists[0].id;
       items=getActiveItems();
       customStores=data.customStores||[];
