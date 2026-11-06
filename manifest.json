@@ -3,8 +3,8 @@
   "short_name": "Meine Liste",
   "description": "Einkaufsliste als App – immer dabei",
   "start_url": "./index.html",
-  "background_color": "#ECEEF0",
-  "theme_color": "#ECEEF0",
+  "background_color": "#E6E9ED",
+  "theme_color": "#E6E9ED",
   "display": "standalone",
   "orientation": "portrait",
   "icons": [

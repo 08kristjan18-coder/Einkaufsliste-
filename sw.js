@@ -1,4 +1,4 @@
-const CACHE = 'liste-v3';
+const CACHE = 'liste-v11';
 const ASSETS = [
   './index.html',
   './manifest.json',
