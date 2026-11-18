@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -342,7 +342,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
 <div class="bottom-bar">
   <button class="b-btn" onclick="shareList()" title="Teilen">↗</button>
   <button class="b-btn add" id="addToggleBtn" onclick="toggleInputPanel()" title="Hinzufügen">＋</button>
-  <button class="b-btn" onclick="openSettings()" title="Mehr">⋯</button>
+  <button class="b-btn" onclick="openMore()" title="Mehr">⋯</button>
 </div>
 
 <!-- EDIT MODAL -->
@@ -355,6 +355,8 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
     <input id="editQty" type="text" inputmode="numeric">
     <label>Preis (€)</label>
     <input id="editPrice" type="text" inputmode="decimal" placeholder="optional">
+    <label>Laden</label>
+    <select id="editStore"></select>
     <label>Priorität</label>
     <select id="editPrio">
       <option value="0">Normal</option>
@@ -379,6 +381,19 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
       <input id="newListName" type="text" placeholder="Name der Liste" maxlength="40">
       <button class="s-btn" onclick="createList()">Liste erstellen</button>
     </div>
+  </div>
+</div>
+
+<!-- MEHR -->
+<div class="modal-bg" id="moreBg" onclick="if(event.target===this)closeMore()">
+  <div class="modal center">
+    <h2>Mehr</h2>
+    <button class="s-btn ghost" onclick="renameList()">Liste umbenennen</button>
+    <button class="s-btn ghost" onclick="checkAll(true)">Alle abhaken</button>
+    <button class="s-btn ghost" onclick="checkAll(false)">Alle zurücksetzen</button>
+    <button class="s-btn ghost" onclick="closeMore();clearDone()">Erledigte leeren</button>
+    <button class="s-btn ghost" onclick="closeMore();openSettings()">Einstellungen</button>
+    <button class="s-btn" onclick="closeMore()">Schließen</button>
   </div>
 </div>
 
@@ -413,6 +428,11 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
     <div class="settings-section">
       <div class="settings-section-title">Kategorien-Filter (Laden-Suche)</div>
       <div class="filter-chips" id="filterChips"></div>
+    </div>
+    <div class="settings-section">
+      <div class="settings-section-title">Verhalten</div>
+      <div class="filter-chips"><button class="filter-chip" id="autoClearChip" onclick="toggleAutoClear()"></button></div>
+      <div class="hint" style="margin-top:10px">Nach dem letzten Haken wird die Liste nach 5 Sekunden geleert – mit Wiederherstellen.</div>
     </div>
     <div class="settings-section">
       <div class="settings-section-title">Backup</div>
@@ -454,7 +474,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
    STATE
 ═══════════════════════════════════════════════════ */
 const STORAGE_KEY = 'liste_v2';
-let data = loadData();
+let data = normalize(loadData());
 let activeListId = data.activeListId;
 let items = getActiveItems();
 let customStores = data.customStores || [];
@@ -522,7 +542,7 @@ function saveData(){
   data.activeLocationIdx = activeLocationIdx;
   data.activeFilters = activeFilters;
   data.activeListId = activeListId;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  try{localStorage.setItem(STORAGE_KEY, JSON.stringify(data));}catch(e){showToast('Speichern fehlgeschlagen – Speicher voll?');}
 }
 function getActiveItems(){
   const list = data.lists.find(l=>l.id===activeListId);
@@ -591,16 +611,16 @@ function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').repl
 function cap(s){return s? s.charAt(0).toUpperCase()+s.slice(1):'';}
 function fmtPrice(v){return v.toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2})+' €';}
 function vibrate(ms){if(navigator.vibrate)navigator.vibrate(ms);}
-function showToast(msg, undoFn){
+function showToast(msg, undoFn, label){
   const t = document.getElementById('toast');
   const msgEl = document.getElementById('toastMsg');
-  msgEl.innerHTML = esc(msg) + (undoFn ? ' <button class="undo" id="undoBtn">Rückgängig</button>' : '');
+  msgEl.innerHTML = esc(msg) + (undoFn ? ' <button class="undo" id="undoBtn">'+esc(label||'Rückgängig')+'</button>' : '');
   t.classList.add('show');
   if(toastTimer) clearTimeout(toastTimer);
   if(undoFn){
     document.getElementById('undoBtn').onclick = ()=>{undoFn();t.classList.remove('show');};
   }
-  toastTimer = setTimeout(()=>t.classList.remove('show'), undoFn?4000:2400);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), undoFn?(label?9000:5000):2400);
 }
 
 /* ═══════════════════════════════════════════════════
@@ -645,6 +665,7 @@ function openSettings(){
   document.getElementById('settingsCity').value = '';
   buildFilterChips();
   buildSavedLocationsList();
+  updateAutoClearChip();
   document.getElementById('settingsBg').classList.add('open');
 }
 function closeSettings(){document.getElementById('settingsBg').classList.remove('open');}
@@ -686,7 +707,7 @@ function isFavorite(name){
 function toggleFavorite(){
   const inp=document.getElementById('inp');
   const raw=inp.value.trim();
-  if(!raw) return;
+  if(!raw){showToast('Erst einen Namen eintippen');return;}
   const name=cap(raw);
   data.favorites=data.favorites||[];
   if(isFavorite(name)){
@@ -731,7 +752,8 @@ function buildFavList(){
     const d=document.createElement('div');
     d.className='store-list-item';
     d.innerHTML=`<span class="s-name">${esc(h)}</span>
-      <button class="store-del" onclick="event.stopPropagation();removeFavorite('${esc(h)}')">✕</button>`;
+      <button class="store-del" data-x="1">✕</button>`;
+    d.querySelector('.store-del').onclick=e=>{e.stopPropagation();removeFavorite(h);};
     d.onclick=()=>{
       document.getElementById('inp').value=h;
       updateFavBtnState();
@@ -755,6 +777,7 @@ function addItem(){
   const inp=document.getElementById('inp');
   const raw=inp.value.trim();
   if(!raw) return;
+  cancelAutoDelete();
   let name=raw, itemQty=getQty();
   const m=raw.match(/^(\d+)[x×\s]\s*(.+)$/i);
   if(m){itemQty=parseInt(m[1]);name=cap(m[2].trim());}
@@ -762,7 +785,9 @@ function addItem(){
 
   const price=getPrice();
 
-  items.unshift({
+  const dup=items.find(i=>!i.done&&i.name.toLowerCase()===name.toLowerCase()&&(i.store||'')===(selectedStore||''));
+  if(dup){dup.qty=(parseInt(dup.qty)||1)+itemQty;if(price!=null)dup.price=price;window._newId=dup.id;}
+  else items.unshift({
     id:(window._newId=Date.now()+Math.random()),
     name, qty:itemQty, unit:'', cat:'', prio:0, note:'',
     done:false, store:selectedStore||'', price
@@ -795,14 +820,15 @@ function toggle(id){
 function del(id){
   const it=items.find(i=>i.id===id);
   if(!it) return;
-  lastDeleted={...it, _idx:items.findIndex(i=>i.id===id)};
+  lastDeleted={...it, _idx:items.findIndex(i=>i.id===id), _list:activeListId};
   items=items.filter(i=>i.id!==id);
   saveData();
   render();
   showToast(it.name+' gelöscht', ()=>{
     if(lastDeleted){
-      items.splice(lastDeleted._idx,0,lastDeleted);
-      delete lastDeleted._idx;
+      const ld0=lastDeleted,ix=ld0._idx,lid=ld0._list;delete ld0._idx;delete ld0._list;
+      const tgt=(lid===activeListId)?items:((data.lists.find(l=>l.id===lid)||{}).items);
+      if(tgt)tgt.splice(Math.min(ix,tgt.length),0,ld0);
       lastDeleted=null;
       saveData();
       render();
@@ -829,7 +855,7 @@ function clearAll(){
   showToast('Liste geleert');
 }
 function checkAllDone(){
-  if(items.length>0 && items.every(i=>i.done)) startCountdown();
+  if(data.autoClear!==false && items.length>0 && items.every(i=>i.done)) startCountdown();
   else cancelAutoDelete();
 }
 function startCountdown(){
@@ -845,10 +871,10 @@ function startCountdown(){
     txt.textContent='Liste wird in '+secs+'s geleert…';
     if(secs<=0){
       cancelAutoDelete();
-      items=[];
-      saveData();
-      render();
-      showToast('Alles erledigt 🎉');
+      if(!items.length||!items.every(i=>i.done))return;
+      const snap=items.slice();items=[];
+      saveData();render();
+      showToast('Alles erledigt 🎉',()=>{items=snap;saveData();render();},'Wiederherstellen');
     }
   },1000);
 }
@@ -867,6 +893,7 @@ function openEdit(id){
   document.getElementById('editQty').value=it.qty;
   document.getElementById('editPrice').value=it.price!=null?String(it.price).replace('.',','):'';
   document.getElementById('editPrio').value=String(it.prio||0);
+  {const se=document.getElementById('editStore');const nm=[...customStores];if(it.store&&!nm.some(x=>x.toLowerCase()===it.store.toLowerCase()))nm.push(it.store);se.innerHTML='<option value="">Überall</option>'+nm.map(n=>'<option>'+esc(n)+'</option>').join('');se.value=it.store||'';}
   document.getElementById('modalBg').classList.add('open');
   setTimeout(()=>document.getElementById('editName').focus(),80);
 }
@@ -878,9 +905,10 @@ function saveEdit(){
   const pv=(document.getElementById('editPrice').value||'').trim().replace(',','.');
   const pn=parseFloat(pv);
   if(n) it.name=n;
-  if(q) it.qty=isNaN(q)?q:parseInt(q);
+  if(q){const qn=parseInt(q);it.qty=isNaN(qn)||qn<1?1:qn;}
   it.price=(pv==='')?null:(isNaN(pn)?null:Math.round(pn*100)/100);
   it.prio=parseInt(document.getElementById('editPrio').value)||0;
+  it.store=document.getElementById('editStore').value;
   saveData();
   render();
   closeModal();
@@ -981,11 +1009,11 @@ function render(){
         ${priceStr?`<span class="item-price">${priceStr}</span>`:''}
       </div>`;
     d.dataset.id=it.id;d.addEventListener('click',()=>toggle(it.id));
-    d.addEventListener('contextmenu',e=>{e.preventDefault();openEdit(it.id);});
+    d.addEventListener('contextmenu',e=>{e.preventDefault();if(!('ontouchstart' in window))openEdit(it.id);});
     // long press for edit on mobile
     let lp=null;
-    d.addEventListener('touchstart',()=>{lp=setTimeout(()=>openEdit(it.id),550);},{passive:true});
-    d.addEventListener('touchend',()=>clearTimeout(lp));
+    d.addEventListener('touchstart',()=>{d._lp=false;clearTimeout(lp);lp=setTimeout(()=>{d._lp=true;vibrate(15);},500);},{passive:true});
+    d.addEventListener('touchend',e=>{clearTimeout(lp);if(d._lp){d._lp=false;if(e.cancelable)e.preventDefault();openEdit(it.id);}});
     d.addEventListener('touchmove',()=>clearTimeout(lp));
     return d;
   }
@@ -1047,7 +1075,8 @@ function buildStoreList(){
     const d=document.createElement('div');
     d.className='store-list-item'+(s===selectedStore?' selected':'');
     d.innerHTML=`<span class="s-name">${esc(s)}</span><span class="s-check">✓</span>
-      ${customStores.length?`<button class="store-del" onclick="event.stopPropagation();removeStore('${esc(s)}')">✕</button>`:''}`;
+      ${customStores.length?`<button class="store-del" data-x="1">✕</button>`:''}`;
+    const dl=d.querySelector('.store-del');if(dl)dl.onclick=e=>{e.stopPropagation();removeStore(s);};
     d.onclick=()=>{
       if(!customStores.length){
         if(!customStores.map(x=>x.toLowerCase()).includes(s.toLowerCase())){
@@ -1188,8 +1217,13 @@ async function loadStoresByLocation(query,plz,city){
       `way["shop"="${t}"](around:${radius},${lat},${lon});`
     ]).join('');
     const q=`[out:json][timeout:25];(${typeLines});out tags;`;
-    const ovResp=await fetch('https://overpass-api.de/api/interpreter',{method:'POST',body:'data='+encodeURIComponent(q)});
-    if(!ovResp.ok) throw new Error('Overpass nicht erreichbar');
+    let ovResp=null;
+    for(const ep of ['https://overpass-api.de/api/interpreter','https://overpass.kumi.systems/api/interpreter']){
+      try{const ac=new AbortController();const to=setTimeout(()=>ac.abort(),30000);
+        const r=await fetch(ep,{method:'POST',body:'data='+encodeURIComponent(q),signal:ac.signal});clearTimeout(to);
+        if(r.ok){ovResp=r;break;}}catch(e){}
+    }
+    if(!ovResp) throw new Error('Läden-Server nicht erreichbar – später nochmal versuchen');
     setSearchProgress(80,'Verarbeite…');
     const ovData=await ovResp.json();
     const seen=new Set();const found=[];
@@ -1222,7 +1256,7 @@ async function loadStoresByLocation(query,plz,city){
     showToast(found.length?found.length+' Läden in '+locName:'Keine Läden gefunden');
   }catch(err){
     console.error(err);
-    showToast(err.message||'Fehler bei der Suche');
+    showToast(/fetch|network/i.test(err.message||'')?'Keine Verbindung – die Läden-Suche braucht Internet':(err.message||'Fehler bei der Suche'));
     hideSearchProgress();
   }
 }
@@ -1279,7 +1313,7 @@ function importBackup(event){
         return;
       }
       if(!confirm('Backup laden? Aktuelle Daten werden überschrieben.')){event.target.value='';return;}
-      data=converted;
+      data=normalize(converted);
       activeListId=data.activeListId||data.lists[0].id;
       items=getActiveItems();
       customStores=data.customStores||[];
@@ -1299,7 +1333,10 @@ function importBackup(event){
    PWA + INIT
 ═══════════════════════════════════════════════════ */
 if('serviceWorker' in navigator){
-  window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+  window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').then(reg=>{
+    reg.addEventListener('updatefound',()=>{const nw=reg.installing;if(!nw)return;nw.addEventListener('statechange',()=>{if(nw.state==='installed'&&navigator.serviceWorker.controller)showToast('Update bereit',()=>location.reload(),'Neu laden');});});
+    document.addEventListener('visibilitychange',()=>{if(!document.hidden)reg.update().catch(()=>{});});
+  }).catch(()=>{}));
 }
 
 // init
@@ -1383,6 +1420,48 @@ document.getElementById('sugg').addEventListener('pointerdown',e=>e.preventDefau
     })(t0);
   }).observe(el,{childList:true,characterData:true,subtree:true});
 })();
+
+/* ═══ Überarbeitung: Hilfsfunktionen ═══ */
+function normalize(d){
+  d=(d&&typeof d==='object')?d:{};
+  if(!Array.isArray(d.lists)||!d.lists.length)d.lists=[{id:'default',name:'Einkauf',items:[],budget:null}];
+  d.lists.forEach(l=>{
+    l.id=l.id||('l_'+Math.random().toString(36).slice(2));
+    l.name=l.name||'Liste';
+    l.items=(Array.isArray(l.items)?l.items:[]).filter(i=>i&&i.name).map(i=>{
+      const q=parseInt(i.qty);i.qty=q>0?q:1;
+      if(i.id==null)i.id=Date.now()+Math.random();
+      i.price=(i.price==null||isNaN(i.price))?null:Number(i.price);
+      return i;
+    });
+  });
+  if(!d.lists.some(l=>l.id===d.activeListId))d.activeListId=d.lists[0].id;
+  if(!Array.isArray(d.favorites))d.favorites=[];
+  if(!Array.isArray(d.customStores))d.customStores=[];
+  if(!Array.isArray(d.savedLocations))d.savedLocations=[];
+  if(!Array.isArray(d.activeFilters)||!d.activeFilters.length)d.activeFilters=['food','drug'];
+  return d;
+}
+function openMore(){document.getElementById('moreBg').classList.add('open');}
+function closeMore(){document.getElementById('moreBg').classList.remove('open');}
+function renameList(){
+  const l=getActiveList();closeMore();
+  const n=prompt('Neuer Name der Liste',l.name);
+  if(n&&n.trim()){l.name=n.trim().slice(0,40);saveData();render();showToast('Umbenannt');}
+}
+function checkAll(v){
+  if(!items.length){closeMore();return;}
+  items.forEach(i=>i.done=v);saveData();render();closeMore();checkAllDone();
+}
+function toggleAutoClear(){data.autoClear=(data.autoClear===false);saveData();updateAutoClearChip();}
+function updateAutoClearChip(){
+  const on=data.autoClear!==false,c=document.getElementById('autoClearChip');
+  c.textContent=(on?'✓ ':'')+'Liste automatisch leeren';c.classList.toggle('active',on);
+  if(!on)cancelAutoDelete();
+}
+document.addEventListener('touchcancel',()=>document.querySelectorAll('.item').forEach(i=>{i.style.transition='';i.style.transform='';i.classList.remove('sw-r','sw-l');}),{passive:true});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')['modalBg','listsBg','settingsBg','moreBg','storePopupBg','favPopupBg'].forEach(id=>document.getElementById(id).classList.remove('open'));});
+try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist();}catch(e){}
 </script>
 </body>
 </html>
